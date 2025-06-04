@@ -1,0 +1,100 @@
+/* Marine Blue Modern Theme - Nouvelle couleur #1e3a5f */
+@layer components {
+    /* Marine Blue Borders */
+    .marine-border {
+        @apply border-4 border-marineBlue-600 rounded-lg;
+    }
+
+    .marine-solid {
+        @apply bg-marineBlue-600;
+    }
+
+    .marine-solid-text {
+        @apply text-marineBlue-600;
+    }
+
+    /* Modern Marine Border Effect */
+    .modern-marine-border {
+        @apply border-2 border-marineBlue-600 p-1 rounded-lg;
+    }
+
+    /* Marine Text Styles */
+    .text-marine-blue {
+        color: #1e3a5f;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Marine Gradient */
+    .marine-gradient {
+        @apply bg-gradient-to-r from-marineBlue-600 via-marineBlue-500 to-brandSky;
+    }
+
+    .marine-gradient-text {
+        @apply bg-gradient-to-r from-marineBlue-600 via-brandSky to-marineBlue-400 bg-clip-text text-transparent;
+    }
+
+    /* Marine Text Shadow */
+    .marine-text-shadow {
+        text-shadow: 1px 1px 2px rgba(30, 58, 95, 0.3);
+    }
+
+    .highlight-text-marine {
+        @apply text-marineBlue-600 font-semibold;
+    }
+
+    /* Backward compatibility - redirect old blue classes to marine */
+    .blue-border {
+        @apply border-4 border-marineBlue-600 rounded-lg;
+    }
+
+    .blue-solid {
+        @apply bg-marineBlue-600;
+    }
+
+    .blue-solid-text {
+        @apply text-marineBlue-600;
+    }
+
+    .modern-border {
+        @apply border-2 border-marineBlue-600 p-1 rounded-lg;
+    }
+
+    .text-brand-blue {
+        color: #1e3a5f;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .modern-border-solid {
+        position: relative;
+        @apply border-2 border-marineBlue-600 rounded-lg;
+    }
+
+    .blue-text-shadow {
+        text-shadow: 1px 1px 2px rgba(30, 58, 95, 0.3);
+    }
+
+    .highlight-text-blue {
+        @apply text-marineBlue-600 font-semibold;
+    }
+
+    .heading-underline::after {
+        content: "";
+        display: block;
+        margin: 0.5em auto 0;
+        width: 100px;
+        height: 4px;
+        background: #1e6fbb;
+        border-radius: 2px;
+    }
+
+    .geometric-bg {
+        background-image: url("/patterns/geometric-pattern.svg");
+        background-repeat: repeat;
+        background-size: 150px;
+    }
+
+    /* Boutons avec couleur unie */
+    .btn-blue-solid {
+        @apply bg-brandBlue hover:bg-brandBlue-dark text-white font-semibold px-6 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300;
+    }
+}

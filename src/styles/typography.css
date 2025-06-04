@@ -1,0 +1,37 @@
+
+/* Typography Styles */
+@layer base {
+  /* Enhanced Typography */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+  }
+
+  .font-display {
+    font-family: 'Inter Display', 'Inter', system-ui, sans-serif;
+    font-feature-settings: 'ss01', 'ss02', 'cv01', 'cv03';
+  }
+}
+
+@layer components {
+  /* Text Styles */
+  .text-premium {
+    @apply text-gray-900 font-medium leading-relaxed;
+  }
+
+  /* Typography Enhancements */
+  .heading-display {
+    @apply font-display font-bold tracking-tight;
+    font-variation-settings: 'wght' 700;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+}

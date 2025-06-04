@@ -1,0 +1,80 @@
+
+/* Component Styles */
+@layer components {
+  /* Premium Card Components */
+  .premium-card {
+    @apply bg-gradient-to-br from-white/95 via-white/90 to-amber-50/20 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-afroGold/10 relative;
+  }
+  
+  .premium-card::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-br from-afroGold/8 to-afroGreen/6 opacity-0 transition-opacity duration-500;
+  }
+  
+  .premium-card:hover::before {
+    @apply opacity-100;
+  }
+
+  /* Enhanced Button Styles */
+  .btn-african {
+    @apply bg-gradient-to-r from-afroGreen to-afroGold hover:from-afroGreen-dark hover:to-afroGold-dark text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300;
+  }
+
+  .btn-premium {
+    @apply bg-gradient-to-r from-white/95 to-amber-50/30 text-gray-900 hover:from-amber-50/40 hover:to-orange-50/30 border-2 border-afroGold/20 hover:border-afroGold/40 font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300;
+  }
+
+  /* Glass Morphism Effects */
+  .glass-card {
+    @apply bg-white/85 backdrop-blur-md border border-afroGold/15 shadow-xl;
+  }
+
+  .glass-navbar {
+    @apply bg-white/92 backdrop-blur-md border-b border-afroGold/20 shadow-lg;
+  }
+
+  /* Advanced Shadows */
+  .shadow-premium {
+    box-shadow: 0 25px 50px -12px rgba(252, 209, 22, 0.15), 0 0 0 1px rgba(252, 209, 22, 0.08);
+  }
+
+  .shadow-african {
+    box-shadow: 
+      0 20px 40px -12px rgba(206, 17, 38, 0.12),
+      0 10px 20px -6px rgba(252, 209, 22, 0.15),
+      0 5px 10px -3px rgba(0, 150, 57, 0.12);
+  }
+
+  /* Interactive Elements */
+  .hover-lift {
+    @apply transition-transform duration-300 hover:-translate-y-2;
+  }
+
+  .hover-glow {
+    @apply transition-all duration-300 hover:shadow-2xl;
+  }
+
+  .hover-scale {
+    @apply transition-transform duration-200 hover:scale-105;
+  }
+
+  /* Advanced Grid Layouts */
+  .grid-auto-fit {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+
+  .grid-auto-fill {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+
+  /* Performance Optimizations */
+  .gpu-accelerated {
+    will-change: transform;
+    transform: translateZ(0);
+  }
+
+  .smooth-scroll {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+}

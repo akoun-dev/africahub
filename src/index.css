@@ -1,0 +1,183 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import modular styles */
+@import './styles/typography.css';
+@import './styles/blue-theme.css';
+@import './styles/components.css';
+@import './styles/animations.css';
+@import './styles/african-theme.css';
+
+@layer base {
+  :root {
+    --background: 45 100% 98%;
+    --foreground: 20 10% 20%;
+    --card: 0 0% 100%;
+    --card-foreground: 20 10% 20%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 10% 20%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 213 100% 97%;
+    --secondary-foreground: 20 10% 20%;
+    --muted: 213 27% 94%;
+    --muted-foreground: 25 5% 45%;
+    --accent: 217 91% 60%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 75% 44%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 213 27% 84%;
+    --input: 213 27% 84%;
+    --ring: 217 91% 60%;
+    --radius: 0.75rem;
+    --sidebar-background: 213 100% 97%;
+    --sidebar-foreground: 20 10% 20%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 213 27% 94%;
+    --sidebar-accent-foreground: 20 10% 20%;
+    --sidebar-border: 213 27% 84%;
+    --sidebar-ring: 217 91% 60%;
+  }
+
+  .dark {
+    --background: 217 19% 12%;
+    --foreground: 213 31% 91%;
+    --card: 217 19% 12%;
+    --card-foreground: 213 31% 91%;
+    --popover: 217 19% 12%;
+    --popover-foreground: 213 31% 91%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 217 19% 18%;
+    --secondary-foreground: 213 31% 91%;
+    --muted: 217 19% 18%;
+    --muted-foreground: 213 13% 65%;
+    --accent: 217 91% 60%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 217 19% 18%;
+    --input: 217 19% 18%;
+    --ring: 217 91% 60%;
+    --sidebar-background: 217 19% 15%;
+    --sidebar-foreground: 213 31% 91%;
+    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 217 19% 18%;
+    --sidebar-accent-foreground: 213 31% 91%;
+    --sidebar-border: 217 19% 18%;
+    --sidebar-ring: 217 91% 60%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply text-foreground;
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    font-variation-settings: normal;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    
+    /* Fond plus solide avec motif africain subtil */
+    background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 50%, #E2E8F0 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    
+    /* Motif géométrique africain très subtil en arrière-plan */
+    background-image: 
+      radial-gradient(circle at 20% 80%, rgba(251, 191, 36, 0.03) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.03) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(99, 102, 241, 0.02) 0%, transparent 50%);
+  }
+}
+
+@layer components {
+  /* Mobile Optimizations */
+  @media (max-width: 768px) {
+    .premium-card {
+      @apply rounded-xl shadow-lg hover:shadow-xl border border-gray-200;
+    }
+    
+    .btn-blue, .btn-premium {
+      @apply px-4 py-2 text-sm shadow-md;
+      min-height: 44px;
+    }
+
+    .glass-card {
+      @apply bg-white/95 border border-gray-200 shadow-md;
+    }
+
+    /* Enhanced touch targets */
+    button, .button, [role="button"] {
+      min-height: 44px;
+      min-width: 44px;
+    }
+
+    /* Prevent zoom on input focus */
+    input, textarea, select {
+      font-size: 16px !important;
+    }
+  }
+
+  /* Nouveaux utilitaires pour les motifs africains */
+  .african-geometric-bg {
+    background-image: 
+      linear-gradient(45deg, transparent 40%, rgba(251, 191, 36, 0.05) 42%, rgba(251, 191, 36, 0.05) 44%, transparent 46%),
+      linear-gradient(-45deg, transparent 40%, rgba(59, 130, 246, 0.05) 42%, rgba(59, 130, 246, 0.05) 44%, transparent 46%);
+    background-size: 48px 48px;
+  }
+
+  .kente-inspired-border {
+    border-image: linear-gradient(45deg, #F59E0B, #3B82F6, #EF4444, #10B981) 1;
+    border-width: 2px;
+    border-style: solid;
+  }
+
+  /* Micro-animations africaines */
+  .african-hover {
+    @apply transition-all duration-300 hover:scale-105 hover:shadow-xl;
+  }
+
+  .geometric-pulse {
+    animation: geometric-pulse 3s ease-in-out infinite;
+  }
+}
+
+@keyframes geometric-pulse {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.05) rotate(2deg);
+    opacity: 0.8;
+  }
+}
+
+/* Custom scrollbar with African colors */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: linear-gradient(45deg, #f1f5f9, #e2e8f0);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #1E6FBB, #F59E0B);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(45deg, #1557A0, #D97706);
+}
