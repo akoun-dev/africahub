@@ -20,11 +20,11 @@ import { AfricanGradientButton } from "@/components/ui/african-gradient-button"
 export const UnifiedFooter: React.FC = () => {
     // Données des secteurs populaires
     const popularSectors = [
-        { name: "Assurances", href: "/secteur/insurance", icon: Shield },
-        { name: "Banques", href: "/secteur/banking", icon: TrendingUp },
+        { name: "Assurances", href: "/secteur/assurance-auto", icon: Shield },
+        { name: "Banques", href: "/secteur/banque", icon: TrendingUp },
         { name: "Télécoms", href: "/secteur/telecom", icon: Phone },
-        { name: "Énergie", href: "/secteur/energy", icon: Zap },
-        { name: "Immobilier", href: "/secteur/real-estate", icon: MapPin },
+        { name: "Énergie", href: "/secteur/energie", icon: Zap },
+        { name: "Immobilier", href: "/secteur/immobilier", icon: MapPin },
         { name: "Transport", href: "/secteur/transport", icon: Car },
     ]
 
@@ -339,7 +339,7 @@ export const UnifiedFooter: React.FC = () => {
                                 © 2024 AfricaHub. Tous droits réservés.
                             </p>
                             <div className="flex items-center space-x-2">
-                                <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                                <Star className="w-4 h-4 text-brandSky fill-current" />
                                 <span className="text-sm text-marineBlue-100">
                                     4.8/5 sur 10,000+ avis
                                 </span>

@@ -76,6 +76,16 @@ const Reviews = React.lazy(() => import("./pages/Reviews"))
 const Marketplace = React.lazy(() => import("./pages/Marketplace"))
 const PublicAPI = React.lazy(() => import("./pages/PublicAPI"))
 
+// Pages sectorielles spécialisées
+const Banque = React.lazy(() => import("./pages/Banque"))
+const Energie = React.lazy(() => import("./pages/Energie"))
+const Telecoms = React.lazy(() => import("./pages/Telecoms"))
+const Immobilier = React.lazy(() => import("./pages/Immobilier"))
+const Transport = React.lazy(() => import("./pages/Transport"))
+const Education = React.lazy(() => import("./pages/Education"))
+const Sante = React.lazy(() => import("./pages/Sante"))
+const Commerce = React.lazy(() => import("./pages/Commerce"))
+
 const queryClient = new QueryClient()
 
 /**
@@ -512,6 +522,183 @@ const App = () => (
                                         }
                                     />
 
+                                    {/* Routes sectorielles spécialisées */}
+                                    <Route
+                                        path="/secteur/banque"
+                                        element={
+                                            <Suspense
+                                                fallback={
+                                                    <LoadingSpinner
+                                                        size="lg"
+                                                        text="Chargement du secteur bancaire..."
+                                                    />
+                                                }
+                                            >
+                                                <PublicLayout
+                                                    title="Secteur Bancaire"
+                                                    description="Services bancaires et financiers en Afrique"
+                                                    showBreadcrumbs={false}
+                                                >
+                                                    <Banque />
+                                                </PublicLayout>
+                                            </Suspense>
+                                        }
+                                    />
+
+                                    <Route
+                                        path="/secteur/energie"
+                                        element={
+                                            <Suspense
+                                                fallback={
+                                                    <LoadingSpinner
+                                                        size="lg"
+                                                        text="Chargement du secteur énergétique..."
+                                                    />
+                                                }
+                                            >
+                                                <PublicLayout
+                                                    title="Secteur Énergétique"
+                                                    description="Solutions énergétiques et renouvelables en Afrique"
+                                                    showBreadcrumbs={false}
+                                                >
+                                                    <Energie />
+                                                </PublicLayout>
+                                            </Suspense>
+                                        }
+                                    />
+
+                                    <Route
+                                        path="/secteur/telecom"
+                                        element={
+                                            <Suspense
+                                                fallback={
+                                                    <LoadingSpinner
+                                                        size="lg"
+                                                        text="Chargement du secteur télécoms..."
+                                                    />
+                                                }
+                                            >
+                                                <PublicLayout
+                                                    title="Secteur Télécoms"
+                                                    description="Services de télécommunications en Afrique"
+                                                    showBreadcrumbs={false}
+                                                >
+                                                    <Telecoms />
+                                                </PublicLayout>
+                                            </Suspense>
+                                        }
+                                    />
+
+                                    <Route
+                                        path="/secteur/immobilier"
+                                        element={
+                                            <Suspense
+                                                fallback={
+                                                    <LoadingSpinner
+                                                        size="lg"
+                                                        text="Chargement du secteur immobilier..."
+                                                    />
+                                                }
+                                            >
+                                                <PublicLayout
+                                                    title="Secteur Immobilier"
+                                                    description="Marché immobilier et opportunités d'investissement en Afrique"
+                                                    showBreadcrumbs={false}
+                                                >
+                                                    <Immobilier />
+                                                </PublicLayout>
+                                            </Suspense>
+                                        }
+                                    />
+
+                                    <Route
+                                        path="/secteur/transport"
+                                        element={
+                                            <Suspense
+                                                fallback={
+                                                    <LoadingSpinner
+                                                        size="lg"
+                                                        text="Chargement du secteur transport..."
+                                                    />
+                                                }
+                                            >
+                                                <PublicLayout
+                                                    title="Secteur Transport"
+                                                    description="Solutions de transport et logistique en Afrique"
+                                                    showBreadcrumbs={false}
+                                                >
+                                                    <Transport />
+                                                </PublicLayout>
+                                            </Suspense>
+                                        }
+                                    />
+
+                                    <Route
+                                        path="/secteur/education"
+                                        element={
+                                            <Suspense
+                                                fallback={
+                                                    <LoadingSpinner
+                                                        size="lg"
+                                                        text="Chargement du secteur éducation..."
+                                                    />
+                                                }
+                                            >
+                                                <PublicLayout
+                                                    title="Secteur Éducation"
+                                                    description="Formations et opportunités éducatives en Afrique"
+                                                    showBreadcrumbs={false}
+                                                >
+                                                    <Education />
+                                                </PublicLayout>
+                                            </Suspense>
+                                        }
+                                    />
+
+                                    <Route
+                                        path="/secteur/sante"
+                                        element={
+                                            <Suspense
+                                                fallback={
+                                                    <LoadingSpinner
+                                                        size="lg"
+                                                        text="Chargement du secteur santé..."
+                                                    />
+                                                }
+                                            >
+                                                <PublicLayout
+                                                    title="Secteur Santé"
+                                                    description="Services de santé et soins médicaux en Afrique"
+                                                    showBreadcrumbs={false}
+                                                >
+                                                    <Sante />
+                                                </PublicLayout>
+                                            </Suspense>
+                                        }
+                                    />
+
+                                    <Route
+                                        path="/secteur/commerce"
+                                        element={
+                                            <Suspense
+                                                fallback={
+                                                    <LoadingSpinner
+                                                        size="lg"
+                                                        text="Chargement du secteur commerce..."
+                                                    />
+                                                }
+                                            >
+                                                <PublicLayout
+                                                    title="Secteur Commerce"
+                                                    description="E-commerce et solutions commerciales en Afrique"
+                                                    showBreadcrumbs={false}
+                                                >
+                                                    <Commerce />
+                                                </PublicLayout>
+                                            </Suspense>
+                                        }
+                                    />
+
                                     {/* Pages légales avec layout simplifié */}
                                     <Route
                                         path="/mentions-legales"
@@ -692,6 +879,111 @@ const App = () => (
                                                     description="Choisissez le plan qui correspond à vos besoins et votre budget"
                                                 >
                                                     <Pricing />
+                                                </PublicLayout>
+                                            </Suspense>
+                                        }
+                                    />
+
+                                    <Route
+                                        path="/alerts"
+                                        element={
+                                            <Suspense
+                                                fallback={
+                                                    <LoadingSpinner
+                                                        size="lg"
+                                                        text="Chargement des alertes..."
+                                                    />
+                                                }
+                                            >
+                                                <PublicLayout
+                                                    title="Alertes Prix"
+                                                    description="Configurez vos alertes pour être notifié des meilleures offres"
+                                                >
+                                                    <Alerts />
+                                                </PublicLayout>
+                                            </Suspense>
+                                        }
+                                    />
+
+                                    <Route
+                                        path="/favorites-public"
+                                        element={
+                                            <Suspense
+                                                fallback={
+                                                    <LoadingSpinner
+                                                        size="lg"
+                                                        text="Chargement des favoris publics..."
+                                                    />
+                                                }
+                                            >
+                                                <PublicLayout
+                                                    title="Favoris Publics"
+                                                    description="Découvrez les produits et services les plus appréciés"
+                                                >
+                                                    <FavoritesPublic />
+                                                </PublicLayout>
+                                            </Suspense>
+                                        }
+                                    />
+
+                                    <Route
+                                        path="/reviews"
+                                        element={
+                                            <Suspense
+                                                fallback={
+                                                    <LoadingSpinner
+                                                        size="lg"
+                                                        text="Chargement des avis..."
+                                                    />
+                                                }
+                                            >
+                                                <PublicLayout
+                                                    title="Avis et Témoignages"
+                                                    description="Consultez les avis et témoignages de notre communauté"
+                                                >
+                                                    <Reviews />
+                                                </PublicLayout>
+                                            </Suspense>
+                                        }
+                                    />
+
+                                    <Route
+                                        path="/marketplace"
+                                        element={
+                                            <Suspense
+                                                fallback={
+                                                    <LoadingSpinner
+                                                        size="lg"
+                                                        text="Chargement de la marketplace..."
+                                                    />
+                                                }
+                                            >
+                                                <PublicLayout
+                                                    title="Marketplace AfricaHub"
+                                                    description="Plateforme de mise en relation entre fournisseurs et consommateurs"
+                                                >
+                                                    <Marketplace />
+                                                </PublicLayout>
+                                            </Suspense>
+                                        }
+                                    />
+
+                                    <Route
+                                        path="/public-api"
+                                        element={
+                                            <Suspense
+                                                fallback={
+                                                    <LoadingSpinner
+                                                        size="lg"
+                                                        text="Chargement de l'API publique..."
+                                                    />
+                                                }
+                                            >
+                                                <PublicLayout
+                                                    title="API Publique AfricaHub"
+                                                    description="Documentation et accès à notre API publique"
+                                                >
+                                                    <PublicAPI />
                                                 </PublicLayout>
                                             </Suspense>
                                         }

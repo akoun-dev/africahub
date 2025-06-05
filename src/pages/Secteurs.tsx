@@ -62,8 +62,8 @@ const Secteurs: React.FC = () => {
             rating: 4.8,
             popular: true,
             trending: true,
-            color: "text-blue-600",
-            bgColor: "bg-blue-50",
+            color: "text-marineBlue-600",
+            bgColor: "bg-marineBlue-50",
             countries: [
                 "Côte d'Ivoire",
                 "Sénégal",
@@ -92,8 +92,8 @@ const Secteurs: React.FC = () => {
             reviews: 8900,
             rating: 4.7,
             popular: true,
-            color: "text-green-600",
-            bgColor: "bg-green-50",
+            color: "text-marineBlue-600",
+            bgColor: "bg-marineBlue-50",
             countries: [
                 "Côte d'Ivoire",
                 "Sénégal",
@@ -123,8 +123,8 @@ const Secteurs: React.FC = () => {
             rating: 4.6,
             popular: true,
             trending: true,
-            color: "text-purple-600",
-            bgColor: "bg-purple-50",
+            color: "text-marineBlue-600",
+            bgColor: "bg-marineBlue-50",
             countries: [
                 "Côte d'Ivoire",
                 "Sénégal",
@@ -152,8 +152,8 @@ const Secteurs: React.FC = () => {
             avgSavings: "20%",
             reviews: 6700,
             rating: 4.9,
-            color: "text-yellow-600",
-            bgColor: "bg-yellow-50",
+            color: "text-marineBlue-600",
+            bgColor: "bg-marineBlue-50",
             countries: ["Kenya", "Ghana", "Nigeria", "Afrique du Sud"],
             subSectors: ["Électricité", "Gaz", "Solaire", "Éolien"],
         },
@@ -169,8 +169,8 @@ const Secteurs: React.FC = () => {
             avgSavings: "12%",
             reviews: 4300,
             rating: 4.5,
-            color: "text-red-600",
-            bgColor: "bg-red-50",
+            color: "text-marineBlue-600",
+            bgColor: "bg-marineBlue-50",
             countries: [
                 "Côte d'Ivoire",
                 "Sénégal",
@@ -193,8 +193,8 @@ const Secteurs: React.FC = () => {
             avgSavings: "18%",
             reviews: 9200,
             rating: 4.4,
-            color: "text-indigo-600",
-            bgColor: "bg-indigo-50",
+            color: "text-marineBlue-600",
+            bgColor: "bg-marineBlue-50",
             countries: [
                 "Côte d'Ivoire",
                 "Sénégal",
@@ -221,8 +221,8 @@ const Secteurs: React.FC = () => {
             reviews: 3400,
             rating: 4.3,
             trending: true,
-            color: "text-cyan-600",
-            bgColor: "bg-cyan-50",
+            color: "text-marineBlue-600",
+            bgColor: "bg-marineBlue-50",
             countries: ["Multi-pays"],
             subSectors: ["Vols", "Hôtels", "Séjours", "Activités"],
         },
@@ -238,8 +238,8 @@ const Secteurs: React.FC = () => {
             avgSavings: "28%",
             reviews: 2100,
             rating: 4.6,
-            color: "text-orange-600",
-            bgColor: "bg-orange-50",
+            color: "text-marineBlue-600",
+            bgColor: "bg-marineBlue-50",
             countries: [
                 "Côte d'Ivoire",
                 "Sénégal",
@@ -266,8 +266,8 @@ const Secteurs: React.FC = () => {
             avgSavings: "16%",
             reviews: 5600,
             rating: 4.7,
-            color: "text-pink-600",
-            bgColor: "bg-pink-50",
+            color: "text-marineBlue-600",
+            bgColor: "bg-marineBlue-50",
             countries: [
                 "Côte d'Ivoire",
                 "Sénégal",
@@ -295,8 +295,8 @@ const Secteurs: React.FC = () => {
             avgSavings: "14%",
             reviews: 7800,
             rating: 4.2,
-            color: "text-emerald-600",
-            bgColor: "bg-emerald-50",
+            color: "text-marineBlue-600",
+            bgColor: "bg-marineBlue-50",
             countries: ["Multi-pays"],
             subSectors: ["E-commerce", "Magasins", "Distribution", "Services"],
         },
@@ -312,8 +312,8 @@ const Secteurs: React.FC = () => {
             avgSavings: "19%",
             reviews: 1900,
             rating: 4.5,
-            color: "text-slate-600",
-            bgColor: "bg-slate-50",
+            color: "text-marineBlue-600",
+            bgColor: "bg-marineBlue-50",
             countries: ["Multi-pays"],
             subSectors: ["Consulting", "IT", "Marketing", "Juridique"],
         },
@@ -341,15 +341,15 @@ const Secteurs: React.FC = () => {
     const trendingSectors = sectors.filter(sector => sector.trending)
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gradient-to-br from-marineBlue-50 to-brandSky-50">
             {/* Hero Section */}
-            <section className="bg-gradient-to-r from-afroGreen via-afroGold to-afroRed py-16">
+            <section className="bg-gradient-to-r from-marineBlue-600 to-brandSky py-16">
                 <div className="container mx-auto px-4">
                     <div className="text-center text-white">
                         <h1 className="text-4xl md:text-5xl font-bold mb-4">
                             Tous les Secteurs AfricaHub
                         </h1>
-                        <p className="text-xl md:text-2xl mb-8 opacity-90 max-w-3xl mx-auto">
+                        <p className="text-xl md:text-2xl mb-8 text-marineBlue-100 max-w-3xl mx-auto">
                             Explorez et comparez dans tous les secteurs clés de
                             l'économie africaine
                         </p>
@@ -406,7 +406,7 @@ const Secteurs: React.FC = () => {
                             <select
                                 value={filterType}
                                 onChange={e => setFilterType(e.target.value)}
-                                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-afroGreen"
+                                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-marineBlue-500"
                             >
                                 <option value="all">Tous les secteurs</option>
                                 <option value="popular">Populaires</option>
@@ -420,14 +420,14 @@ const Secteurs: React.FC = () => {
                 {popularSectors.length > 0 && filterType === "all" && (
                     <section className="mb-12">
                         <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                            <Star className="w-6 h-6 text-afroGold mr-2" />
+                            <Star className="w-6 h-6 text-marineBlue-500 mr-2" />
                             Secteurs populaires
                         </h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {popularSectors.map(sector => (
                                 <Card
                                     key={sector.id}
-                                    className="hover:shadow-xl transition-all duration-300 border-0 shadow-lg"
+                                    className="hover:shadow-lg transition-shadow border-l-4 border-l-marineBlue-500 hover:border-l-marineBlue-600"
                                 >
                                     <CardHeader
                                         className={`${sector.bgColor} rounded-t-lg`}
@@ -453,11 +453,11 @@ const Secteurs: React.FC = () => {
                                                 </div>
                                             </div>
                                             <div className="flex flex-col gap-1">
-                                                <Badge className="bg-afroGold text-white">
+                                                <Badge className="bg-marineBlue-500 text-white">
                                                     Populaire
                                                 </Badge>
                                                 {sector.trending && (
-                                                    <Badge className="bg-afroRed text-white">
+                                                    <Badge className="bg-brandSky text-white">
                                                         <TrendingUpIcon className="w-3 h-3 mr-1" />
                                                         Tendance
                                                     </Badge>
@@ -473,7 +473,7 @@ const Secteurs: React.FC = () => {
                                         {/* Statistiques */}
                                         <div className="grid grid-cols-3 gap-4 mb-4 py-3 bg-gray-50 rounded-lg">
                                             <div className="text-center">
-                                                <div className="text-lg font-bold text-afroGreen">
+                                                <div className="text-lg font-bold text-marineBlue-600">
                                                     {sector.providers}
                                                 </div>
                                                 <div className="text-xs text-gray-500">
@@ -481,7 +481,7 @@ const Secteurs: React.FC = () => {
                                                 </div>
                                             </div>
                                             <div className="text-center">
-                                                <div className="text-lg font-bold text-afroGreen">
+                                                <div className="text-lg font-bold text-marineBlue-600">
                                                     {sector.avgSavings}
                                                 </div>
                                                 <div className="text-xs text-gray-500">
@@ -489,7 +489,7 @@ const Secteurs: React.FC = () => {
                                                 </div>
                                             </div>
                                             <div className="text-center">
-                                                <div className="text-lg font-bold text-afroGreen">
+                                                <div className="text-lg font-bold text-marineBlue-600">
                                                     {sector.rating}
                                                 </div>
                                                 <div className="text-xs text-gray-500">
@@ -520,7 +520,8 @@ const Secteurs: React.FC = () => {
 
                                         <Button
                                             asChild
-                                            className="w-full bg-afroGreen hover:bg-afroGreen/90"
+                                            variant="outline"
+                                            className="w-full border-marineBlue-200 text-marineBlue-600 hover:bg-marineBlue-50 hover:border-marineBlue-300"
                                         >
                                             <Link
                                                 to={`/secteur/${sector.slug}`}
@@ -538,7 +539,7 @@ const Secteurs: React.FC = () => {
 
                 {/* Tous les secteurs */}
                 <section>
-                    <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                    <h2 className="text-2xl font-bold text-marineBlue-800 mb-6">
                         {filterType === "all"
                             ? "Tous les secteurs"
                             : filterType === "popular"
@@ -550,7 +551,7 @@ const Secteurs: React.FC = () => {
                         {filteredSectors.map(sector => (
                             <Card
                                 key={sector.id}
-                                className="hover:shadow-lg transition-shadow"
+                                className="hover:shadow-lg transition-shadow border-l-4 border-l-marineBlue-500 hover:border-l-marineBlue-600"
                             >
                                 <CardHeader>
                                     <div className="flex items-center space-x-3 mb-2">
@@ -572,7 +573,7 @@ const Secteurs: React.FC = () => {
                                         {sector.trending && (
                                             <Badge
                                                 variant="secondary"
-                                                className="bg-afroRed/10 text-afroRed"
+                                                className="bg-brandSky/10 text-brandSky"
                                             >
                                                 Tendance
                                             </Badge>
@@ -587,14 +588,14 @@ const Secteurs: React.FC = () => {
                                     {/* Statistiques compactes */}
                                     <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
                                         <div className="flex items-center">
-                                            <Users className="w-4 h-4 mr-1" />
+                                            <Users className="w-4 h-4 mr-1 text-marineBlue-500" />
                                             {sector.providers} fournisseurs
                                         </div>
                                         <div className="flex items-center">
-                                            <Star className="w-4 h-4 mr-1 text-yellow-400" />
+                                            <Star className="w-4 h-4 mr-1 text-marineBlue-500" />
                                             {sector.rating}
                                         </div>
-                                        <div className="text-afroGreen font-medium">
+                                        <div className="text-marineBlue-600 font-medium">
                                             {sector.avgSavings} d'économies
                                         </div>
                                     </div>
@@ -618,10 +619,11 @@ const Secteurs: React.FC = () => {
                                     <Button
                                         asChild
                                         variant="outline"
-                                        className="w-full"
+                                        className="w-full border-marineBlue-200 text-marineBlue-600 hover:bg-marineBlue-50 hover:border-marineBlue-300"
                                     >
                                         <Link to={`/secteur/${sector.slug}`}>
                                             Explorer {sector.name}
+                                            <ArrowRight className="w-4 h-4 ml-2" />
                                         </Link>
                                     </Button>
                                 </CardContent>
@@ -631,7 +633,7 @@ const Secteurs: React.FC = () => {
                 </section>
 
                 {/* CTA */}
-                <section className="mt-16 bg-gradient-to-r from-afroGreen/10 to-afroGold/10 rounded-2xl p-8 text-center">
+                <section className="mt-16 bg-gradient-to-r from-marineBlue-100 to-brandSky-100 rounded-2xl p-8 text-center">
                     <h3 className="text-2xl font-bold text-gray-900 mb-4">
                         Vous ne trouvez pas votre secteur ?
                     </h3>
@@ -642,11 +644,15 @@ const Secteurs: React.FC = () => {
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <Button
                             asChild
-                            className="bg-afroGreen hover:bg-afroGreen/90"
+                            className="bg-marineBlue-600 hover:bg-marineBlue-700 text-white"
                         >
                             <Link to="/contact">Nous contacter</Link>
                         </Button>
-                        <Button asChild variant="outline">
+                        <Button
+                            asChild
+                            variant="outline"
+                            className="border-marineBlue-200 text-marineBlue-600 hover:bg-marineBlue-50 hover:border-marineBlue-300"
+                        >
                             <Link to="/business">Devenir partenaire</Link>
                         </Button>
                     </div>

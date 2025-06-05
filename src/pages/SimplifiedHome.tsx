@@ -12,6 +12,7 @@ import { InteractiveMapSection } from "@/components/sections/InteractiveMapSecti
 import { QuickNavigation } from "@/components/navigation/QuickNavigation"
 import { AIInsightsWidget } from "@/components/ai/AIInsightsWidget"
 import ModernMultiSectorAssistant from "@/components/ModernMultiSectorAssistant"
+import { MobileMenuDemo } from "@/components/demo/MobileMenuDemo"
 import { useAuth } from "@/contexts/AuthContext"
 import { useTranslation } from "@/hooks/useTranslation"
 import { SectionBackground } from "@/components/ui/section-background"
@@ -78,6 +79,9 @@ const SimplifiedHome = () => {
             {/* Composants flottants - Assistance et navigation */}
             <ModernMultiSectorAssistant />
             <QuickNavigation />
+
+            {/* Composant de démonstration du menu mobile - uniquement en développement */}
+            {process.env.NODE_ENV === "development" && <MobileMenuDemo />}
         </div>
     )
 }

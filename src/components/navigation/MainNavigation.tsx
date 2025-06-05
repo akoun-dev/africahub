@@ -2,15 +2,7 @@ import React from "react"
 import { Link, useLocation } from "react-router-dom"
 import { useTranslation } from "@/hooks/useTranslation"
 import { useAuth } from "@/contexts/AuthContext"
-import {
-    Home,
-    Search,
-    BarChart3,
-    Zap,
-    Settings,
-    SearchX,
-    Package,
-} from "lucide-react"
+import { Home, Search, BarChart3, Zap, Settings, Package } from "lucide-react"
 
 export const MainNavigation: React.FC = () => {
     const location = useLocation()
@@ -36,12 +28,6 @@ export const MainNavigation: React.FC = () => {
             href: "/produits",
             label: t("nav.products", "Produits"),
             icon: Package,
-            show: true,
-        },
-        {
-            href: "/advanced-search",
-            label: t("nav.advanced_search", "Recherche Avancée"),
-            icon: SearchX,
             show: true,
         },
         {

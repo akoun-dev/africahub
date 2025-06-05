@@ -7,6 +7,9 @@ import { useCompanies } from "@/hooks/useCompanies"
 import { CMSSectorHero } from "@/components/sector/CMSSectorHero"
 import { CMSSectorFeatures } from "@/components/sector/CMSSectorFeatures"
 import { CMSSectorBenefits } from "@/components/sector/CMSSectorBenefits"
+import { EnhancedSectorFeatures } from "@/components/sector/EnhancedSectorFeatures"
+import { EnhancedSectorProducts } from "@/components/sector/EnhancedSectorProducts"
+import { SectorTestimonials } from "@/components/sector/SectorTestimonials"
 import { SectorStats } from "@/components/sector/SectorStats"
 import { PremiumSectorCompanies } from "@/components/sector/PremiumSectorCompanies"
 
@@ -38,7 +41,7 @@ export default function Sector() {
     if (sectorLoading) {
         return (
             <div className="flex items-center justify-center min-h-[60vh]">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-afroGreen"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-marineBlue-600"></div>
                 {isMobile && <MobileTabNavigation currentSectorSlug={slug} />}
             </div>
         )
@@ -145,17 +148,36 @@ export default function Sector() {
                     </div>
                 </SectionBackground>
 
-                {/* CMS-Powered Features */}
-                <CMSSectorFeatures
-                    sectorSlug={sector.slug}
-                    sectorColor={themeColor}
-                />
+                {/* Enhanced Features Section */}
+                <SectionBackground variant="default">
+                    <div className="container px-4 md:px-6 py-12">
+                        <EnhancedSectorFeatures
+                            sectorSlug={sector.slug}
+                            sectorColor={themeColor}
+                        />
+                    </div>
+                </SectionBackground>
 
-                {/* CMS-Powered Benefits */}
-                <CMSSectorBenefits
-                    sectorSlug={sector.slug}
-                    sectorColor={themeColor}
-                />
+                {/* Enhanced Products Section */}
+                <SectionBackground variant="muted">
+                    <div className="container px-4 md:px-6 py-12">
+                        <EnhancedSectorProducts
+                            sectorId={sector.id}
+                            sectorName={sector.name}
+                            sectorColor={themeColor}
+                        />
+                    </div>
+                </SectionBackground>
+
+                {/* Testimonials and Stats Section */}
+                <SectionBackground variant="default">
+                    <div className="container px-4 md:px-6 py-12">
+                        <SectorTestimonials
+                            sectorSlug={sector.slug}
+                            sectorColor={themeColor}
+                        />
+                    </div>
+                </SectionBackground>
 
                 <SectionBackground variant="accent" withPattern>
                     <SectorStats

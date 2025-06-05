@@ -161,10 +161,40 @@ export const useNavigationStructure = () => {
             description: "Solutions énergétiques",
         },
         {
+            label: "Télécoms",
+            href: "/secteur/telecom",
+            icon: Smartphone,
+            description: "Services de télécommunications",
+        },
+        {
+            label: "Immobilier",
+            href: "/secteur/immobilier",
+            icon: Home,
+            description: "Marché immobilier et investissement",
+        },
+        {
             label: t("sector.transport"),
             href: "/secteur/transport",
             icon: Plane,
             description: "Services de transport et logistique",
+        },
+        {
+            label: "Éducation",
+            href: "/secteur/education",
+            icon: Building,
+            description: "Formations et enseignement",
+        },
+        {
+            label: "Santé",
+            href: "/secteur/sante",
+            icon: Shield,
+            description: "Services de santé et soins médicaux",
+        },
+        {
+            label: "Commerce",
+            href: "/secteur/commerce",
+            icon: Package,
+            description: "E-commerce et retail",
         },
     ]
 
