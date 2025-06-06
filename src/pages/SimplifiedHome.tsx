@@ -13,13 +13,13 @@ import { QuickNavigation } from "@/components/navigation/QuickNavigation"
 import { AIInsightsWidget } from "@/components/ai/AIInsightsWidget"
 import ModernMultiSectorAssistant from "@/components/ModernMultiSectorAssistant"
 import { MobileMenuDemo } from "@/components/demo/MobileMenuDemo"
-import { useAuth } from "@/contexts/AuthContext"
+import { useEnhancedAuth } from "@/contexts/EnhancedAuthContext"
 import { useTranslation } from "@/hooks/useTranslation"
 import { SectionBackground } from "@/components/ui/section-background"
 import { GlassCard } from "@/components/ui/glass-card"
 
 const SimplifiedHome = () => {
-    const { user } = useAuth()
+    const { user } = useEnhancedAuth()
     const { t } = useTranslation()
 
     return (

@@ -8,7 +8,7 @@ import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useAuth } from '@/contexts/AuthContext';
+import { useEnhancedAuth } from '@/contexts/EnhancedAuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { Save, Brain, Target, TrendingUp, Shield } from 'lucide-react';
@@ -24,7 +24,7 @@ const UserPreferencesModal: React.FC<UserPreferencesModalProps> = ({
   onClose,
   insuranceType
 }) => {
-  const { user } = useAuth();
+  const { user } = useEnhancedAuth();
   const [preferences, setPreferences] = useState({
     budget_range: 'medium',
     risk_tolerance: 'moderate',

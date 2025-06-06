@@ -3,7 +3,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { UnifiedHeader } from '@/components/UnifiedHeader';
 import { UnifiedFooter } from '@/components/UnifiedFooter';
 import { Breadcrumb } from '@/components/navigation/Breadcrumb';
-import { useAuth } from '@/contexts/AuthContext';
+import { useEnhancedAuth } from '@/contexts/EnhancedAuthContext';
 import { useTranslation } from '@/hooks/useTranslation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Shield, User, Heart, Clock, Bell, MessageSquare } from 'lucide-react';
@@ -29,7 +29,7 @@ export const ProtectedLayout: React.FC<ProtectedLayoutProps> = ({
   description,
   className = ''
 }) => {
-  const { user, loading } = useAuth();
+  const { user, loading } = useEnhancedAuth();
   const location = useLocation();
   const { t } = useTranslation();
 

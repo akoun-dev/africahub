@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { Link, useLocation } from "react-router-dom"
 import { useCountry } from "@/contexts/CountryContext"
-import { useAuth } from "@/contexts/AuthContext"
+import { useEnhancedAuth } from "@/contexts/EnhancedAuthContext"
 import { useTranslation } from "@/hooks/useTranslation"
 import {
     Sheet,
@@ -18,7 +18,7 @@ const ModernHeader = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const { country } = useCountry()
     const location = useLocation()
-    const { user } = useAuth()
+    const { user, profile, hasRole } = useEnhancedAuth()
     const { t } = useTranslation()
 
     const isActive = (path: string) => location.pathname === path
@@ -26,20 +26,15 @@ const ModernHeader = () => {
     const navigationItems = [
         { href: "/", label: t("nav.home", "Accueil") },
         { href: "/compare", label: t("nav.compare", "Comparer") },
-        {
-            href: "/recommendations",
-            label: t("nav.recommendations", "Recommandations IA"),
-        },
-        { href: "/api", label: t("nav.api", "API") },
+        // Recommandations IA uniquement pour les utilisateurs connectés
         ...(user
             ? [
                   {
-                      href: "/dashboard",
-                      label: t("nav.dashboard", "Tableau de bord"),
+                      href: "/recommendations",
+                      label: t("nav.recommendations", "Recommandations IA"),
                   },
               ]
             : []),
-        ...(user ? [{ href: "/admin", label: t("nav.admin", "Admin") }] : []),
     ]
 
     return (

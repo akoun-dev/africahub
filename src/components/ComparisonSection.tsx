@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from '@/components/ui/use-toast';
 import { useProductsWithCriteria, type ProductWithCriteria } from '@/hooks/useProductsWithCriteria';
 import { InsuranceTabContent } from './insurance/InsuranceTabContent';
-import { useAuth } from '@/contexts/AuthContext';
+import { useEnhancedAuth } from '@/contexts/EnhancedAuthContext';
 import AIRecommendations from './AIRecommendations';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -19,7 +19,7 @@ import { useSectors } from '@/hooks/useSectors';
 
 const ComparisonSection = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user } = useEnhancedAuth();
   const { t } = useTranslation();
   const { data: sectors } = useSectors();
   const [activeTab, setActiveTab] = useState('auto');

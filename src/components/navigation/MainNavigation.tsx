@@ -1,13 +1,13 @@
 import React from "react"
 import { Link, useLocation } from "react-router-dom"
 import { useTranslation } from "@/hooks/useTranslation"
-import { useAuth } from "@/contexts/AuthContext"
+import { useEnhancedAuth } from "@/contexts/EnhancedAuthContext"
 import { Home, Search, BarChart3, Zap, Settings, Package } from "lucide-react"
 
 export const MainNavigation: React.FC = () => {
     const location = useLocation()
     const { t } = useTranslation()
-    const { user } = useAuth()
+    const { user, profile, hasRole } = useEnhancedAuth()
 
     const isActive = (path: string) => location.pathname === path
 
@@ -28,19 +28,7 @@ export const MainNavigation: React.FC = () => {
             href: "/recommendations",
             label: t("nav.recommendations"),
             icon: Zap,
-            show: true,
-        },
-        {
-            href: "/dashboard",
-            label: t("nav.dashboard"),
-            icon: Settings,
-            show: !!user,
-        },
-        {
-            href: "/admin",
-            label: t("nav.admin"),
-            icon: Settings,
-            show: !!user,
+            show: !!user, // Recommandations IA uniquement pour les utilisateurs connectés
         },
     ]
 

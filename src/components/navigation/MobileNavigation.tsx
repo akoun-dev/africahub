@@ -4,7 +4,7 @@ import { X, ChevronRight, Shield } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { CountryPickerButton } from "@/components/header/CountryPickerButton"
 import { useNavigationStructure } from "./NavigationStructure"
-import { useAuth } from "@/contexts/AuthContext"
+import { useEnhancedAuth } from "@/contexts/EnhancedAuthContext"
 import { useAdminAuth } from "@/hooks/useAdminAuth"
 import { useTranslation } from "@/hooks/useTranslation"
 import { cn } from "@/lib/utils"
@@ -26,7 +26,7 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({
         authNavigation,
         isActive,
     } = useNavigationStructure()
-    const { user } = useAuth()
+    const { user } = useEnhancedAuth()
     const { adminUser } = useAdminAuth()
     const { t } = useTranslation()
 

@@ -2,11 +2,11 @@ import React from "react"
 import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { useAuth } from "@/contexts/AuthContext"
+import { useEnhancedAuth } from "@/contexts/EnhancedAuthContext"
 import { User, Heart, Clock, Settings, LogIn } from "lucide-react"
 
 const Profile = () => {
-    const { user } = useAuth()
+    const { user } = useEnhancedAuth()
 
     if (!user) {
         return (

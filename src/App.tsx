@@ -4,7 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
-import { AuthProvider } from "./contexts/AuthContext"
+import { EnhancedAuthProvider } from "./contexts/EnhancedAuthContext"
 import { CountryProvider } from "./contexts/CountryContext"
 import { ThemeProvider } from "./contexts/ThemeContext"
 
@@ -16,6 +16,12 @@ import { AdminLayout } from "./layouts/AdminLayout"
 // Components
 import { LoadingSpinner } from "./components/ui/loading-spinner"
 import { ErrorBoundary } from "./components/common/ErrorBoundary"
+import {
+    RequireAuth,
+    RequireUser,
+    RequireMerchant,
+    RequireAdmin,
+} from "./components/auth/ProtectedRoute"
 
 // Pages publiques - Lazy loaded pour optimiser les performances
 const Index = React.lazy(() => import("./pages/Index"))
@@ -55,6 +61,8 @@ const Notifications = React.lazy(() => import("./pages/Notifications"))
 const MyReviews = React.lazy(() =>
     import("./pages/MyReviews").then(module => ({ default: module.MyReviews }))
 )
+const UserDashboard = React.lazy(() => import("./pages/UserDashboard"))
+const MerchantDashboard = React.lazy(() => import("./pages/MerchantDashboard"))
 
 // Pages administrateur
 const Admin = React.lazy(() => import("./pages/Admin"))
@@ -87,6 +95,16 @@ const Sante = React.lazy(() => import("./pages/Sante"))
 const Health = React.lazy(() => import("./pages/Health"))
 const Commerce = React.lazy(() => import("./pages/Commerce"))
 
+// Nouvelles pages pour les fonctionnalités utilisateur
+const Trending = React.lazy(() => import("./pages/Trending"))
+const TopRated = React.lazy(() => import("./pages/TopRated"))
+const LocalNearby = React.lazy(() => import("./pages/local/LocalNearby"))
+const LocalDelivery = React.lazy(() => import("./pages/local/LocalDelivery"))
+const LocalReservations = React.lazy(
+    () => import("./pages/local/LocalReservations")
+)
+const Unauthorized = React.lazy(() => import("./pages/Unauthorized"))
+
 const queryClient = new QueryClient()
 
 /**
@@ -104,7 +122,7 @@ const App = () => (
                 <Toaster />
                 <Sonner />
                 <BrowserRouter>
-                    <AuthProvider>
+                    <EnhancedAuthProvider>
                         <CountryProvider>
                             <ErrorBoundary>
                                 <Routes>
@@ -327,12 +345,14 @@ const App = () => (
                                                     />
                                                 }
                                             >
-                                                <PublicLayout
-                                                    title="Tous les secteurs"
-                                                    description="Explorez tous les secteurs disponibles sur AfricaHub"
-                                                >
-                                                    <Secteurs />
-                                                </PublicLayout>
+                                                <RequireAuth>
+                                                    <PublicLayout
+                                                        title="Tous les secteurs"
+                                                        description="Explorez tous les secteurs disponibles sur AfricaHub"
+                                                    >
+                                                        <Secteurs />
+                                                    </PublicLayout>
+                                                </RequireAuth>
                                             </Suspense>
                                         }
                                     />
@@ -813,12 +833,14 @@ const App = () => (
                                                     />
                                                 }
                                             >
-                                                <PublicLayout
-                                                    title="Recommandations IA"
-                                                    description="Suggestions personnalisées basées sur votre profil et vos préférences"
-                                                >
-                                                    <Recommendations />
-                                                </PublicLayout>
+                                                <RequireAuth>
+                                                    <PublicLayout
+                                                        title="Recommandations IA"
+                                                        description="Suggestions personnalisées basées sur votre profil et vos préférences"
+                                                    >
+                                                        <Recommendations />
+                                                    </PublicLayout>
+                                                </RequireAuth>
                                             </Suspense>
                                         }
                                     />
@@ -1156,7 +1178,196 @@ const App = () => (
                                         }
                                     />
 
-                                    {/* Routes administrateur avec layout spécialisé */}
+                                    {/* Nouvelles pages pour les fonctionnalités utilisateur - PROTÉGÉES */}
+                                    <Route
+                                        path="/trending"
+                                        element={
+                                            <Suspense
+                                                fallback={
+                                                    <LoadingSpinner
+                                                        size="lg"
+                                                        text="Chargement des tendances..."
+                                                    />
+                                                }
+                                            >
+                                                <RequireAuth>
+                                                    <PublicLayout
+                                                        title="Produits Tendance"
+                                                        description="Découvrez les produits les plus populaires du moment"
+                                                    >
+                                                        <Trending />
+                                                    </PublicLayout>
+                                                </RequireAuth>
+                                            </Suspense>
+                                        }
+                                    />
+
+                                    <Route
+                                        path="/top-rated"
+                                        element={
+                                            <Suspense
+                                                fallback={
+                                                    <LoadingSpinner
+                                                        size="lg"
+                                                        text="Chargement des produits les mieux notés..."
+                                                    />
+                                                }
+                                            >
+                                                <RequireAuth>
+                                                    <PublicLayout
+                                                        title="Produits Mieux Notés"
+                                                        description="Les produits avec les meilleures évaluations"
+                                                    >
+                                                        <TopRated />
+                                                    </PublicLayout>
+                                                </RequireAuth>
+                                            </Suspense>
+                                        }
+                                    />
+
+                                    <Route
+                                        path="/local/nearby"
+                                        element={
+                                            <Suspense
+                                                fallback={
+                                                    <LoadingSpinner
+                                                        size="lg"
+                                                        text="Chargement des commerces..."
+                                                    />
+                                                }
+                                            >
+                                                <RequireAuth>
+                                                    <PublicLayout
+                                                        title="Commerces à Proximité"
+                                                        description="Trouvez des commerces près de chez vous"
+                                                    >
+                                                        <LocalNearby />
+                                                    </PublicLayout>
+                                                </RequireAuth>
+                                            </Suspense>
+                                        }
+                                    />
+
+                                    <Route
+                                        path="/local/delivery"
+                                        element={
+                                            <Suspense
+                                                fallback={
+                                                    <LoadingSpinner
+                                                        size="lg"
+                                                        text="Chargement des services de livraison..."
+                                                    />
+                                                }
+                                            >
+                                                <RequireAuth>
+                                                    <PublicLayout
+                                                        title="Services de Livraison"
+                                                        description="Services de livraison disponibles dans votre région"
+                                                    >
+                                                        <LocalDelivery />
+                                                    </PublicLayout>
+                                                </RequireAuth>
+                                            </Suspense>
+                                        }
+                                    />
+
+                                    <Route
+                                        path="/local/reservations"
+                                        element={
+                                            <Suspense
+                                                fallback={
+                                                    <LoadingSpinner
+                                                        size="lg"
+                                                        text="Chargement des réservations..."
+                                                    />
+                                                }
+                                            >
+                                                <RequireAuth>
+                                                    <PublicLayout
+                                                        title="Réservations"
+                                                        description="Gérez vos réservations et rendez-vous"
+                                                    >
+                                                        <LocalReservations />
+                                                    </PublicLayout>
+                                                </RequireAuth>
+                                            </Suspense>
+                                        }
+                                    />
+
+                                    {/* Routes des dashboards utilisateur et marchand - PROTÉGÉES */}
+                                    <Route
+                                        path="/user/dashboard"
+                                        element={
+                                            <Suspense
+                                                fallback={
+                                                    <LoadingSpinner
+                                                        size="lg"
+                                                        text="Chargement de votre dashboard..."
+                                                    />
+                                                }
+                                            >
+                                                <RequireUser>
+                                                    <UserDashboard />
+                                                </RequireUser>
+                                            </Suspense>
+                                        }
+                                    />
+
+                                    <Route
+                                        path="/user-dashboard"
+                                        element={
+                                            <Suspense
+                                                fallback={
+                                                    <LoadingSpinner
+                                                        size="lg"
+                                                        text="Chargement de votre dashboard..."
+                                                    />
+                                                }
+                                            >
+                                                <RequireUser>
+                                                    <UserDashboard />
+                                                </RequireUser>
+                                            </Suspense>
+                                        }
+                                    />
+
+                                    <Route
+                                        path="/merchant/dashboard"
+                                        element={
+                                            <Suspense
+                                                fallback={
+                                                    <LoadingSpinner
+                                                        size="lg"
+                                                        text="Chargement de votre dashboard marchand..."
+                                                    />
+                                                }
+                                            >
+                                                <RequireMerchant>
+                                                    <MerchantDashboard />
+                                                </RequireMerchant>
+                                            </Suspense>
+                                        }
+                                    />
+
+                                    <Route
+                                        path="/merchant-dashboard"
+                                        element={
+                                            <Suspense
+                                                fallback={
+                                                    <LoadingSpinner
+                                                        size="lg"
+                                                        text="Chargement de votre dashboard marchand..."
+                                                    />
+                                                }
+                                            >
+                                                <RequireMerchant>
+                                                    <MerchantDashboard />
+                                                </RequireMerchant>
+                                            </Suspense>
+                                        }
+                                    />
+
+                                    {/* Routes administrateur avec layout spécialisé - PROTÉGÉES */}
                                     <Route
                                         path="/admin"
                                         element={
@@ -1168,12 +1379,14 @@ const App = () => (
                                                     />
                                                 }
                                             >
-                                                <AdminLayout
-                                                    title="Administration"
-                                                    description="Gestion et configuration de la plateforme"
-                                                >
-                                                    <Admin />
-                                                </AdminLayout>
+                                                <RequireAdmin>
+                                                    <AdminLayout
+                                                        title="Administration"
+                                                        description="Gestion et configuration de la plateforme"
+                                                    >
+                                                        <Admin />
+                                                    </AdminLayout>
+                                                </RequireAdmin>
                                             </Suspense>
                                         }
                                     />
@@ -1189,12 +1402,14 @@ const App = () => (
                                                     />
                                                 }
                                             >
-                                                <AdminLayout
-                                                    title="Gestion API"
-                                                    description="Gestion des APIs et intégrations"
-                                                >
-                                                    <APIManagement />
-                                                </AdminLayout>
+                                                <RequireAdmin>
+                                                    <AdminLayout
+                                                        title="Gestion API"
+                                                        description="Gestion des APIs et intégrations"
+                                                    >
+                                                        <APIManagement />
+                                                    </AdminLayout>
+                                                </RequireAdmin>
                                             </Suspense>
                                         }
                                     />
@@ -1210,12 +1425,14 @@ const App = () => (
                                                     />
                                                 }
                                             >
-                                                <AdminLayout
-                                                    title="Analyses de recherche"
-                                                    description="Statistiques et analyses détaillées"
-                                                >
-                                                    <SearchAnalytics />
-                                                </AdminLayout>
+                                                <RequireAdmin>
+                                                    <AdminLayout
+                                                        title="Analyses de recherche"
+                                                        description="Statistiques et analyses détaillées"
+                                                    >
+                                                        <SearchAnalytics />
+                                                    </AdminLayout>
+                                                </RequireAdmin>
                                             </Suspense>
                                         }
                                     />
@@ -1231,12 +1448,31 @@ const App = () => (
                                                     />
                                                 }
                                             >
-                                                <AdminLayout
-                                                    title="Surveillance"
-                                                    description="Surveillance système et performances"
-                                                >
-                                                    <Monitoring />
-                                                </AdminLayout>
+                                                <RequireAdmin>
+                                                    <AdminLayout
+                                                        title="Surveillance"
+                                                        description="Surveillance système et performances"
+                                                    >
+                                                        <Monitoring />
+                                                    </AdminLayout>
+                                                </RequireAdmin>
+                                            </Suspense>
+                                        }
+                                    />
+
+                                    {/* Page d'accès non autorisé */}
+                                    <Route
+                                        path="/unauthorized"
+                                        element={
+                                            <Suspense
+                                                fallback={
+                                                    <LoadingSpinner
+                                                        size="lg"
+                                                        text="Chargement..."
+                                                    />
+                                                }
+                                            >
+                                                <Unauthorized />
                                             </Suspense>
                                         }
                                     />
@@ -1265,7 +1501,7 @@ const App = () => (
                                 </Routes>
                             </ErrorBoundary>
                         </CountryProvider>
-                    </AuthProvider>
+                    </EnhancedAuthProvider>
                 </BrowserRouter>
             </TooltipProvider>
         </ThemeProvider>

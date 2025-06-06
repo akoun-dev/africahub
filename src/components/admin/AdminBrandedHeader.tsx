@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
-import { useAuth } from '@/contexts/AuthContext';
+import { useEnhancedAuth } from '@/contexts/EnhancedAuthContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -10,12 +10,12 @@ import { LogOut, Settings, User, Globe, Crown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export const AdminBrandedHeader: React.FC = () => {
-  const { user, logout } = useAuth();
+  const { user, signOut } = useEnhancedAuth();
   const { adminUser } = useAdminAuth();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    await logout();
+    await signOut();
     navigate('/auth');
   };
 

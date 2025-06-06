@@ -21,7 +21,7 @@ import {
     Package,
     Star, // Ajouté pour les avis clients
 } from "lucide-react"
-import { useAuth } from "@/contexts/AuthContext"
+import { useEnhancedAuth } from "@/contexts/EnhancedAuthContext"
 import { useAdminAuth } from "@/hooks/useAdminAuth"
 import { useUserRoles } from "@/hooks/useUserRoles"
 import { useTranslation } from "@/hooks/useTranslation"
@@ -38,7 +38,7 @@ export interface NavigationItem {
 }
 
 export const useNavigationStructure = () => {
-    const { user } = useAuth()
+    const { user } = useEnhancedAuth()
     const { adminUser, isAdmin } = useAdminAuth()
     const { hasRole, isDeveloper } = useUserRoles()
     const { t } = useTranslation()
