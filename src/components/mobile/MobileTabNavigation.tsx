@@ -39,12 +39,6 @@ export const MobileTabNavigation: React.FC<MobileTabNavigationProps> = ({
       path: '/compare'
     },
     {
-      id: 'compare',
-      label: 'Comparer',
-      icon: BarChart3,
-      path: currentSectorSlug ? `/secteur/${currentSectorSlug}/comparer` : '/compare'
-    },
-    {
       id: 'quote',
       label: 'Devis',
       icon: FileText,

@@ -72,9 +72,12 @@ const ProductComparisonView: React.FC<ProductComparisonViewProps> = ({
     const [selectedOffer, setSelectedOffer] = useState<number>(0)
 
     // Tri des offres par prix croissant
-    const sortedOffers = [...product.offers].sort(
-        (a, b) => a.price + a.shipping - (b.price + b.shipping)
-    )
+    const sortedOffers =
+        product.offers && product.offers.length > 0
+            ? [...product.offers].sort(
+                  (a, b) => a.price + a.shipping - (b.price + b.shipping)
+              )
+            : []
 
     const bestOffer = sortedOffers[0]
     const savings =
@@ -176,60 +179,74 @@ const ProductComparisonView: React.FC<ProductComparisonViewProps> = ({
                         </div>
 
                         {/* Prix le plus bas */}
-                        <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <div className="text-sm text-green-700 font-medium">
-                                        Meilleur prix
-                                    </div>
-                                    <div className="text-2xl font-bold text-green-800">
-                                        {formatPrice(
-                                            bestOffer.price,
-                                            bestOffer.currency
+                        {bestOffer ? (
+                            <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <div className="text-sm text-green-700 font-medium">
+                                            Meilleur prix
+                                        </div>
+                                        <div className="text-2xl font-bold text-green-800">
+                                            {formatPrice(
+                                                bestOffer.price,
+                                                bestOffer.currency
+                                            )}
+                                        </div>
+                                        {bestOffer.shipping > 0 && (
+                                            <div className="text-sm text-gray-600">
+                                                +{" "}
+                                                {formatPrice(
+                                                    bestOffer.shipping,
+                                                    bestOffer.currency
+                                                )}{" "}
+                                                livraison
+                                            </div>
                                         )}
                                     </div>
-                                    {bestOffer.shipping > 0 && (
-                                        <div className="text-sm text-gray-600">
-                                            +{" "}
-                                            {formatPrice(
-                                                bestOffer.shipping,
-                                                bestOffer.currency
-                                            )}{" "}
-                                            livraison
+                                    {savings > 0 && (
+                                        <div className="text-right">
+                                            <Badge className="bg-green-500">
+                                                <TrendingDown className="w-3 h-3 mr-1" />
+                                                -
+                                                {formatPrice(
+                                                    savings,
+                                                    bestOffer.currency
+                                                )}
+                                            </Badge>
                                         </div>
                                     )}
                                 </div>
-                                {savings > 0 && (
-                                    <div className="text-right">
-                                        <Badge className="bg-green-500">
-                                            <TrendingDown className="w-3 h-3 mr-1" />
-                                            -
-                                            {formatPrice(
-                                                savings,
-                                                bestOffer.currency
-                                            )}
-                                        </Badge>
-                                    </div>
-                                )}
                             </div>
-                        </div>
+                        ) : (
+                            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4">
+                                <div className="text-center text-gray-500">
+                                    Aucune offre disponible
+                                </div>
+                            </div>
+                        )}
 
                         {/* Aperçu des caractéristiques */}
                         <div className="space-y-2">
                             <h3 className="font-semibold text-gray-900">
                                 Caractéristiques clés
                             </h3>
-                            {product.features
-                                .slice(0, 4)
-                                .map((feature, index) => (
-                                    <div
-                                        key={index}
-                                        className="flex items-center gap-2 text-sm"
-                                    >
-                                        <CheckCircle className="w-4 h-4 text-green-500" />
-                                        <span>{feature}</span>
-                                    </div>
-                                ))}
+                            {product.features && product.features.length > 0 ? (
+                                product.features
+                                    .slice(0, 4)
+                                    .map((feature, index) => (
+                                        <div
+                                            key={index}
+                                            className="flex items-center gap-2 text-sm"
+                                        >
+                                            <CheckCircle className="w-4 h-4 text-green-500" />
+                                            <span>{feature}</span>
+                                        </div>
+                                    ))
+                            ) : (
+                                <div className="text-sm text-gray-500">
+                                    Aucune caractéristique disponible
+                                </div>
+                            )}
                         </div>
                     </CardContent>
                 </Card>
@@ -430,21 +447,27 @@ const ProductComparisonView: React.FC<ProductComparisonViewProps> = ({
                                         Spécifications techniques
                                     </h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        {Object.entries(
-                                            product.specifications
-                                        ).map(([key, value]) => (
-                                            <div
-                                                key={key}
-                                                className="flex justify-between py-2 border-b border-gray-100"
-                                            >
-                                                <span className="font-medium text-gray-700 capitalize">
-                                                    {key.replace("_", " ")}
-                                                </span>
-                                                <span className="text-gray-900">
-                                                    {value}
-                                                </span>
+                                        {product.specifications &&
+                                            Object.entries(
+                                                product.specifications
+                                            ).map(([key, value]) => (
+                                                <div
+                                                    key={key}
+                                                    className="flex justify-between py-2 border-b border-gray-100"
+                                                >
+                                                    <span className="font-medium text-gray-700 capitalize">
+                                                        {key.replace("_", " ")}
+                                                    </span>
+                                                    <span className="text-gray-900">
+                                                        {value}
+                                                    </span>
+                                                </div>
+                                            ))}
+                                        {!product.specifications && (
+                                            <div className="col-span-2 text-center text-gray-500 py-4">
+                                                Aucune spécification disponible
                                             </div>
-                                        ))}
+                                        )}
                                     </div>
                                 </CardContent>
                             </Card>
@@ -457,18 +480,26 @@ const ProductComparisonView: React.FC<ProductComparisonViewProps> = ({
                                         Toutes les caractéristiques
                                     </h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                        {product.features.map(
-                                            (feature, index) => (
-                                                <div
-                                                    key={index}
-                                                    className="flex items-center gap-2"
-                                                >
-                                                    <CheckCircle className="w-4 h-4 text-green-500" />
-                                                    <span className="text-gray-700">
-                                                        {feature}
-                                                    </span>
-                                                </div>
+                                        {product.features &&
+                                        product.features.length > 0 ? (
+                                            product.features.map(
+                                                (feature, index) => (
+                                                    <div
+                                                        key={index}
+                                                        className="flex items-center gap-2"
+                                                    >
+                                                        <CheckCircle className="w-4 h-4 text-green-500" />
+                                                        <span className="text-gray-700">
+                                                            {feature}
+                                                        </span>
+                                                    </div>
+                                                )
                                             )
+                                        ) : (
+                                            <div className="col-span-2 text-center text-gray-500 py-4">
+                                                Aucune caractéristique
+                                                disponible
+                                            </div>
                                         )}
                                     </div>
                                 </CardContent>
@@ -482,17 +513,26 @@ const ProductComparisonView: React.FC<ProductComparisonViewProps> = ({
                                         Disponibilité par pays
                                     </h3>
                                     <div className="flex flex-wrap gap-2">
-                                        {product.country_availability.map(
-                                            country => (
-                                                <Badge
-                                                    key={country}
-                                                    variant="outline"
-                                                    className="flex items-center gap-1"
-                                                >
-                                                    <MapPin className="w-3 h-3" />
-                                                    {country}
-                                                </Badge>
+                                        {product.country_availability &&
+                                        product.country_availability.length >
+                                            0 ? (
+                                            product.country_availability.map(
+                                                country => (
+                                                    <Badge
+                                                        key={country}
+                                                        variant="outline"
+                                                        className="flex items-center gap-1"
+                                                    >
+                                                        <MapPin className="w-3 h-3" />
+                                                        {country}
+                                                    </Badge>
+                                                )
                                             )
+                                        ) : (
+                                            <div className="text-center text-gray-500 py-4 w-full">
+                                                Aucune information de
+                                                disponibilité
+                                            </div>
                                         )}
                                     </div>
                                 </CardContent>

@@ -84,6 +84,7 @@ const Immobilier = React.lazy(() => import("./pages/Immobilier"))
 const Transport = React.lazy(() => import("./pages/Transport"))
 const Education = React.lazy(() => import("./pages/Education"))
 const Sante = React.lazy(() => import("./pages/Sante"))
+const Health = React.lazy(() => import("./pages/Health"))
 const Commerce = React.lazy(() => import("./pages/Commerce"))
 
 const queryClient = new QueryClient()
@@ -672,6 +673,28 @@ const App = () => (
                                                     showBreadcrumbs={false}
                                                 >
                                                     <Sante />
+                                                </PublicLayout>
+                                            </Suspense>
+                                        }
+                                    />
+
+                                    <Route
+                                        path="/secteur/health"
+                                        element={
+                                            <Suspense
+                                                fallback={
+                                                    <LoadingSpinner
+                                                        size="lg"
+                                                        text="Chargement du secteur santé..."
+                                                    />
+                                                }
+                                            >
+                                                <PublicLayout
+                                                    title="Health Sector"
+                                                    description="Healthcare services and medical care in Africa"
+                                                    showBreadcrumbs={false}
+                                                >
+                                                    <Health />
                                                 </PublicLayout>
                                             </Suspense>
                                         }

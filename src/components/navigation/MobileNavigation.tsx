@@ -96,19 +96,6 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({
                                     <ChevronRight className="w-4 h-4" />
                                 </Link>
                                 <Link
-                                    to="/compare"
-                                    onClick={handleLinkClick}
-                                    className="flex items-center justify-between py-3 px-4 text-marineBlue-700 hover:text-white hover:bg-marineBlue-600 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md hover:scale-[1.02]"
-                                >
-                                    <div className="flex items-center">
-                                        <span className="text-lg mr-3">⚖️</span>
-                                        <span className="font-medium">
-                                            Comparer
-                                        </span>
-                                    </div>
-                                    <ChevronRight className="w-4 h-4" />
-                                </Link>
-                                <Link
                                     to="/produits"
                                     onClick={handleLinkClick}
                                     className="flex items-center justify-between py-3 px-4 text-marineBlue-700 hover:text-white hover:bg-marineBlue-600 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md hover:scale-[1.02]"

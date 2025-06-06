@@ -19,12 +19,6 @@ export const MainNavigation: React.FC = () => {
             show: true,
         },
         {
-            href: "/compare",
-            label: t("nav.compare"),
-            icon: BarChart3,
-            show: true,
-        },
-        {
             href: "/produits",
             label: t("nav.products", "Produits"),
             icon: Package,
