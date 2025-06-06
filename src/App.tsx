@@ -87,6 +87,17 @@ const Sante = React.lazy(() => import("./pages/Sante"))
 const Health = React.lazy(() => import("./pages/Health"))
 const Commerce = React.lazy(() => import("./pages/Commerce"))
 
+// Nouvelles pages pour le système de profils utilisateurs
+const AuthPage = React.lazy(() => import("./pages/auth/AuthPage"))
+const UserDashboardPage = React.lazy(() => import("./pages/user/UserDashboardPage"))
+const MerchantDashboardPage = React.lazy(() => import("./pages/merchant/MerchantDashboardPage"))
+const ManagerDashboardPage = React.lazy(() => import("./pages/manager/ManagerDashboardPage"))
+const AdminDashboardPage = React.lazy(() => import("./pages/admin/AdminDashboardPage"))
+
+// Composants de protection et redirection
+const ProfileRedirect = React.lazy(() => import("./components/auth/ProfileRedirect"))
+import { SimpleUserRoute, MerchantRoute, ManagerRoute, AdminRoute } from "./components/auth/ProtectedRoute"
+
 const queryClient = new QueryClient()
 
 /**
@@ -1012,7 +1023,7 @@ const App = () => (
                                         }
                                     />
 
-                                    {/* Authentification (sans layout) */}
+                                    {/* Authentification avec nouveau système de profils */}
                                     <Route
                                         path="/auth"
                                         element={
@@ -1020,16 +1031,16 @@ const App = () => (
                                                 fallback={
                                                     <LoadingSpinner
                                                         size="lg"
-                                                        text="Chargement..."
+                                                        text="Chargement de l'authentification..."
                                                     />
                                                 }
                                             >
-                                                <Auth />
+                                                <AuthPage />
                                             </Suspense>
                                         }
                                     />
 
-                                    {/* Routes protégées avec layout spécialisé */}
+                                    {/* Redirection intelligente vers le bon dashboard */}
                                     <Route
                                         path="/dashboard"
                                         element={
@@ -1037,19 +1048,89 @@ const App = () => (
                                                 fallback={
                                                     <LoadingSpinner
                                                         size="lg"
-                                                        text="Chargement du tableau de bord..."
+                                                        text="Redirection vers votre espace..."
                                                     />
                                                 }
                                             >
-                                                <ProtectedLayout
-                                                    title="Tableau de bord"
-                                                    description="Vue d'ensemble de votre compte et de vos activités"
-                                                >
-                                                    <Dashboard />
-                                                </ProtectedLayout>
+                                                <ProfileRedirect />
                                             </Suspense>
                                         }
                                     />
+
+                                    {/* Dashboards spécialisés par type d'utilisateur */}
+                                    <Route
+                                        path="/dashboard/user"
+                                        element={
+                                            <Suspense
+                                                fallback={
+                                                    <LoadingSpinner
+                                                        size="lg"
+                                                        text="Chargement de votre espace utilisateur..."
+                                                    />
+                                                }
+                                            >
+                                                <SimpleUserRoute>
+                                                    <UserDashboardPage />
+                                                </SimpleUserRoute>
+                                            </Suspense>
+                                        }
+                                    />
+
+                                    <Route
+                                        path="/dashboard/merchant"
+                                        element={
+                                            <Suspense
+                                                fallback={
+                                                    <LoadingSpinner
+                                                        size="lg"
+                                                        text="Chargement de votre espace marchand..."
+                                                    />
+                                                }
+                                            >
+                                                <MerchantRoute>
+                                                    <MerchantDashboardPage />
+                                                </MerchantRoute>
+                                            </Suspense>
+                                        }
+                                    />
+
+                                    <Route
+                                        path="/dashboard/manager"
+                                        element={
+                                            <Suspense
+                                                fallback={
+                                                    <LoadingSpinner
+                                                        size="lg"
+                                                        text="Chargement de l'espace gestionnaire..."
+                                                    />
+                                                }
+                                            >
+                                                <ManagerRoute>
+                                                    <ManagerDashboardPage />
+                                                </ManagerRoute>
+                                            </Suspense>
+                                        }
+                                    />
+
+                                    <Route
+                                        path="/dashboard/admin"
+                                        element={
+                                            <Suspense
+                                                fallback={
+                                                    <LoadingSpinner
+                                                        size="lg"
+                                                        text="Chargement de l'administration..."
+                                                    />
+                                                }
+                                            >
+                                                <AdminRoute>
+                                                    <AdminDashboardPage />
+                                                </AdminRoute>
+                                            </Suspense>
+                                        }
+                                    />
+
+                                    {/* Routes protégées avec layout spécialisé */}
 
                                     <Route
                                         path="/profile"
