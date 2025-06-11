@@ -1,0 +1,348 @@
+
+_format_version: "3.0"
+_transform: true
+
+# Global plugins configuration
+plugins:
+  - name: correlation-id
+    config:
+      header_name: x-request-id
+      generator: uuid
+      echo_downstream: true
+
+  - name: prometheus
+    config:
+      per_consumer: true
+      status_code_metrics: true
+      latency_metrics: true
+      bandwidth_metrics: true
+
+# Core Business Services
+services:
+  # Product Catalog Service
+  - name: product-catalog
+    url: http://product-catalog-service:3006
+    connect_timeout: 5000
+    write_timeout: 10000
+    read_timeout: 10000
+    retries: 3
+    plugins:
+      - name: cors
+        config:
+          origins: ["*"]
+          methods: [GET, POST, PUT, DELETE, OPTIONS, PATCH]
+          headers: [Accept, Authorization, Content-Type, X-Request-ID, X-API-Key]
+          credentials: true
+      - name: rate-limiting
+        config:
+          minute: 1000
+          hour: 10000
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
+          fault_tolerant: true
+      - name: jwt
+        config:
+          secret_is_base64: false
+          key_claim_name: iss
+
+  # Comparison Engine Service  
+  - name: comparison-engine
+    url: http://comparison-engine-service:3007
+    connect_timeout: 10000
+    write_timeout: 30000
+    read_timeout: 30000
+    retries: 2
+    plugins:
+      - name: cors
+        config:
+          origins: ["*"]
+          methods: [GET, POST, PUT, DELETE, OPTIONS]
+          headers: [Accept, Authorization, Content-Type, X-Request-ID]
+          credentials: true
+      - name: rate-limiting
+        config:
+          minute: 500
+          hour: 5000
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
+      - name: request-size-limiting
+        config:
+          allowed_payload_size: 1
+
+  # User Management Service
+  - name: user-management
+    url: http://user-management-service:3008
+    plugins:
+      - name: cors
+        config:
+          origins: ["*"]
+          methods: [GET, POST, PUT, DELETE, OPTIONS, PATCH]
+          headers: [Accept, Authorization, Content-Type, X-Request-ID]
+          credentials: true
+      - name: rate-limiting
+        config:
+          minute: 2000
+          hour: 20000
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
+
+  # AI Recommendations Service
+  - name: ai-recommendations
+    url: http://ai-recommendations-service:3001
+    connect_timeout: 15000
+    write_timeout: 60000
+    read_timeout: 60000
+    plugins:
+      - name: cors
+        config:
+          origins: ["*"]
+          methods: [GET, POST, PUT, DELETE, OPTIONS]
+          headers: [Accept, Authorization, Content-Type, X-Request-ID]
+          credentials: true
+      - name: rate-limiting
+        config:
+          minute: 200
+          hour: 2000
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
+      - name: response-transformer
+        config:
+          add:
+            headers:
+              - "X-Service-Name:ai-recommendations"
+
+  # Notifications Service
+  - name: notifications
+    url: http://notifications-service:3002
+    plugins:
+      - name: cors
+        config:
+          origins: ["*"]
+          methods: [GET, POST, PUT, DELETE, OPTIONS]
+          headers: [Accept, Authorization, Content-Type, X-Request-ID]
+          credentials: true
+      - name: rate-limiting
+        config:
+          minute: 1000
+          hour: 10000
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
+
+  # Analytics Service
+  - name: analytics
+    url: http://analytics-service:3003
+    plugins:
+      - name: cors
+        config:
+          origins: ["*"]
+          methods: [GET, POST, PUT, DELETE, OPTIONS]
+          headers: [Accept, Authorization, Content-Type, X-Request-ID]
+          credentials: true
+      - name: rate-limiting
+        config:
+          minute: 2000
+          hour: 20000
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
+
+  # CMS Service
+  - name: cms
+    url: http://cms-service:3005
+    plugins:
+      - name: cors
+        config:
+          origins: ["*"]
+          methods: [GET, POST, PUT, DELETE, OPTIONS, PATCH]
+          headers: [Accept, Authorization, Content-Type, X-Request-ID]
+          credentials: true
+      - name: rate-limiting
+        config:
+          minute: 1500
+          hour: 15000
+          policy: redis
+          redis_host: redis
+          redis_port: 6379
+
+# Routes Configuration
+routes:
+  # Product Catalog Routes
+  - name: products-api
+    service: product-catalog
+    paths:
+      - /api/v1/products
+      - /api/v1/criteria
+      - /api/v1/types
+    methods: [GET, POST, PUT, DELETE, PATCH]
+    strip_path: false
+
+  # Comparison Engine Routes
+  - name: comparison-api
+    service: comparison-engine
+    paths:
+      - /api/v1/compare
+      - /api/v1/scoring
+    methods: [GET, POST]
+    strip_path: false
+
+  # User Management Routes
+  - name: users-api
+    service: user-management
+    paths:
+      - /api/v1/users
+      - /api/v1/profiles
+      - /api/v1/preferences
+      - /api/v1/auth
+    methods: [GET, POST, PUT, DELETE, PATCH]
+    strip_path: false
+
+  # AI Recommendations Routes
+  - name: recommendations-api
+    service: ai-recommendations
+    paths:
+      - /api/v1/recommendations
+    methods: [GET, POST]
+    strip_path: false
+
+  # Notifications Routes
+  - name: notifications-api
+    service: notifications
+    paths:
+      - /api/v1/notifications
+      - /api/v1/templates
+      - /api/v1/notification-preferences
+    methods: [GET, POST, PUT, DELETE]
+    strip_path: false
+
+  # Analytics Routes
+  - name: analytics-api
+    service: analytics
+    paths:
+      - /api/v1/events
+      - /api/v1/analytics
+      - /api/v1/reports
+    methods: [GET, POST]
+    strip_path: false
+
+  # CMS Routes
+  - name: cms-api
+    service: cms
+    paths:
+      - /api/v1/content
+      - /api/v1/cms
+    methods: [GET, POST, PUT, DELETE, PATCH]
+    strip_path: false
+
+  # Health Check Routes (no authentication required)
+  - name: health-checks
+    service: product-catalog
+    paths:
+      - /health
+      - /health/live
+      - /health/ready
+    methods: [GET]
+    strip_path: false
+    plugins:
+      - name: jwt
+        config:
+          anonymous: "anonymous"
+
+  # Metrics Routes (restricted access)
+  - name: metrics-routes
+    service: analytics
+    paths:
+      - /metrics
+    methods: [GET]
+    strip_path: false
+    plugins:
+      - name: ip-restriction
+        config:
+          allow: ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16"]
+
+  # API Documentation Routes
+  - name: docs-routes
+    service: product-catalog
+    paths:
+      - /docs
+      - /docs.json
+    methods: [GET]
+    strip_path: false
+    plugins:
+      - name: jwt
+        config:
+          anonymous: "anonymous"
+
+# Consumers (API clients)
+consumers:
+  - username: frontend-app
+    custom_id: frontend-spa
+    plugins:
+      - name: jwt
+        config:
+          key: frontend-app
+          secret: "your-jwt-secret-key"
+      - name: rate-limiting
+        config:
+          minute: 5000
+          hour: 50000
+
+  - username: mobile-app
+    custom_id: mobile-client
+    plugins:
+      - name: jwt
+        config:
+          key: mobile-app
+          secret: "your-jwt-secret-key"
+      - name: rate-limiting
+        config:
+          minute: 3000
+          hour: 30000
+
+  - username: admin-dashboard
+    custom_id: admin-panel
+    plugins:
+      - name: jwt
+        config:
+          key: admin-dashboard
+          secret: "your-jwt-secret-key"
+      - name: rate-limiting
+        config:
+          minute: 10000
+          hour: 100000
+
+# Upstreams for load balancing
+upstreams:
+  - name: comparison-engine-upstream
+    algorithm: round-robin
+    healthchecks:
+      active:
+        http_path: /health/ready
+        healthy:
+          interval: 30
+          successes: 2
+        unhealthy:
+          interval: 10
+          http_failures: 3
+    targets:
+      - target: comparison-engine-service:3007
+        weight: 100
+
+  - name: product-catalog-upstream
+    algorithm: least-connections
+    healthchecks:
+      active:
+        http_path: /health/ready
+        healthy:
+          interval: 30
+          successes: 2
+        unhealthy:
+          interval: 10
+          http_failures: 3
+    targets:
+      - target: product-catalog-service:3006
+        weight: 100

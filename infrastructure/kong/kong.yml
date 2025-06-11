@@ -1,0 +1,148 @@
+
+_format_version: "3.0"
+_transform: true
+
+services:
+  - name: ai-recommendations
+    url: http://ai-recommendations-service:3001
+    plugins:
+      - name: cors
+        config:
+          origins:
+            - "*"
+          methods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+            - OPTIONS
+          headers:
+            - Accept
+            - Authorization
+            - Content-Type
+            - X-Auth-Token
+          credentials: true
+      - name: rate-limiting
+        config:
+          minute: 100
+          hour: 1000
+
+  - name: notifications
+    url: http://notifications-service:3002
+    plugins:
+      - name: cors
+        config:
+          origins:
+            - "*"
+          methods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+            - OPTIONS
+          headers:
+            - Accept
+            - Authorization
+            - Content-Type
+            - X-Auth-Token
+          credentials: true
+      - name: rate-limiting
+        config:
+          minute: 200
+          hour: 2000
+
+  - name: analytics
+    url: http://analytics-service:3003
+    plugins:
+      - name: cors
+        config:
+          origins:
+            - "*"
+          methods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+            - OPTIONS
+          headers:
+            - Accept
+            - Authorization
+            - Content-Type
+            - X-Auth-Token
+          credentials: true
+      - name: rate-limiting
+        config:
+          minute: 500
+          hour: 5000
+
+  - name: cms
+    url: http://cms-service:3005
+    plugins:
+      - name: cors
+        config:
+          origins:
+            - "*"
+          methods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+            - OPTIONS
+          headers:
+            - Accept
+            - Authorization
+            - Content-Type
+            - X-Auth-Token
+          credentials: true
+      - name: rate-limiting
+        config:
+          minute: 300
+          hour: 3000
+
+routes:
+  - name: ai-recommendations-routes
+    service: ai-recommendations
+    paths:
+      - /api/v1/recommendations
+
+  - name: notifications-routes
+    service: notifications
+    paths:
+      - /api/v1/notifications
+      - /api/v1/templates
+      - /api/v1/preferences
+
+  - name: analytics-routes
+    service: analytics
+    paths:
+      - /api/v1/events
+      - /api/v1/analytics
+      - /api/v1/reports
+
+  - name: cms-routes
+    service: cms
+    paths:
+      - /cms
+
+  - name: health-checks
+    service: ai-recommendations
+    paths:
+      - /health
+      - /metrics
+
+  - name: notifications-health
+    service: notifications
+    paths:
+      - /notifications/health
+      - /notifications/metrics
+
+  - name: analytics-health
+    service: analytics
+    paths:
+      - /analytics/health
+      - /analytics/metrics
+
+  - name: cms-health
+    service: cms
+    paths:
+      - /cms/health

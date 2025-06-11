@@ -1,0 +1,104 @@
+
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em rgba(0, 150, 57, 0.7));
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em rgba(252, 209, 22, 0.7));
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+/* African-inspired customizations */
+.african-text-shadow {
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.kente-border-animated {
+  position: relative;
+}
+
+.kente-border-animated::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, 
+    #CE1126 0%, #CE1126 25%, 
+    #FCD116 25%, #FCD116 50%, 
+    #009639 50%, #009639 75%, 
+    #000000 75%, #000000 100%);
+  background-size: 20px 20px;
+  z-index: -1;
+  border-radius: 8px;
+  animation: border-dance 3s linear infinite;
+}
+
+@keyframes border-dance {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 20px 0;
+  }
+}
+
+.adinkra-bg {
+  background-image: url('/patterns/adinkra-pattern.svg');
+  background-repeat: repeat;
+  background-size: 150px;
+}
+
+.highlight-text-afro {
+  display: inline;
+  background: linear-gradient(to right, #CE1126, #FCD116, #009639);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  position: relative;
+}
+
+.heading-underline::after {
+  content: '';
+  display: block;
+  margin: 0.5em auto 0;
+  width: 100px;
+  height: 4px;
+  background: linear-gradient(to right, #CE1126, #FCD116, #009639);
+  border-radius: 2px;
+}

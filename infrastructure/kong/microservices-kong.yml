@@ -1,0 +1,164 @@
+
+_format_version: "3.0"
+_transform: true
+
+services:
+  # Core Business Services
+  - name: product-catalog
+    url: http://product-catalog-service:3006
+    plugins:
+      - name: cors
+        config:
+          origins: ["*"]
+          methods: [GET, POST, PUT, DELETE, OPTIONS]
+          headers: [Accept, Authorization, Content-Type, X-Auth-Token]
+          credentials: true
+      - name: rate-limiting
+        config:
+          minute: 200
+          hour: 2000
+
+  - name: comparison-engine
+    url: http://comparison-engine-service:3007
+    plugins:
+      - name: cors
+        config:
+          origins: ["*"]
+          methods: [GET, POST, PUT, DELETE, OPTIONS]
+          headers: [Accept, Authorization, Content-Type, X-Auth-Token]
+          credentials: true
+      - name: rate-limiting
+        config:
+          minute: 100
+          hour: 1000
+
+  - name: user-management
+    url: http://user-management-service:3008
+    plugins:
+      - name: cors
+        config:
+          origins: ["*"]
+          methods: [GET, POST, PUT, DELETE, OPTIONS]
+          headers: [Accept, Authorization, Content-Type, X-Auth-Token]
+          credentials: true
+      - name: rate-limiting
+        config:
+          minute: 300
+          hour: 3000
+
+  # Support Services
+  - name: ai-recommendations
+    url: http://ai-recommendations-service:3001
+    plugins:
+      - name: cors
+        config:
+          origins: ["*"]
+          methods: [GET, POST, PUT, DELETE, OPTIONS]
+          headers: [Accept, Authorization, Content-Type, X-Auth-Token]
+          credentials: true
+      - name: rate-limiting
+        config:
+          minute: 100
+          hour: 1000
+
+  - name: notifications
+    url: http://notifications-service:3002
+    plugins:
+      - name: cors
+        config:
+          origins: ["*"]
+          methods: [GET, POST, PUT, DELETE, OPTIONS]
+          headers: [Accept, Authorization, Content-Type, X-Auth-Token]
+          credentials: true
+      - name: rate-limiting
+        config:
+          minute: 200
+          hour: 2000
+
+  - name: analytics
+    url: http://analytics-service:3003
+    plugins:
+      - name: cors
+        config:
+          origins: ["*"]
+          methods: [GET, POST, PUT, DELETE, OPTIONS]
+          headers: [Accept, Authorization, Content-Type, X-Auth-Token]
+          credentials: true
+      - name: rate-limiting
+        config:
+          minute: 500
+          hour: 5000
+
+  - name: cms
+    url: http://cms-service:3005
+    plugins:
+      - name: cors
+        config:
+          origins: ["*"]
+          methods: [GET, POST, PUT, DELETE, OPTIONS]
+          headers: [Accept, Authorization, Content-Type, X-Auth-Token]
+          credentials: true
+      - name: rate-limiting
+        config:
+          minute: 300
+          hour: 3000
+
+routes:
+  # Product Catalog Routes
+  - name: products-routes
+    service: product-catalog
+    paths:
+      - /api/v1/products
+      - /api/v1/criteria
+      - /api/v1/types
+
+  # Comparison Engine Routes
+  - name: comparison-routes
+    service: comparison-engine
+    paths:
+      - /api/v1/compare
+      - /api/v1/scoring
+
+  # User Management Routes
+  - name: users-routes
+    service: user-management
+    paths:
+      - /api/v1/users
+      - /api/v1/profiles
+      - /api/v1/preferences
+
+  # AI Recommendations Routes
+  - name: ai-recommendations-routes
+    service: ai-recommendations
+    paths:
+      - /api/v1/recommendations
+
+  # Notifications Routes
+  - name: notifications-routes
+    service: notifications
+    paths:
+      - /api/v1/notifications
+      - /api/v1/templates
+      - /api/v1/notification-preferences
+
+  # Analytics Routes
+  - name: analytics-routes
+    service: analytics
+    paths:
+      - /api/v1/events
+      - /api/v1/analytics
+      - /api/v1/reports
+
+  # CMS Routes
+  - name: cms-routes
+    service: cms
+    paths:
+      - /api/v1/content
+      - /api/v1/cms
+
+  # Health Check Routes
+  - name: health-checks
+    service: product-catalog
+    paths:
+      - /health
+      - /metrics
