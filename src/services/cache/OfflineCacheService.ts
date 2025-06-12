@@ -154,10 +154,10 @@ export class OfflineCacheService {
     let totalSize = 0;
 
     if (Capacitor.isNativePlatform()) {
-      const { keys } = await Storage.keys();
+      const { keys } = await Preferences.keys();
       for (const key of keys) {
         if (key.startsWith("cache_")) {
-          const result = await Storage.get({ key });
+          const result = await Preferences.get({ key });
           if (result.value) {
             totalSize += new Blob([result.value]).size;
           }
