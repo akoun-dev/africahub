@@ -131,18 +131,18 @@ export class OfflineCacheService {
 
     // Clean persistent storage
     if (Capacitor.isNativePlatform()) {
-      const { keys } = await Storage.keys();
+      const { keys } = await Preferences.keys();
       for (const key of keys) {
         if (key.startsWith("cache_")) {
-          const result = await Storage.get({ key });
+          const result = await Preferences.get({ key });
           if (result.value) {
             try {
               const entry: CacheEntry = JSON.parse(result.value);
               if (entry.expiry <= now) {
-                await Storage.remove({ key });
+                await Preferences.remove({ key });
               }
             } catch (error) {
-              await Storage.remove({ key });
+              await Preferences.remove({ key });
             }
           }
         }
