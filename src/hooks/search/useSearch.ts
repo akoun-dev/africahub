@@ -1,13 +1,13 @@
 
 import { useState, useCallback } from 'react';
-import { useEnhancedAuth } from '@/contexts/EnhancedAuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { useCountry } from '@/contexts/CountryContext';
 import { SearchManager } from '@/services/managers/SearchManager';
 import { SearchCriteria, SearchState, AnalyticsData } from '@/types/search';
 import { toast } from 'sonner';
 
 export const useSearch = () => {
-  const { user } = useEnhancedAuth();
+  const { user } = useAuth();
   const { country } = useCountry();
   
   const [state, setState] = useState<SearchState>({

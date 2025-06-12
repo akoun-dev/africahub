@@ -77,7 +77,7 @@ export const useAIRecommendations = (
 };
 
 export const useGenerateRecommendations = () => {
-  const { user } = useEnhancedAuth();
+  const { user } = useAuth();
 
   return {
     mutateAsync: async ({ insuranceType, preferences }: any) => {

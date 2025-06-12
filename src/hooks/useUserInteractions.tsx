@@ -1,7 +1,7 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useEnhancedAuth } from '@/contexts/EnhancedAuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 export interface UserInteraction {
   product_id?: string;
@@ -11,7 +11,7 @@ export interface UserInteraction {
 }
 
 export const useTrackInteraction = () => {
-  const { user } = useEnhancedAuth();
+  const { user } = useAuth();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -51,7 +51,7 @@ export const useUserInteractions = () => {
 };
 
 export const useBehavioralPatterns = () => {
-  const { user } = useEnhancedAuth();
+  const { user } = useAuth();
 
   return useMutation({
     mutationFn: async (patterns: {

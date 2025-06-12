@@ -43,6 +43,9 @@ const NotFound = React.lazy(() => import("./pages/NotFound"))
 // Page de test sans protection
 const TestDashboard = React.lazy(() => import("./pages/TestDashboard"))
 
+// Page de diagnostic des profils
+const DiagnosticProfils = React.lazy(() => import("./pages/DiagnosticProfils"))
+
 // Import du test de profil
 import "./utils/testProfile.js"
 
@@ -1639,6 +1642,23 @@ const App = () => (
                                     <Route
                                         path="/test-dashboard"
                                         element={<TestDashboard />}
+                                    />
+
+                                    {/* Page de diagnostic des profils */}
+                                    <Route
+                                        path="/diagnostic-profils"
+                                        element={
+                                            <Suspense
+                                                fallback={
+                                                    <LoadingSpinner
+                                                        size="lg"
+                                                        text="Chargement du diagnostic..."
+                                                    />
+                                                }
+                                            >
+                                                <DiagnosticProfils />
+                                            </Suspense>
+                                        }
                                     />
 
                                     {/* Routes de dashboard par rôle */}
