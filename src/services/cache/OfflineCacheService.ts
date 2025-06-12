@@ -1,6 +1,5 @@
-
-import { Capacitor } from '@capacitor/core';
-import { Storage } from '@capacitor/storage';
+import { Capacitor } from "@capacitor/core";
+import { Preferences } from "@capacitor/preferences";
 
 export interface CacheEntry<T = any> {
   data: T;
@@ -24,7 +23,7 @@ export class OfflineCacheService {
       defaultTTL: 24 * 60 * 60 * 1000, // 24 hours
       maxSize: 50 * 1024 * 1024, // 50MB
       compressionEnabled: true,
-      ...config
+      ...config,
     };
   }
 
@@ -39,7 +38,7 @@ export class OfflineCacheService {
     const entry: CacheEntry<T> = {
       data,
       timestamp: Date.now(),
-      expiry: Date.now() + (ttl || this.config.defaultTTL)
+      expiry: Date.now() + (ttl || this.config.defaultTTL),
     };
 
     // Store in memory cache
@@ -49,7 +48,7 @@ export class OfflineCacheService {
     if (Capacitor.isNativePlatform()) {
       await Storage.set({
         key: `cache_${key}`,
-        value: JSON.stringify(entry)
+        value: JSON.stringify(entry),
       });
     } else {
       localStorage.setItem(`cache_${key}`, JSON.stringify(entry));
@@ -68,7 +67,7 @@ export class OfflineCacheService {
 
     // Check persistent storage
     let storedValue: string | null = null;
-    
+
     if (Capacitor.isNativePlatform()) {
       const result = await Storage.get({ key: `cache_${key}` });
       storedValue = result.value;
@@ -80,7 +79,7 @@ export class OfflineCacheService {
 
     try {
       const entry: CacheEntry<T> = JSON.parse(storedValue);
-      
+
       // Check if expired
       if (entry.expiry <= Date.now()) {
         await this.remove(key);
@@ -91,7 +90,7 @@ export class OfflineCacheService {
       this.memoryCache.set(key, entry);
       return entry.data;
     } catch (error) {
-      console.error('Error parsing cached data:', error);
+      console.error("Error parsing cached data:", error);
       await this.remove(key);
       return null;
     }
@@ -99,7 +98,7 @@ export class OfflineCacheService {
 
   async remove(key: string): Promise<void> {
     this.memoryCache.delete(key);
-    
+
     if (Capacitor.isNativePlatform()) {
       await Storage.remove({ key: `cache_${key}` });
     } else {
@@ -109,20 +108,20 @@ export class OfflineCacheService {
 
   async clear(): Promise<void> {
     this.memoryCache.clear();
-    
+
     if (Capacitor.isNativePlatform()) {
       await Storage.clear();
     } else {
       // Clear only cache items from localStorage
       Object.keys(localStorage)
-        .filter(key => key.startsWith('cache_'))
-        .forEach(key => localStorage.removeItem(key));
+        .filter((key) => key.startsWith("cache_"))
+        .forEach((key) => localStorage.removeItem(key));
     }
   }
 
   async cleanup(): Promise<void> {
     const now = Date.now();
-    
+
     // Clean memory cache
     for (const [key, entry] of this.memoryCache.entries()) {
       if (entry.expiry <= now) {
@@ -134,7 +133,7 @@ export class OfflineCacheService {
     if (Capacitor.isNativePlatform()) {
       const { keys } = await Storage.keys();
       for (const key of keys) {
-        if (key.startsWith('cache_')) {
+        if (key.startsWith("cache_")) {
           const result = await Storage.get({ key });
           if (result.value) {
             try {
@@ -153,11 +152,11 @@ export class OfflineCacheService {
 
   async getCacheSize(): Promise<number> {
     let totalSize = 0;
-    
+
     if (Capacitor.isNativePlatform()) {
       const { keys } = await Storage.keys();
       for (const key of keys) {
-        if (key.startsWith('cache_')) {
+        if (key.startsWith("cache_")) {
           const result = await Storage.get({ key });
           if (result.value) {
             totalSize += new Blob([result.value]).size;
@@ -166,15 +165,15 @@ export class OfflineCacheService {
       }
     } else {
       Object.keys(localStorage)
-        .filter(key => key.startsWith('cache_'))
-        .forEach(key => {
+        .filter((key) => key.startsWith("cache_"))
+        .forEach((key) => {
           const value = localStorage.getItem(key);
           if (value) {
             totalSize += new Blob([value]).size;
           }
         });
     }
-    
+
     return totalSize;
   }
 
