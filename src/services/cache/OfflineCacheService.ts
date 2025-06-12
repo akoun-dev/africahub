@@ -69,7 +69,7 @@ export class OfflineCacheService {
     let storedValue: string | null = null;
 
     if (Capacitor.isNativePlatform()) {
-      const result = await Storage.get({ key: `cache_${key}` });
+      const result = await Preferences.get({ key: `cache_${key}` });
       storedValue = result.value;
     } else {
       storedValue = localStorage.getItem(`cache_${key}`);
