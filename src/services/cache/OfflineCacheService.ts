@@ -100,7 +100,7 @@ export class OfflineCacheService {
     this.memoryCache.delete(key);
 
     if (Capacitor.isNativePlatform()) {
-      await Storage.remove({ key: `cache_${key}` });
+      await Preferences.remove({ key: `cache_${key}` });
     } else {
       localStorage.removeItem(`cache_${key}`);
     }
