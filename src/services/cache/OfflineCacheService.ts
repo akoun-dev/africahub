@@ -110,7 +110,7 @@ export class OfflineCacheService {
     this.memoryCache.clear();
 
     if (Capacitor.isNativePlatform()) {
-      await Storage.clear();
+      await Preferences.clear();
     } else {
       // Clear only cache items from localStorage
       Object.keys(localStorage)
