@@ -223,7 +223,7 @@ SELECT repair_missing_profiles();
 -- =============================================================================
 
 COMMENT ON FUNCTION create_user_profile_safe(UUID, TEXT, TEXT, TEXT, TEXT) IS 'Crée un profil utilisateur de manière sécurisée';
-COMMENT ON FUNCTION handle_new_user() IS 'Trigger pour créer automatiquement un profil lors de l\'inscription';
+COMMENT ON FUNCTION handle_new_user() IS 'Trigger pour créer automatiquement un profil lors de l''inscription';
 COMMENT ON FUNCTION repair_missing_profiles() IS 'Répare les profils manquants pour les utilisateurs existants';
 
 -- Donner les permissions d'exécution

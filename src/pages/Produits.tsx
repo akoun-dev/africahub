@@ -1,5 +1,5 @@
-// 🚀 Vue Produits Moderne AfricaHub - UX Optimisée
-// Design inspiré des meilleurs comparateurs avec adaptation africaine
+// 🚀 Vue Marketplace Unifiée AfricaHub - Tous les secteurs
+// Gestion unifiée de tous les types de données : produits, services, banques, énergie, etc.
 
 import React, { useState, useMemo, useEffect } from "react"
 import { Link, useParams, useNavigate } from "react-router-dom"
@@ -29,6 +29,11 @@ import {
     ChevronDown,
     ChevronRight,
     Home,
+    Building2,
+    Car,
+    Smartphone,
+    Plane,
+    Factory,
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -50,23 +55,283 @@ import {
     SheetTitle,
     SheetTrigger,
 } from "@/components/ui/sheet"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
+// Import de toutes les données
 import {
     getProductsWithFallback,
     getTopCategories,
     getTrendingProducts,
 } from "@/data/demoProducts"
+import {
+    africanBanks,
+    bankingServices,
+    getBanksByCountry,
+} from "@/data/banksData"
+import {
+    africanEnergyProviders,
+    energyTariffs,
+    solarSolutions,
+} from "@/data/energiesData"
+import { africanInsuranceData } from "@/data/insuranceData"
+import {
+    africanTelecomOperators,
+    mobilePlans,
+    internetServices,
+} from "@/data/telecomData"
+import {
+    africanTransportCompanies,
+    transportRoutes,
+    deliveryServices,
+} from "@/data/transportData"
+import { africanEconomicSectors, sectorCompanies } from "@/data/sectorsData"
 import { useCountry } from "@/contexts/CountryContext"
 import ProductComparisonView from "@/components/product/ProductComparisonView"
 
-// Interface pour les filtres
-interface ProductFilters {
+// Types unifiés pour tous les secteurs
+type SectorType =
+    | "products"
+    | "banks"
+    | "energy"
+    | "insurance"
+    | "telecom"
+    | "transport"
+    | "sectors"
+
+// Interface unifiée pour tous les éléments
+interface UnifiedItem {
+    id: string | number // ID unique généré automatiquement
+    originalId?: string | number // ID original de la source de données
+    name: string
+    description?: string
+    price?: number
+    currency?: string
+    country?: string
+    countryCode?: string
+    type?: string
+    rating?: number
+    logo?: string
+    website?: string
+    sector: SectorType
+    // Champs spécifiques selon le secteur
+    [key: string]: any
+}
+
+// Interface pour les filtres étendus
+interface UnifiedFilters {
     search: string
+    sector: SectorType | "all"
     category: string
     country: string
     priceRange: string
     sortBy: string
     viewMode: "grid" | "list" | "compact"
+    // Filtres spécifiques par secteur
+    serviceType?: string
+    technology?: string
+    coverage?: string
+}
+
+// Fonction pour unifier toutes les données avec des IDs uniques
+const unifyAllData = (): UnifiedItem[] => {
+    const unifiedData: UnifiedItem[] = []
+    let globalIndex = 0 // Compteur global pour garantir l'unicité des IDs
+
+    // Produits
+    const products = getProductsWithFallback([])
+    products.forEach((product, index) => {
+        unifiedData.push({
+            ...product,
+            id: `products-${globalIndex++}`, // ID unique avec préfixe secteur
+            originalId: product.id, // Conserver l'ID original pour référence
+            sector: "products" as SectorType,
+            description: product.description || "",
+            countryCode: product.country_availability?.[0] || "",
+        })
+    })
+
+    // Banques
+    africanBanks.forEach((bank, index) => {
+        unifiedData.push({
+            ...bank,
+            id: `banks-${globalIndex++}`, // ID unique avec préfixe secteur
+            originalId: bank.id, // Conserver l'ID original
+            sector: "banks" as SectorType,
+            price: undefined, // Les banques n'ont pas de prix fixe
+            currency: "USD",
+        })
+    })
+
+    // Services bancaires
+    bankingServices.forEach((service, index) => {
+        unifiedData.push({
+            ...service,
+            id: `banking-services-${globalIndex++}`, // ID unique avec préfixe
+            originalId: service.id, // Conserver l'ID original
+            sector: "banks" as SectorType,
+            price: service.fees,
+            currency: service.currency,
+            countryCode: service.availableCountries[0] || "",
+        })
+    })
+
+    // Fournisseurs d'énergie
+    africanEnergyProviders.forEach((provider, index) => {
+        unifiedData.push({
+            ...provider,
+            id: `energy-providers-${globalIndex++}`, // ID unique avec préfixe
+            originalId: provider.id, // Conserver l'ID original
+            sector: "energy" as SectorType,
+            price: undefined,
+            currency: "USD",
+        })
+    })
+
+    // Tarifs énergétiques
+    energyTariffs.forEach((tariff, index) => {
+        unifiedData.push({
+            ...tariff,
+            id: `energy-tariffs-${globalIndex++}`, // ID unique avec préfixe
+            originalId: tariff.id, // Conserver l'ID original
+            sector: "energy" as SectorType,
+            price: tariff.pricePerKWh,
+            currency: tariff.currency,
+            countryCode: tariff.availableRegions[0] || "",
+        })
+    })
+
+    // Solutions solaires
+    solarSolutions.forEach((solution, index) => {
+        unifiedData.push({
+            ...solution,
+            id: `solar-solutions-${globalIndex++}`, // ID unique avec préfixe
+            originalId: solution.id, // Conserver l'ID original
+            sector: "energy" as SectorType,
+            price: solution.price,
+            currency: solution.currency,
+            countryCode: solution.availableCountries[0] || "",
+        })
+    })
+
+    // Assurances
+    Object.entries(africanInsuranceData).forEach(([category, insurances]) => {
+        insurances.forEach((insurance, index) => {
+            unifiedData.push({
+                ...insurance,
+                id: `insurance-${category}-${globalIndex++}`, // ID unique avec catégorie
+                originalId: insurance.id, // Conserver l'ID original
+                sector: "insurance" as SectorType,
+                price: insurance.price,
+                currency: insurance.currency,
+                countryCode: insurance.countryAvailability[0] || "",
+                category: category,
+            })
+        })
+    })
+
+    // Opérateurs télécoms
+    africanTelecomOperators.forEach((operator, index) => {
+        unifiedData.push({
+            ...operator,
+            id: `telecom-operators-${globalIndex++}`, // ID unique avec préfixe
+            originalId: operator.id, // Conserver l'ID original
+            sector: "telecom" as SectorType,
+            price: undefined,
+            currency: "USD",
+        })
+    })
+
+    // Forfaits mobiles
+    mobilePlans.forEach((plan, index) => {
+        unifiedData.push({
+            ...plan,
+            id: `mobile-plans-${globalIndex++}`, // ID unique avec préfixe
+            originalId: plan.id, // Conserver l'ID original
+            sector: "telecom" as SectorType,
+            price: plan.price,
+            currency: plan.currency,
+            countryCode: plan.availableCountries[0] || "",
+        })
+    })
+
+    // Services internet
+    internetServices.forEach((service, index) => {
+        unifiedData.push({
+            ...service,
+            id: `internet-services-${globalIndex++}`, // ID unique avec préfixe
+            originalId: service.id, // Conserver l'ID original
+            sector: "telecom" as SectorType,
+            price: service.price,
+            currency: service.currency,
+            countryCode: service.availableRegions[0] || "",
+        })
+    })
+
+    // Compagnies de transport
+    africanTransportCompanies.forEach((company, index) => {
+        unifiedData.push({
+            ...company,
+            id: `transport-companies-${globalIndex++}`, // ID unique avec préfixe
+            originalId: company.id, // Conserver l'ID original
+            sector: "transport" as SectorType,
+            price: undefined,
+            currency: "USD",
+        })
+    })
+
+    // Routes de transport
+    transportRoutes.forEach((route, index) => {
+        unifiedData.push({
+            ...route,
+            id: `transport-routes-${globalIndex++}`, // ID unique avec préfixe
+            originalId: route.id, // Conserver l'ID original
+            sector: "transport" as SectorType,
+            price: route.price,
+            currency: route.currency,
+            name: `${route.origin} → ${route.destination}`,
+            description: `${route.duration} - ${route.frequency}`,
+        })
+    })
+
+    // Services de livraison
+    deliveryServices.forEach((service, index) => {
+        unifiedData.push({
+            ...service,
+            id: `delivery-services-${globalIndex++}`, // ID unique avec préfixe
+            originalId: service.id, // Conserver l'ID original
+            sector: "transport" as SectorType,
+            price: service.price,
+            currency: service.currency,
+            countryCode: service.coverage[0] || "",
+        })
+    })
+
+    // Secteurs économiques
+    africanEconomicSectors.forEach((sector, index) => {
+        unifiedData.push({
+            ...sector,
+            id: `economic-sectors-${globalIndex++}`, // ID unique avec préfixe
+            originalId: sector.id, // Conserver l'ID original
+            sector: "sectors" as SectorType,
+            price: undefined,
+            currency: "USD",
+            countryCode: sector.keyCountries[0] || "",
+        })
+    })
+
+    // Entreprises par secteur
+    sectorCompanies.forEach((company, index) => {
+        unifiedData.push({
+            ...company,
+            id: `sector-companies-${globalIndex++}`, // ID unique avec préfixe
+            originalId: company.id, // Conserver l'ID original
+            sector: "sectors" as SectorType,
+            price: undefined,
+            currency: "USD",
+        })
+    })
+
+    return unifiedData
 }
 
 const Produits: React.FC = () => {
@@ -74,14 +339,14 @@ const Produits: React.FC = () => {
     const navigate = useNavigate()
     const { country } = useCountry()
 
-    // Données
-    const products = getProductsWithFallback([])
+    // Données unifiées
+    const allData = useMemo(() => unifyAllData(), [])
     const categories = getTopCategories()
-    const trendingProducts = getTrendingProducts(4)
 
     // États
-    const [filters, setFilters] = useState<ProductFilters>({
+    const [filters, setFilters] = useState<UnifiedFilters>({
         search: "",
+        sector: "all",
         category: "all",
         country: country?.code || "all",
         priceRange: "all",
@@ -104,7 +369,7 @@ const Produits: React.FC = () => {
     }, [productId])
 
     // Fonctions utilitaires
-    const updateFilter = (key: keyof ProductFilters, value: string) => {
+    const updateFilter = (key: keyof UnifiedFilters, value: string) => {
         setFilters(prev => ({ ...prev, [key]: value }))
     }
 
@@ -127,11 +392,93 @@ const Produits: React.FC = () => {
         })
     }
 
-    const handleProductClick = (productId: string) => {
-        navigate(`/produits/${productId}`)
+    const handleProductClick = (itemId: string | number) => {
+        navigate(`/produits/${itemId}`)
     }
 
-    // Configuration des options
+    // Fonction pour obtenir l'icône selon le secteur
+    const getSectorIcon = (sector: SectorType) => {
+        switch (sector) {
+            case "products":
+                return Package
+            case "banks":
+                return Building2
+            case "energy":
+                return Zap
+            case "insurance":
+                return Award
+            case "telecom":
+                return Smartphone
+            case "transport":
+                return Car
+            case "sectors":
+                return Factory
+            default:
+                return Package
+        }
+    }
+
+    // Fonction pour formater le prix selon le secteur
+    const formatPrice = (item: UnifiedItem) => {
+        if (!item.price) return null
+
+        const currency = item.currency || "XOF"
+        const price = item.price.toLocaleString()
+
+        switch (item.sector) {
+            case "energy":
+                return `${price} ${currency}/kWh`
+            case "telecom":
+                if (item.type === "internet") return `${price} ${currency}/mois`
+                if (item.type === "prepaid" || item.type === "postpaid")
+                    return `${price} ${currency}/mois`
+                return `${price} ${currency}`
+            case "transport":
+                return `${price} ${currency}`
+            case "banks":
+                return `${price} ${currency} (frais)`
+            case "insurance":
+                return `${price} ${currency}/an`
+            default:
+                return `${price} ${currency}`
+        }
+    }
+
+    // Fonction pour obtenir les informations secondaires
+    const getSecondaryInfo = (item: UnifiedItem) => {
+        switch (item.sector) {
+            case "banks":
+                return item.type || "Service bancaire"
+            case "energy":
+                return item.capacity || item.speed || item.type
+            case "telecom":
+                if (item.data) return `${item.data} data`
+                if (item.speed) return `${item.speed}`
+                return item.type || "Service télécom"
+            case "transport":
+                return item.duration || item.deliveryTime || item.type
+            case "insurance":
+                return item.coverage || item.type
+            case "sectors":
+                return `${item.employment || 0}M emplois`
+            default:
+                return item.companies?.name || item.provider || item.company
+        }
+    }
+
+    // Configuration des secteurs
+    const sectorOptions = [
+        { value: "all", label: "🌍 Tous les secteurs", icon: Globe },
+        { value: "products", label: "🛒 Produits", icon: Package },
+        { value: "banks", label: "🏦 Banques", icon: Building2 },
+        { value: "energy", label: "⚡ Énergie", icon: Zap },
+        { value: "insurance", label: "🛡️ Assurances", icon: Award },
+        { value: "telecom", label: "📱 Télécoms", icon: Smartphone },
+        { value: "transport", label: "🚛 Transport", icon: Car },
+        { value: "sectors", label: "🏭 Secteurs", icon: Factory },
+    ]
+
+    // Configuration des options de tri
     const sortOptions = [
         { value: "relevance", label: "🎯 Pertinence", icon: "🎯" },
         { value: "price_asc", label: "💰 Prix croissant", icon: "💰" },
@@ -139,6 +486,7 @@ const Produits: React.FC = () => {
         { value: "newest", label: "🆕 Plus récents", icon: "🆕" },
         { value: "popular", label: "🔥 Populaires", icon: "🔥" },
         { value: "name", label: "🔤 Nom A-Z", icon: "🔤" },
+        { value: "rating", label: "⭐ Mieux notés", icon: "⭐" },
     ]
 
     const priceRanges = [
@@ -160,39 +508,57 @@ const Produits: React.FC = () => {
         { value: "TN", label: "🇹🇳 Tunisie" },
     ]
 
-    // Logique de filtrage
-    const filteredProducts = useMemo(() => {
-        if (!products || products.length === 0) return []
+    // Logique de filtrage unifiée
+    const filteredItems = useMemo(() => {
+        if (!allData || allData.length === 0) return []
 
-        let filtered = products.filter(product => {
+        let filtered = allData.filter(item => {
+            // Filtre par secteur
+            if (filters.sector !== "all") {
+                if (item.sector !== filters.sector) return false
+            }
+
             // Recherche textuelle
             if (filters.search) {
                 const searchLower = filters.search.toLowerCase()
                 const matchesSearch =
-                    product.name.toLowerCase().includes(searchLower) ||
-                    product.description?.toLowerCase().includes(searchLower) ||
-                    product.companies?.name.toLowerCase().includes(searchLower)
+                    item.name.toLowerCase().includes(searchLower) ||
+                    item.description?.toLowerCase().includes(searchLower) ||
+                    item.company?.toLowerCase().includes(searchLower) ||
+                    item.provider?.toLowerCase().includes(searchLower) ||
+                    item.operatorName?.toLowerCase().includes(searchLower)
                 if (!matchesSearch) return false
             }
 
-            // Filtre par catégorie
-            if (filters.category !== "all") {
-                if (product.product_types?.slug !== filters.category)
-                    return false
+            // Filtre par catégorie (pour les produits)
+            if (filters.category !== "all" && item.sector === "products") {
+                if (item.product_types?.slug !== filters.category) return false
             }
 
             // Filtre par pays
             if (filters.country !== "all") {
-                if (!product.country_availability?.includes(filters.country))
-                    return false
+                let itemCountries =
+                    item.country_availability ||
+                    item.availableCountries ||
+                    item.availableRegions ||
+                    item.coverage ||
+                    item.markets ||
+                    (item.countryCode ? [item.countryCode] : [])
+
+                // S'assurer que itemCountries est un tableau
+                if (!Array.isArray(itemCountries)) {
+                    itemCountries = itemCountries ? [itemCountries] : []
+                }
+
+                if (!itemCountries.includes(filters.country)) return false
             }
 
             // Filtre par prix
-            if (filters.priceRange !== "all" && product.price) {
+            if (filters.priceRange !== "all" && item.price) {
                 const [min, max] = filters.priceRange
                     .split("-")
                     .map(p => p.replace("+", ""))
-                const price = product.price
+                const price = item.price
 
                 if (filters.priceRange.includes("+")) {
                     if (price < parseInt(min)) return false
@@ -214,48 +580,77 @@ const Produits: React.FC = () => {
                     return (a.price || 0) - (b.price || 0)
                 case "price_desc":
                     return (b.price || 0) - (a.price || 0)
+                case "rating":
+                    return (b.rating || 0) - (a.rating || 0)
                 case "newest":
-                    return (
-                        new Date(b.created_at).getTime() -
-                        new Date(a.created_at).getTime()
-                    )
+                    const aDate = a.created_at || a.established || 0
+                    const bDate = b.created_at || b.established || 0
+                    return new Date(bDate).getTime() - new Date(aDate).getTime()
                 case "popular":
-                    return (b.views || 0) - (a.views || 0)
+                    return (
+                        (b.views || b.subscribers || 0) -
+                        (a.views || a.subscribers || 0)
+                    )
                 default:
                     return 0
             }
         })
 
         return filtered
-    }, [products, filters])
+    }, [allData, filters])
 
-    // Statistiques
+    // Statistiques unifiées
     const stats = useMemo(() => {
         const uniqueCountries = new Set()
-        products.forEach(product => {
-            product.country_availability?.forEach(country =>
-                uniqueCountries.add(country)
+        const sectorCounts = new Map()
+
+        allData.forEach(item => {
+            // Compter les pays - s'assurer que c'est un tableau
+            let itemCountries =
+                item.country_availability ||
+                item.availableCountries ||
+                item.availableRegions ||
+                item.coverage ||
+                item.markets ||
+                (item.countryCode ? [item.countryCode] : [])
+
+            // S'assurer que itemCountries est un tableau
+            if (!Array.isArray(itemCountries)) {
+                itemCountries = itemCountries ? [itemCountries] : []
+            }
+
+            itemCountries.forEach(country => {
+                if (country) uniqueCountries.add(country)
+            })
+
+            // Compter par secteur
+            sectorCounts.set(
+                item.sector,
+                (sectorCounts.get(item.sector) || 0) + 1
             )
         })
 
         return {
-            total: products.length,
-            categories: categories.length,
+            total: allData.length,
+            sectors: sectorCounts.size,
             countries: uniqueCountries.size,
-            filtered: filteredProducts.length,
+            filtered: filteredItems.length,
+            sectorBreakdown: Object.fromEntries(sectorCounts),
         }
-    }, [products, categories, filteredProducts])
+    }, [allData, filteredItems])
 
-    // Si un produit est sélectionné, afficher la vue détaillée
+    // Si un élément est sélectionné, afficher la vue détaillée
     if (selectedProductId) {
-        const selectedProduct = products.find(p => p.id === selectedProductId)
+        const selectedItem = allData.find(
+            item => item.id.toString() === selectedProductId
+        )
 
         return (
             <div className="min-h-screen bg-gray-50">
                 {/* Vue de comparaison */}
                 <div className="container mx-auto px-4 py-8">
                     <ProductComparisonView
-                        product={selectedProduct}
+                        product={selectedItem}
                         onToggleFavorite={() =>
                             toggleFavorite(selectedProductId)
                         }
@@ -284,11 +679,12 @@ const Produits: React.FC = () => {
                             <Package className="w-8 h-8" />
                         </div>
                         <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                            Marketplace AfricaHub
+                            Marketplace Unifiée AfricaHub
                         </h1>
                         <p className="text-lg md:text-xl mb-8 opacity-90 max-w-3xl mx-auto">
-                            🌍 Découvrez, comparez et choisissez les meilleurs
-                            produits et services dans toute l'Afrique
+                            🌍 Découvrez, comparez et choisissez parmi tous les
+                            secteurs : produits, banques, énergie, télécoms,
+                            transport et plus encore !
                         </p>
 
                         {/* Statistiques */}
@@ -303,7 +699,7 @@ const Produits: React.FC = () => {
                                     {stats.total}
                                 </div>
                                 <div className="text-xs opacity-80">
-                                    📦 Produits
+                                    📊 Total
                                 </div>
                             </motion.div>
                             <motion.div
@@ -313,7 +709,7 @@ const Produits: React.FC = () => {
                                 className="bg-white/10 backdrop-blur-sm rounded-xl p-3"
                             >
                                 <div className="text-2xl font-bold">
-                                    {stats.categories}
+                                    {stats.sectors}
                                 </div>
                                 <div className="text-xs opacity-80">
                                     🏢 Secteurs
@@ -439,41 +835,89 @@ const Produits: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* Filtres rapides par catégorie */}
+                        {/* Filtres rapides par secteur */}
                         <div className="flex flex-wrap gap-2 mb-4">
-                            <Button
-                                variant={
-                                    filters.category === "all"
-                                        ? "default"
-                                        : "outline"
-                                }
-                                size="sm"
-                                onClick={() => updateFilter("category", "all")}
-                                className="rounded-full"
-                            >
-                                🌍 Tous
-                            </Button>
-                            {categories.slice(0, 6).map(category => (
+                            {sectorOptions.map(sector => {
+                                const IconComponent = sector.icon
+                                const count =
+                                    stats.sectorBreakdown[sector.value] || 0
+                                return (
+                                    <Button
+                                        key={sector.value}
+                                        variant={
+                                            filters.sector === sector.value
+                                                ? "default"
+                                                : "outline"
+                                        }
+                                        size="sm"
+                                        onClick={() =>
+                                            updateFilter("sector", sector.value)
+                                        }
+                                        className="rounded-full flex items-center gap-2"
+                                    >
+                                        <IconComponent className="w-4 h-4" />
+                                        {sector.label
+                                            .split(" ")
+                                            .slice(1)
+                                            .join(" ")}
+                                        {sector.value !== "all" && (
+                                            <Badge
+                                                variant="secondary"
+                                                className="ml-1"
+                                            >
+                                                {count}
+                                            </Badge>
+                                        )}
+                                    </Button>
+                                )
+                            })}
+                        </div>
+
+                        {/* Filtres rapides par catégorie (pour les produits uniquement) */}
+                        {filters.sector === "products" && (
+                            <div className="flex flex-wrap gap-2 mb-4">
                                 <Button
-                                    key={category.slug}
                                     variant={
-                                        filters.category === category.slug
+                                        filters.category === "all"
                                             ? "default"
                                             : "outline"
                                     }
                                     size="sm"
                                     onClick={() =>
-                                        updateFilter("category", category.slug)
+                                        updateFilter("category", "all")
                                     }
                                     className="rounded-full"
                                 >
-                                    {category.icon} {category.name}
-                                    <Badge variant="secondary" className="ml-2">
-                                        {category.count}
-                                    </Badge>
+                                    🌍 Toutes catégories
                                 </Button>
-                            ))}
-                        </div>
+                                {categories.slice(0, 6).map(category => (
+                                    <Button
+                                        key={category.slug}
+                                        variant={
+                                            filters.category === category.slug
+                                                ? "default"
+                                                : "outline"
+                                        }
+                                        size="sm"
+                                        onClick={() =>
+                                            updateFilter(
+                                                "category",
+                                                category.slug
+                                            )
+                                        }
+                                        className="rounded-full"
+                                    >
+                                        {category.icon} {category.name}
+                                        <Badge
+                                            variant="secondary"
+                                            className="ml-2"
+                                        >
+                                            {category.count}
+                                        </Badge>
+                                    </Button>
+                                ))}
+                            </div>
+                        )}
 
                         {/* Filtres secondaires */}
                         <div className="flex flex-wrap gap-4">
@@ -556,8 +1000,8 @@ const Produits: React.FC = () => {
                     </Card>
                 </motion.div>
 
-                {/* Grille de produits */}
-                {filteredProducts.length > 0 ? (
+                {/* Grille d'éléments unifiés */}
+                {filteredItems.length > 0 ? (
                     <AnimatePresence mode="wait">
                         {filters.viewMode === "grid" ? (
                             <motion.div
@@ -567,99 +1011,130 @@ const Produits: React.FC = () => {
                                 exit={{ opacity: 0 }}
                                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
                             >
-                                {filteredProducts.map((product, index) => (
-                                    <motion.div
-                                        key={product.id}
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: index * 0.05 }}
-                                        whileHover={{ y: -5 }}
-                                        className="cursor-pointer"
-                                        onClick={() =>
-                                            handleProductClick(product.id)
-                                        }
-                                    >
-                                        <Card className="h-full hover:shadow-lg transition-all duration-300 border-0 bg-white/80 backdrop-blur-sm">
-                                            <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 rounded-t-lg flex items-center justify-center">
-                                                <Package className="w-12 h-12 text-gray-400" />
-                                            </div>
-                                            <CardContent className="p-4">
-                                                <div className="flex items-start justify-between mb-2">
-                                                    <h3 className="font-semibold text-sm line-clamp-2 flex-1">
-                                                        {product.name}
-                                                    </h3>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        onClick={e => {
-                                                            e.stopPropagation()
-                                                            toggleFavorite(
-                                                                product.id
-                                                            )
-                                                        }}
-                                                        className="ml-2 p-1 h-8 w-8"
+                                {filteredItems.map((item, index) => {
+                                    const IconComponent = getSectorIcon(
+                                        item.sector
+                                    )
+                                    const priceFormatted = formatPrice(item)
+                                    const secondaryInfo = getSecondaryInfo(item)
+
+                                    return (
+                                        <motion.div
+                                            key={item.id} // Utiliser l'ID unique généré
+                                            initial={{ opacity: 0, y: 20 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: index * 0.05 }}
+                                            whileHover={{ y: -5 }}
+                                            className="cursor-pointer"
+                                            onClick={() =>
+                                                handleProductClick(item.id)
+                                            }
+                                        >
+                                            <Card className="h-full hover:shadow-lg transition-all duration-300 border-0 bg-white/80 backdrop-blur-sm">
+                                                <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 rounded-t-lg flex items-center justify-center relative">
+                                                    <IconComponent className="w-12 h-12 text-gray-400" />
+                                                    {/* Badge secteur */}
+                                                    <Badge
+                                                        variant="secondary"
+                                                        className="absolute top-2 right-2 text-xs"
                                                     >
-                                                        <Heart
-                                                            className={`w-4 h-4 ${
-                                                                favoritesList.includes(
-                                                                    product.id
-                                                                )
-                                                                    ? "fill-red-500 text-red-500"
-                                                                    : "text-gray-400"
-                                                            }`}
-                                                        />
-                                                    </Button>
+                                                        {sectorOptions
+                                                            .find(
+                                                                s =>
+                                                                    s.value ===
+                                                                    item.sector
+                                                            )
+                                                            ?.label.split(
+                                                                " "
+                                                            )[1] || item.sector}
+                                                    </Badge>
+                                                    {/* Badge rating si disponible */}
+                                                    {item.rating && (
+                                                        <Badge
+                                                            variant="default"
+                                                            className="absolute top-2 left-2 text-xs bg-yellow-500"
+                                                        >
+                                                            ⭐ {item.rating}
+                                                        </Badge>
+                                                    )}
                                                 </div>
-                                                <p className="text-xs text-gray-600 mb-3 line-clamp-2">
-                                                    {product.description}
-                                                </p>
-                                                <div className="flex items-center justify-between">
-                                                    <div>
-                                                        <div className="text-lg font-bold text-marineBlue-600">
-                                                            {product.price?.toLocaleString()}{" "}
-                                                            {product.currency}
-                                                        </div>
-                                                        <div className="text-xs text-gray-500">
-                                                            {
-                                                                product
-                                                                    .companies
-                                                                    ?.name
-                                                            }
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex gap-1">
+                                                <CardContent className="p-4">
+                                                    <div className="flex items-start justify-between mb-2">
+                                                        <h3 className="font-semibold text-sm line-clamp-2 flex-1">
+                                                            {item.name}
+                                                        </h3>
                                                         <Button
-                                                            variant="outline"
+                                                            variant="ghost"
                                                             size="sm"
                                                             onClick={e => {
                                                                 e.stopPropagation()
-                                                                toggleCompare(
-                                                                    product.id
+                                                                toggleFavorite(
+                                                                    item.id.toString()
                                                                 )
                                                             }}
-                                                            className="p-1 h-8 w-8"
+                                                            className="ml-2 p-1 h-8 w-8"
                                                         >
-                                                            <Scale className="w-3 h-3" />
-                                                        </Button>
-                                                        <Button
-                                                            variant="outline"
-                                                            size="sm"
-                                                            onClick={e => {
-                                                                e.stopPropagation()
-                                                                handleProductClick(
-                                                                    product.id
-                                                                )
-                                                            }}
-                                                            className="p-1 h-8 w-8"
-                                                        >
-                                                            <Eye className="w-3 h-3" />
+                                                            <Heart
+                                                                className={`w-4 h-4 ${
+                                                                    favoritesList.includes(
+                                                                        item.id.toString()
+                                                                    )
+                                                                        ? "fill-red-500 text-red-500"
+                                                                        : "text-gray-400"
+                                                                }`}
+                                                            />
                                                         </Button>
                                                     </div>
-                                                </div>
-                                            </CardContent>
-                                        </Card>
-                                    </motion.div>
-                                ))}
+                                                    <p className="text-xs text-gray-600 mb-3 line-clamp-2">
+                                                        {item.description}
+                                                    </p>
+                                                    <div className="flex items-center justify-between">
+                                                        <div>
+                                                            {priceFormatted && (
+                                                                <div className="text-lg font-bold text-marineBlue-600">
+                                                                    {
+                                                                        priceFormatted
+                                                                    }
+                                                                </div>
+                                                            )}
+                                                            <div className="text-xs text-gray-500">
+                                                                {secondaryInfo}
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex gap-1">
+                                                            <Button
+                                                                variant="outline"
+                                                                size="sm"
+                                                                onClick={e => {
+                                                                    e.stopPropagation()
+                                                                    toggleCompare(
+                                                                        item.id.toString()
+                                                                    )
+                                                                }}
+                                                                className="p-1 h-8 w-8"
+                                                            >
+                                                                <Scale className="w-3 h-3" />
+                                                            </Button>
+                                                            <Button
+                                                                variant="outline"
+                                                                size="sm"
+                                                                onClick={e => {
+                                                                    e.stopPropagation()
+                                                                    handleProductClick(
+                                                                        item.id
+                                                                    )
+                                                                }}
+                                                                className="p-1 h-8 w-8"
+                                                            >
+                                                                <Eye className="w-3 h-3" />
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </CardContent>
+                                            </Card>
+                                        </motion.div>
+                                    )
+                                })}
                             </motion.div>
                         ) : (
                             <motion.div
@@ -669,106 +1144,154 @@ const Produits: React.FC = () => {
                                 exit={{ opacity: 0 }}
                                 className="space-y-4"
                             >
-                                {filteredProducts.map((product, index) => (
-                                    <motion.div
-                                        key={product.id}
-                                        initial={{ opacity: 0, x: -20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: index * 0.05 }}
-                                        className="cursor-pointer"
-                                        onClick={() =>
-                                            handleProductClick(product.id)
-                                        }
-                                    >
-                                        <Card className="hover:shadow-lg transition-all duration-300 border-0 bg-white/80 backdrop-blur-sm">
-                                            <CardContent className="p-4">
-                                                <div className="flex gap-4">
-                                                    <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center flex-shrink-0">
-                                                        <Package className="w-8 h-8 text-gray-400" />
-                                                    </div>
-                                                    <div className="flex-1 min-w-0">
-                                                        <div className="flex items-start justify-between mb-2">
-                                                            <h3 className="font-semibold text-lg line-clamp-1">
-                                                                {product.name}
-                                                            </h3>
-                                                            <div className="flex gap-2 ml-4">
-                                                                <Button
-                                                                    variant="ghost"
-                                                                    size="sm"
-                                                                    onClick={e => {
-                                                                        e.stopPropagation()
-                                                                        toggleFavorite(
-                                                                            product.id
-                                                                        )
-                                                                    }}
-                                                                    className="p-2"
-                                                                >
-                                                                    <Heart
-                                                                        className={`w-4 h-4 ${
-                                                                            favoritesList.includes(
-                                                                                product.id
+                                {filteredItems.map((item, index) => {
+                                    const IconComponent = getSectorIcon(
+                                        item.sector
+                                    )
+                                    const priceFormatted = formatPrice(item)
+                                    const secondaryInfo = getSecondaryInfo(item)
+
+                                    return (
+                                        <motion.div
+                                            key={item.id} // Utiliser l'ID unique généré
+                                            initial={{ opacity: 0, x: -20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: index * 0.05 }}
+                                            className="cursor-pointer"
+                                            onClick={() =>
+                                                handleProductClick(item.id)
+                                            }
+                                        >
+                                            <Card className="hover:shadow-lg transition-all duration-300 border-0 bg-white/80 backdrop-blur-sm">
+                                                <CardContent className="p-4">
+                                                    <div className="flex gap-4">
+                                                        <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center flex-shrink-0 relative">
+                                                            <IconComponent className="w-8 h-8 text-gray-400" />
+                                                            {/* Badge secteur */}
+                                                            <Badge
+                                                                variant="secondary"
+                                                                className="absolute -top-1 -right-1 text-xs"
+                                                            >
+                                                                {sectorOptions
+                                                                    .find(
+                                                                        s =>
+                                                                            s.value ===
+                                                                            item.sector
+                                                                    )
+                                                                    ?.label.split(
+                                                                        " "
+                                                                    )[1] ||
+                                                                    item.sector}
+                                                            </Badge>
+                                                        </div>
+                                                        <div className="flex-1 min-w-0">
+                                                            <div className="flex items-start justify-between mb-2">
+                                                                <div className="flex-1">
+                                                                    <h3 className="font-semibold text-lg line-clamp-1">
+                                                                        {
+                                                                            item.name
+                                                                        }
+                                                                    </h3>
+                                                                    {item.rating && (
+                                                                        <div className="flex items-center gap-1 mt-1">
+                                                                            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                                                                            <span className="text-sm text-gray-600">
+                                                                                {
+                                                                                    item.rating
+                                                                                }
+                                                                            </span>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                                <div className="flex gap-2 ml-4">
+                                                                    <Button
+                                                                        variant="ghost"
+                                                                        size="sm"
+                                                                        onClick={e => {
+                                                                            e.stopPropagation()
+                                                                            toggleFavorite(
+                                                                                item.id.toString()
                                                                             )
-                                                                                ? "fill-red-500 text-red-500"
-                                                                                : "text-gray-400"
-                                                                        }`}
-                                                                    />
-                                                                </Button>
+                                                                        }}
+                                                                        className="p-2"
+                                                                    >
+                                                                        <Heart
+                                                                            className={`w-4 h-4 ${
+                                                                                favoritesList.includes(
+                                                                                    item.id.toString()
+                                                                                )
+                                                                                    ? "fill-red-500 text-red-500"
+                                                                                    : "text-gray-400"
+                                                                            }`}
+                                                                        />
+                                                                    </Button>
+                                                                    <Button
+                                                                        variant="outline"
+                                                                        size="sm"
+                                                                        onClick={e => {
+                                                                            e.stopPropagation()
+                                                                            toggleCompare(
+                                                                                item.id.toString()
+                                                                            )
+                                                                        }}
+                                                                        className="p-2"
+                                                                    >
+                                                                        <Scale className="w-4 h-4" />
+                                                                    </Button>
+                                                                </div>
+                                                            </div>
+                                                            <p className="text-gray-600 mb-3 line-clamp-2">
+                                                                {
+                                                                    item.description
+                                                                }
+                                                            </p>
+                                                            <div className="flex items-center justify-between">
+                                                                <div>
+                                                                    {priceFormatted && (
+                                                                        <div className="text-xl font-bold text-marineBlue-600">
+                                                                            {
+                                                                                priceFormatted
+                                                                            }
+                                                                        </div>
+                                                                    )}
+                                                                    <div className="text-sm text-gray-500">
+                                                                        {
+                                                                            secondaryInfo
+                                                                        }
+                                                                    </div>
+                                                                    {/* Informations supplémentaires selon le secteur */}
+                                                                    {item.country && (
+                                                                        <div className="flex items-center gap-1 mt-1">
+                                                                            <MapPin className="w-3 h-3 text-gray-400" />
+                                                                            <span className="text-xs text-gray-500">
+                                                                                {
+                                                                                    item.country
+                                                                                }
+                                                                            </span>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
                                                                 <Button
                                                                     variant="outline"
-                                                                    size="sm"
                                                                     onClick={e => {
                                                                         e.stopPropagation()
-                                                                        toggleCompare(
-                                                                            product.id
+                                                                        handleProductClick(
+                                                                            item.id
                                                                         )
                                                                     }}
-                                                                    className="p-2"
+                                                                    className="flex items-center gap-2"
                                                                 >
-                                                                    <Scale className="w-4 h-4" />
+                                                                    <Eye className="w-4 h-4" />
+                                                                    Voir détails
                                                                 </Button>
                                                             </div>
                                                         </div>
-                                                        <p className="text-gray-600 mb-3 line-clamp-2">
-                                                            {
-                                                                product.description
-                                                            }
-                                                        </p>
-                                                        <div className="flex items-center justify-between">
-                                                            <div>
-                                                                <div className="text-xl font-bold text-marineBlue-600">
-                                                                    {product.price?.toLocaleString()}{" "}
-                                                                    {
-                                                                        product.currency
-                                                                    }
-                                                                </div>
-                                                                <div className="text-sm text-gray-500">
-                                                                    {
-                                                                        product
-                                                                            .companies
-                                                                            ?.name
-                                                                    }
-                                                                </div>
-                                                            </div>
-                                                            <Button
-                                                                variant="outline"
-                                                                onClick={e => {
-                                                                    e.stopPropagation()
-                                                                    handleProductClick(
-                                                                        product.id
-                                                                    )
-                                                                }}
-                                                                className="flex items-center gap-2"
-                                                            >
-                                                                <Eye className="w-4 h-4" />
-                                                                Voir détails
-                                                            </Button>
-                                                        </div>
                                                     </div>
-                                                </div>
-                                            </CardContent>
-                                        </Card>
-                                    </motion.div>
-                                ))}
+                                                </CardContent>
+                                            </Card>
+                                        </motion.div>
+                                    )
+                                })}
                             </motion.div>
                         )}
                     </AnimatePresence>
@@ -782,12 +1305,12 @@ const Produits: React.FC = () => {
                             <Package className="w-16 h-16 text-gray-400" />
                         </div>
                         <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                            Aucun produit trouvé
+                            Aucun résultat trouvé
                         </h3>
                         <p className="text-gray-600 mb-8 max-w-md mx-auto">
-                            Nous n'avons trouvé aucun produit correspondant à
-                            vos critères. Essayez de modifier vos filtres ou
-                            votre recherche.
+                            Nous n'avons trouvé aucun élément correspondant à
+                            vos critères dans les secteurs sélectionnés. Essayez
+                            de modifier vos filtres ou votre recherche.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
                             <Button onClick={() => updateFilter("search", "")}>
@@ -796,7 +1319,10 @@ const Produits: React.FC = () => {
                             </Button>
                             <Button
                                 variant="outline"
-                                onClick={() => updateFilter("category", "all")}
+                                onClick={() => {
+                                    updateFilter("sector", "all")
+                                    updateFilter("category", "all")
+                                }}
                             >
                                 <Filter className="w-4 h-4 mr-2" />
                                 Réinitialiser les filtres

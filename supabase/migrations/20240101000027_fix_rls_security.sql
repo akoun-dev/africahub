@@ -219,7 +219,7 @@ SELECT test_rls_security() as security_test_result;
 COMMENT ON POLICY "authenticated_users_read_own_profile" ON user_profiles IS 'Permet aux utilisateurs authentifiés de lire leur propre profil uniquement';
 COMMENT ON POLICY "admins_read_all_profiles" ON user_profiles IS 'Permet aux admins de lire tous les profils';
 COMMENT ON POLICY "authenticated_users_update_own_profile" ON user_profiles IS 'Permet aux utilisateurs de modifier leur propre profil';
-COMMENT ON POLICY "allow_profile_creation_on_signup" ON user_profiles IS 'Permet la création de profil lors de l\'inscription';
+COMMENT ON POLICY "allow_profile_creation_on_signup" ON user_profiles IS 'Permet la création de profil lors de l''inscription';
 COMMENT ON POLICY "only_admins_delete_profiles" ON user_profiles IS 'Seuls les admins peuvent supprimer des profils';
 
 COMMENT ON FUNCTION test_rls_security() IS 'Teste la sécurité RLS pour détecter les accès non autorisés';

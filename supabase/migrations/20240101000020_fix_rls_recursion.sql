@@ -29,43 +29,43 @@ DROP POLICY IF EXISTS "Allow permission assignment" ON user_permissions;
 DROP POLICY IF EXISTS "Only admins can revoke permissions" ON user_permissions;
 
 -- Créer une fonction sécurisée pour vérifier les rôles sans récursion
-CREATE OR REPLACE FUNCTION auth.get_user_role(user_id_param UUID DEFAULT NULL)
+CREATE OR REPLACE FUNCTION get_user_role(user_id_param UUID DEFAULT NULL)
 RETURNS TEXT AS $$
 DECLARE
     target_user_id UUID;
     user_role TEXT;
 BEGIN
     target_user_id := COALESCE(user_id_param, auth.uid());
-    
+
     -- Si pas d'utilisateur, retourner null
     IF target_user_id IS NULL THEN
         RETURN NULL;
     END IF;
-    
+
     -- Récupérer le rôle directement sans politique RLS
-    SELECT role INTO user_role 
-    FROM public.user_profiles 
+    SELECT role INTO user_role
+    FROM public.user_profiles
     WHERE user_id = target_user_id;
-    
+
     RETURN user_role;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Créer une fonction pour vérifier si l'utilisateur est admin
-CREATE OR REPLACE FUNCTION auth.is_admin(user_id_param UUID DEFAULT NULL)
+CREATE OR REPLACE FUNCTION is_admin(user_id_param UUID DEFAULT NULL)
 RETURNS BOOLEAN AS $$
 BEGIN
-    RETURN auth.get_user_role(user_id_param) = 'admin';
+    RETURN get_user_role(user_id_param) = 'admin';
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Créer une fonction pour vérifier si l'utilisateur est manager ou admin
-CREATE OR REPLACE FUNCTION auth.is_manager_or_admin(user_id_param UUID DEFAULT NULL)
+CREATE OR REPLACE FUNCTION is_manager_or_admin(user_id_param UUID DEFAULT NULL)
 RETURNS BOOLEAN AS $$
 DECLARE
     user_role TEXT;
 BEGIN
-    user_role := auth.get_user_role(user_id_param);
+    user_role := get_user_role(user_id_param);
     RETURN user_role IN ('admin', 'manager');
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -79,9 +79,9 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 CREATE POLICY "Users can view own profile" ON user_profiles
     FOR SELECT
     USING (
-        auth.uid() = user_id 
-        OR 
-        auth.is_manager_or_admin()
+        auth.uid() = user_id
+        OR
+        is_manager_or_admin()
     );
 
 -- Politique de mise à jour : Les utilisateurs peuvent modifier leur propre profil
@@ -89,9 +89,9 @@ CREATE POLICY "Users can view own profile" ON user_profiles
 CREATE POLICY "Users can update own profile" ON user_profiles
     FOR UPDATE
     USING (
-        auth.uid() = user_id 
-        OR 
-        auth.is_admin()
+        auth.uid() = user_id
+        OR
+        is_admin()
     );
 
 -- Politique d'insertion : Permettre l'insertion pour les nouveaux utilisateurs et les admins
@@ -105,13 +105,13 @@ CREATE POLICY "Allow profile creation" ON user_profiles
         auth.uid() = user_id
         OR
         -- Permettre aux admins de créer des profils
-        auth.is_admin()
+        is_admin()
     );
 
 -- Politique de suppression : Seuls les admins peuvent supprimer des profils
 CREATE POLICY "Only admins can delete profiles" ON user_profiles
     FOR DELETE
-    USING (auth.is_admin());
+    USING (is_admin());
 
 -- ============================================================================
 -- NOUVELLES POLITIQUES POUR merchant_profiles (sans récursion)
@@ -124,7 +124,7 @@ CREATE POLICY "Merchants can view own business profile" ON merchant_profiles
     USING (
         auth.uid() = user_id 
         OR 
-        auth.is_manager_or_admin()
+        is_manager_or_admin()
     );
 
 -- Politique de mise à jour : Les marchands peuvent modifier leur propre profil business
@@ -132,9 +132,9 @@ CREATE POLICY "Merchants can view own business profile" ON merchant_profiles
 CREATE POLICY "Merchants can update own business profile" ON merchant_profiles
     FOR UPDATE
     USING (
-        auth.uid() = user_id 
-        OR 
-        auth.is_manager_or_admin()
+        auth.uid() = user_id
+        OR
+        is_manager_or_admin()
     );
 
 -- Politique d'insertion : Les marchands peuvent créer leur profil business
@@ -142,9 +142,9 @@ CREATE POLICY "Merchants can update own business profile" ON merchant_profiles
 CREATE POLICY "Allow merchant profile creation" ON merchant_profiles
     FOR INSERT
     WITH CHECK (
-        auth.uid() = user_id 
-        OR 
-        auth.is_admin()
+        auth.uid() = user_id
+        OR
+        is_admin()
         OR
         -- Permettre l'insertion via les triggers
         auth.uid() IS NULL
@@ -153,7 +153,7 @@ CREATE POLICY "Allow merchant profile creation" ON merchant_profiles
 -- Politique de suppression : Seuls les admins peuvent supprimer des profils marchands
 CREATE POLICY "Only admins can delete merchant profiles" ON merchant_profiles
     FOR DELETE
-    USING (auth.is_admin());
+    USING (is_admin());
 
 -- ============================================================================
 -- NOUVELLES POLITIQUES POUR user_permissions (sans récursion)
@@ -166,7 +166,7 @@ CREATE POLICY "Users can view own permissions" ON user_permissions
     USING (
         auth.uid() = user_id 
         OR 
-        auth.is_admin()
+        is_admin()
     );
 
 -- Politique d'insertion : Seuls les admins peuvent accorder des permissions
@@ -177,13 +177,13 @@ CREATE POLICY "Allow permission assignment" ON user_permissions
         auth.uid() IS NULL
         OR
         -- Permettre aux admins d'accorder des permissions
-        auth.is_admin()
+        is_admin()
     );
 
 -- Politique de suppression : Seuls les admins peuvent révoquer des permissions
 CREATE POLICY "Only admins can revoke permissions" ON user_permissions
     FOR DELETE
-    USING (auth.is_admin());
+    USING (is_admin());
 
 -- Réactiver RLS sur toutes les tables
 ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
@@ -191,9 +191,9 @@ ALTER TABLE merchant_profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_permissions ENABLE ROW LEVEL SECURITY;
 
 -- Commentaires
-COMMENT ON FUNCTION auth.get_user_role(UUID) IS 'Récupère le rôle d''un utilisateur sans récursion RLS';
-COMMENT ON FUNCTION auth.is_admin(UUID) IS 'Vérifie si un utilisateur est admin sans récursion RLS';
-COMMENT ON FUNCTION auth.is_manager_or_admin(UUID) IS 'Vérifie si un utilisateur est manager ou admin sans récursion RLS';
+COMMENT ON FUNCTION get_user_role(UUID) IS 'Récupère le rôle d''un utilisateur sans récursion RLS';
+COMMENT ON FUNCTION is_admin(UUID) IS 'Vérifie si un utilisateur est admin sans récursion RLS';
+COMMENT ON FUNCTION is_manager_or_admin(UUID) IS 'Vérifie si un utilisateur est manager ou admin sans récursion RLS';
 
 -- Test de la fonction
 DO $$

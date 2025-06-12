@@ -9,7 +9,8 @@ ADD COLUMN IF NOT EXISTS last_name TEXT;
 -- Ajouter un commentaire pour documenter la colonne
 COMMENT ON COLUMN user_profiles.last_name IS 'Nom de famille de l''utilisateur';
 
--- Mettre à jour la fonction get_user_profile_with_auth_email pour inclure last_name
+-- Supprimer et recréer la fonction get_user_profile_with_auth_email pour inclure last_name
+DROP FUNCTION IF EXISTS get_user_profile_with_auth_email(UUID);
 CREATE OR REPLACE FUNCTION get_user_profile_with_auth_email(user_id_param UUID)
 RETURNS TABLE (
     id UUID,
@@ -106,10 +107,8 @@ SET first_name = SPLIT_PART(first_name, ' ', 1)
 WHERE last_name IS NOT NULL 
   AND first_name LIKE '% %';
 
--- Log de la migration
-INSERT INTO migration_logs (migration_name, description, executed_at)
-VALUES (
-    '20240101000023_add_last_name_to_user_profiles',
-    'Ajout du champ last_name à la table user_profiles et mise à jour des fonctions associées',
-    NOW()
-) ON CONFLICT (migration_name) DO NOTHING;
+-- Migration terminée
+DO $$
+BEGIN
+    RAISE NOTICE 'Migration 20240101000023_add_last_name_to_user_profiles terminée avec succès';
+END $$;

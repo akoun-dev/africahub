@@ -203,7 +203,7 @@ SELECT * FROM create_missing_user_profiles();
 
 COMMENT ON FUNCTION handle_new_user_signup() IS 'Crée automatiquement un profil utilisateur (et marchand si nécessaire) lors de l''inscription';
 COMMENT ON FUNCTION create_missing_user_profiles() IS 'Crée les profils manquants pour tous les utilisateurs existants';
-COMMENT ON TRIGGER on_auth_user_created ON auth.users IS 'Trigger pour créer automatiquement les profils lors de l''inscription';
+-- Note: Impossible de commenter le trigger sur auth.users (permissions insuffisantes)
 
 -- =============================================================================
 -- 7. VÉRIFICATIONS FINALES

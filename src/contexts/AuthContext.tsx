@@ -447,62 +447,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
             console.log("✅ Sign up successful:", data.user?.id)
 
-            // Créer le profil utilisateur manuellement après inscription réussie
+            // Vérifier que le profil a été créé automatiquement par le trigger
             if (data.user?.id) {
                 try {
-                    console.log("🔧 Création manuelle du profil utilisateur...")
+                    console.log(
+                        "🔍 Vérification de la création automatique du profil..."
+                    )
 
-                    // Générer un UUID valide pour le profil
-                    const profileId = crypto.randomUUID()
+                    // Attendre un peu pour que le trigger s'exécute
+                    await new Promise(resolve => setTimeout(resolve, 1000))
 
-                    // Créer le profil dans user_profiles
-                    console.log("📋 Données à insérer:", {
-                        id: profileId,
-                        user_id: data.user.id,
-                        email: userData.email,
-                        first_name: userData.first_name,
-                        last_name: userData.last_name,
-                        role: userData.role || "user",
-                    })
-
-                    const { data: insertResult, error: profileError } =
-                        await supabase
-                            .from("user_profiles")
-                            .insert({
-                                id: profileId,
-                                user_id: data.user.id,
-                                email: userData.email,
-                                first_name: userData.first_name,
-                                last_name: userData.last_name,
-                                role: userData.role || "user",
-                                status: "active",
-                                created_at: new Date().toISOString(),
-                                updated_at: new Date().toISOString(),
-                            })
-                            .select()
-
-                    if (profileError) {
-                        console.error(
-                            "❌ Erreur lors de la création du profil:",
-                            profileError
-                        )
-                        console.error(
-                            "📋 Détails de l'erreur:",
-                            profileError.message
-                        )
-                        console.error("🔍 Code d'erreur:", profileError.code)
-                        console.error("📝 Détails:", profileError.details)
-                        console.error("💡 Hint:", profileError.hint)
-                        // Ne pas faire échouer l'inscription pour autant
-                    } else {
-                        console.log(
-                            "✅ Profil utilisateur créé avec succès:",
-                            insertResult
-                        )
-                    }
-
-                    // Vérifier que le profil a bien été créé
-                    console.log("🔍 Vérification de la création du profil...")
+                    // Vérifier si le profil existe
                     const { data: checkProfile, error: checkError } =
                         await supabase
                             .from("user_profiles")
@@ -510,55 +465,103 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                             .eq("user_id", data.user.id)
                             .single()
 
-                    if (checkError) {
-                        console.error(
-                            "❌ Profil non trouvé après création:",
-                            checkError.message
+                    if (checkError || !checkProfile) {
+                        console.warn(
+                            "⚠️ Profil non trouvé, création manuelle..."
                         )
+
+                        // Utiliser la fonction sécurisée de création de profil
+                        const { data: createResult, error: createError } =
+                            await supabase.rpc(
+                                "create_user_profile_with_logs",
+                                {
+                                    p_user_id: data.user.id,
+                                    p_email: userData.email,
+                                    p_first_name: userData.first_name,
+                                    p_last_name: userData.last_name,
+                                    p_role: userData.role || "user",
+                                }
+                            )
+
+                        if (createError) {
+                            console.error(
+                                "❌ Erreur lors de la création manuelle:",
+                                createError
+                            )
+                        } else {
+                            console.log(
+                                "✅ Profil créé manuellement:",
+                                createResult
+                            )
+                        }
                     } else {
                         console.log(
-                            "✅ Profil confirmé dans la base:",
+                            "✅ Profil créé automatiquement:",
                             checkProfile
                         )
                     }
 
-                    // Créer les permissions de base
-                    const permissions = [
-                        {
-                            user_id: data.user.id,
-                            permission: "view_products",
-                            granted_by: data.user.id,
-                            granted_at: new Date().toISOString(),
-                        },
-                        {
-                            user_id: data.user.id,
-                            permission: "view_profile",
-                            granted_by: data.user.id,
-                            granted_at: new Date().toISOString(),
-                        },
-                        {
-                            user_id: data.user.id,
-                            permission: "edit_profile",
-                            granted_by: data.user.id,
-                            granted_at: new Date().toISOString(),
-                        },
-                    ]
+                    // Pour les marchands, vérifier le profil marchand
+                    if (userData.role === "merchant") {
+                        const { data: merchantProfile, error: merchantError } =
+                            await supabase
+                                .from("merchant_profiles")
+                                .select("*")
+                                .eq("user_id", data.user.id)
+                                .single()
 
-                    const { error: permissionsError } = await supabase
-                        .from("user_permissions")
-                        .insert(permissions)
+                        if (merchantError || !merchantProfile) {
+                            console.warn(
+                                "⚠️ Profil marchand non trouvé, création manuelle..."
+                            )
 
-                    if (permissionsError) {
-                        console.warn(
-                            "⚠️ Erreur lors de la création des permissions:",
-                            permissionsError
-                        )
-                    } else {
-                        console.log("✅ Permissions de base créées")
+                            // Créer le profil marchand manuellement si nécessaire
+                            const businessInfo = userData.business_info || {}
+                            const { error: merchantCreateError } =
+                                await supabase
+                                    .from("merchant_profiles")
+                                    .insert({
+                                        user_id: data.user.id,
+                                        business_name:
+                                            businessInfo.business_name ||
+                                            "Mon Entreprise",
+                                        business_sector:
+                                            businessInfo.business_sector ||
+                                            "Autre",
+                                        business_type:
+                                            businessInfo.business_type ||
+                                            "Autre",
+                                        business_description:
+                                            businessInfo.business_description,
+                                        business_address:
+                                            businessInfo.business_address,
+                                        business_phone:
+                                            businessInfo.business_phone,
+                                        business_email:
+                                            businessInfo.business_email,
+                                        verification_status: "pending",
+                                    })
+
+                            if (merchantCreateError) {
+                                console.error(
+                                    "❌ Erreur création profil marchand:",
+                                    merchantCreateError
+                                )
+                            } else {
+                                console.log(
+                                    "✅ Profil marchand créé manuellement"
+                                )
+                            }
+                        } else {
+                            console.log(
+                                "✅ Profil marchand créé automatiquement:",
+                                merchantProfile
+                            )
+                        }
                     }
                 } catch (profileCreationError) {
                     console.error(
-                        "💥 Erreur inattendue lors de la création du profil:",
+                        "💥 Erreur lors de la vérification/création du profil:",
                         profileCreationError
                     )
                     // Ne pas faire échouer l'inscription

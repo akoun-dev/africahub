@@ -13,15 +13,13 @@ BEGIN
         role,
         first_name,
         last_name,
-        email,
         created_at,
         updated_at
     ) VALUES (
         NEW.id,
         'user', -- Rôle par défaut
-        COALESCE(NEW.raw_user_meta_data->>'first_name', ''),
-        COALESCE(NEW.raw_user_meta_data->>'last_name', ''),
-        NEW.email,
+        COALESCE(NEW.raw_user_meta_data->>'first_name', 'Utilisateur'),
+        COALESCE(NEW.raw_user_meta_data->>'last_name', 'AfricaHub'),
         NOW(),
         NOW()
     );
@@ -49,13 +47,12 @@ CREATE TRIGGER trigger_create_user_profile
 CREATE OR REPLACE FUNCTION update_user_profile_from_auth()
 RETURNS TRIGGER AS $$
 BEGIN
-    -- Mettre à jour l'email dans le profil si il a changé
-    UPDATE user_profiles 
-    SET 
-        email = NEW.email,
+    -- Mettre à jour la date de modification dans le profil
+    UPDATE user_profiles
+    SET
         updated_at = NOW()
     WHERE user_id = NEW.id;
-    
+
     RETURN NEW;
 EXCEPTION
     WHEN OTHERS THEN
@@ -73,14 +70,15 @@ CREATE TRIGGER trigger_update_user_profile_from_auth
     EXECUTE FUNCTION update_user_profile_from_auth();
 
 -- Créer les profils manquants pour les utilisateurs existants
-INSERT INTO user_profiles (user_id, role, email, created_at, updated_at)
-SELECT 
+INSERT INTO user_profiles (user_id, role, first_name, last_name, created_at, updated_at)
+SELECT
     id,
     'user' as role,
-    email,
+    'Utilisateur',
+    'AfricaHub',
     created_at,
     updated_at
-FROM auth.users 
+FROM auth.users
 WHERE id NOT IN (SELECT user_id FROM user_profiles)
 ON CONFLICT (user_id) DO NOTHING;
 

@@ -8,6 +8,8 @@
 -- =============================================================================
 
 DO $$
+DECLARE
+    rec RECORD;
 BEGIN
     -- Vérifier que la table user_profiles existe
     IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'user_profiles') THEN
@@ -15,13 +17,13 @@ BEGIN
     ELSE
         RAISE NOTICE '❌ Table user_profiles n''existe pas';
     END IF;
-    
+
     -- Lister les colonnes de la table
     RAISE NOTICE '📋 Colonnes de user_profiles:';
-    FOR rec IN 
-        SELECT column_name, data_type, is_nullable 
-        FROM information_schema.columns 
-        WHERE table_name = 'user_profiles' 
+    FOR rec IN
+        SELECT column_name, data_type, is_nullable
+        FROM information_schema.columns
+        WHERE table_name = 'user_profiles'
         ORDER BY ordinal_position
     LOOP
         RAISE NOTICE '  - %: % (nullable: %)', rec.column_name, rec.data_type, rec.is_nullable;

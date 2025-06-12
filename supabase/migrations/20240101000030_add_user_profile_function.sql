@@ -87,6 +87,9 @@ $$;
 -- 3. CRÉER UNE FONCTION POUR CRÉER UN PROFIL UTILISATEUR SÉCURISÉ
 -- =============================================================================
 
+-- Supprimer l'ancienne fonction si elle existe
+DROP FUNCTION IF EXISTS create_user_profile_safe(UUID, TEXT, TEXT, TEXT, TEXT);
+
 CREATE OR REPLACE FUNCTION create_user_profile_safe(
     p_user_id UUID,
     p_email TEXT,
