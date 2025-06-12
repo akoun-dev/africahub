@@ -46,7 +46,7 @@ export class OfflineCacheService {
 
     // Store in persistent storage
     if (Capacitor.isNativePlatform()) {
-      await Storage.set({
+      await Preferences.set({
         key: `cache_${key}`,
         value: JSON.stringify(entry),
       });
