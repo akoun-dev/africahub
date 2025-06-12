@@ -1,0 +1,555 @@
+{
+    "products": [
+        {
+            "id": "airpods-pro-ci",
+            "name": "Apple AirPods Pro (2ème génération)",
+            "category": "Écouteurs Bluetooth",
+            "description": "Écouteurs sans fil avec réduction de bruit active et audio spatial",
+            "image": "/images/products/airpods-pro.jpg",
+            "rating": 4.5,
+            "reviews": 1247,
+            "features": [
+                "Réduction de bruit active",
+                "Audio spatial",
+                "Résistant à l'eau IPX4",
+                "Autonomie 6h + 24h avec boîtier",
+                "Charge sans fil"
+            ],
+            "specifications": {
+                "connectivity": "Bluetooth 5.3",
+                "battery": "6h + 24h",
+                "waterproof": "IPX4",
+                "weight": "5.3g par écouteur"
+            },
+            "offers": [
+                {
+                    "merchant": "Orange Côte d'Ivoire",
+                    "price": 185000,
+                    "currency": "XOF",
+                    "shipping": 2500,
+                    "delivery": "2-3 jours",
+                    "stock": "En stock",
+                    "rating": 4.2,
+                    "logo": "/images/merchants/orange-ci.png",
+                    "payment_methods": ["Orange Money", "Visa", "Mastercard"],
+                    "warranty": "12 mois"
+                },
+                {
+                    "merchant": "MTN Store Abidjan",
+                    "price": 179000,
+                    "currency": "XOF",
+                    "shipping": 0,
+                    "delivery": "Retrait en magasin",
+                    "stock": "En stock",
+                    "rating": 4.5,
+                    "logo": "/images/merchants/mtn-ci.png",
+                    "payment_methods": ["MTN Money", "Visa", "Espèces"],
+                    "warranty": "12 mois"
+                },
+                {
+                    "merchant": "Jumia Côte d'Ivoire",
+                    "price": 195000,
+                    "currency": "XOF",
+                    "shipping": 3000,
+                    "delivery": "3-5 jours",
+                    "stock": "Stock limité",
+                    "rating": 4.0,
+                    "logo": "/images/merchants/jumia.png",
+                    "payment_methods": [
+                        "Visa",
+                        "Mastercard",
+                        "Paiement à la livraison"
+                    ],
+                    "warranty": "6 mois"
+                }
+            ],
+            "country_availability": ["CI", "SN", "ML", "BF"],
+            "created_at": "2024-01-15T10:00:00Z",
+            "updated_at": "2024-01-20T15:30:00Z"
+        },
+        {
+            "id": "samsung-galaxy-buds-3",
+            "name": "Samsung Galaxy Buds 3 Pro",
+            "category": "Écouteurs Bluetooth",
+            "description": "Écouteurs premium avec ANC et son Hi-Fi",
+            "image": "/images/products/galaxy-buds-3.jpg",
+            "rating": 4.3,
+            "reviews": 892,
+            "features": [
+                "ANC adaptatif",
+                "Son Hi-Fi 360°",
+                "Résistant IPX7",
+                "Autonomie 8h + 20h",
+                "Charge rapide"
+            ],
+            "specifications": {
+                "connectivity": "Bluetooth 5.3",
+                "battery": "8h + 20h",
+                "waterproof": "IPX7",
+                "weight": "5.4g par écouteur"
+            },
+            "offers": [
+                {
+                    "merchant": "Samsung Store Dakar",
+                    "price": 165000,
+                    "currency": "XOF",
+                    "shipping": 2000,
+                    "delivery": "1-2 jours",
+                    "stock": "En stock",
+                    "rating": 4.6,
+                    "logo": "/images/merchants/samsung.png",
+                    "payment_methods": ["Wave", "Visa", "Mastercard"],
+                    "warranty": "24 mois"
+                },
+                {
+                    "merchant": "Electroplanet Maroc",
+                    "price": 1299,
+                    "currency": "MAD",
+                    "shipping": 50,
+                    "delivery": "24h",
+                    "stock": "En stock",
+                    "rating": 4.4,
+                    "logo": "/images/merchants/electroplanet.png",
+                    "payment_methods": ["Visa", "Mastercard", "Virement"],
+                    "warranty": "12 mois"
+                }
+            ],
+            "country_availability": ["SN", "MA", "TN", "CI"],
+            "created_at": "2024-01-10T08:00:00Z",
+            "updated_at": "2024-01-18T12:00:00Z"
+        },
+        {
+            "id": "xiaomi-redmi-buds-4",
+            "name": "Xiaomi Redmi Buds 4 Pro",
+            "category": "Écouteurs Bluetooth",
+            "description": "Écouteurs abordables avec excellente qualité sonore",
+            "image": "/images/products/redmi-buds-4.jpg",
+            "rating": 4.1,
+            "reviews": 1567,
+            "features": [
+                "Réduction de bruit",
+                "Pilotes 12.4mm",
+                "Résistant IP54",
+                "Autonomie 9h + 27h",
+                "Charge USB-C"
+            ],
+            "specifications": {
+                "connectivity": "Bluetooth 5.2",
+                "battery": "9h + 27h",
+                "waterproof": "IP54",
+                "weight": "4.9g par écouteur"
+            },
+            "offers": [
+                {
+                    "merchant": "Mi Store Lagos",
+                    "price": 45000,
+                    "currency": "NGN",
+                    "shipping": 2000,
+                    "delivery": "2-4 jours",
+                    "stock": "En stock",
+                    "rating": 4.3,
+                    "logo": "/images/merchants/mi-store.png",
+                    "payment_methods": ["Paystack", "Visa", "Mastercard"],
+                    "warranty": "12 mois"
+                },
+                {
+                    "merchant": "Konga Nigeria",
+                    "price": 48500,
+                    "currency": "NGN",
+                    "shipping": 1500,
+                    "delivery": "3-5 jours",
+                    "stock": "Stock limité",
+                    "rating": 4.0,
+                    "logo": "/images/merchants/konga.png",
+                    "payment_methods": [
+                        "Paystack",
+                        "Bank Transfer",
+                        "Cash on Delivery"
+                    ],
+                    "warranty": "6 mois"
+                }
+            ],
+            "country_availability": ["NG", "GH", "KE", "ZA"],
+            "created_at": "2024-01-05T14:00:00Z",
+            "updated_at": "2024-01-19T09:15:00Z"
+        },
+        {
+            "id": "iphone-15-pro",
+            "name": "Apple iPhone 15 Pro",
+            "category": "Smartphones",
+            "description": "Smartphone premium avec puce A17 Pro et appareil photo professionnel",
+            "image": "/images/products/iphone-15-pro.jpg",
+            "rating": 4.7,
+            "reviews": 2341,
+            "features": [
+                "Puce A17 Pro",
+                "Appareil photo 48MP",
+                "Écran ProMotion 120Hz",
+                "Titane Grade 5",
+                "USB-C"
+            ],
+            "specifications": {
+                "screen": "6.1 pouces Super Retina XDR",
+                "storage": "128GB/256GB/512GB/1TB",
+                "camera": "48MP + 12MP + 12MP",
+                "battery": "Jusqu'à 23h de vidéo"
+            },
+            "offers": [
+                {
+                    "merchant": "iStore Casablanca",
+                    "price": 12999,
+                    "currency": "MAD",
+                    "shipping": 0,
+                    "delivery": "Retrait gratuit",
+                    "stock": "En stock",
+                    "rating": 4.8,
+                    "logo": "/images/merchants/istore.png",
+                    "payment_methods": [
+                        "Visa",
+                        "Mastercard",
+                        "Virement",
+                        "3x sans frais"
+                    ],
+                    "warranty": "12 mois Apple"
+                },
+                {
+                    "merchant": "Marjane Maroc",
+                    "price": 13499,
+                    "currency": "MAD",
+                    "shipping": 99,
+                    "delivery": "2-3 jours",
+                    "stock": "Stock limité",
+                    "rating": 4.2,
+                    "logo": "/images/merchants/marjane.png",
+                    "payment_methods": ["Visa", "Mastercard", "Carte Marjane"],
+                    "warranty": "12 mois"
+                }
+            ],
+            "country_availability": ["MA", "TN", "EG", "CI", "SN"],
+            "created_at": "2024-01-12T11:00:00Z",
+            "updated_at": "2024-01-21T16:45:00Z"
+        },
+        {
+            "id": "samsung-galaxy-s24",
+            "name": "Samsung Galaxy S24",
+            "category": "Smartphones",
+            "description": "Smartphone Android avec IA intégrée et appareil photo avancé",
+            "image": "/images/products/galaxy-s24.jpg",
+            "rating": 4.5,
+            "reviews": 1876,
+            "features": [
+                "Snapdragon 8 Gen 3",
+                "IA Galaxy AI",
+                "Appareil photo 50MP",
+                "Écran Dynamic AMOLED 2X",
+                "Charge rapide 25W"
+            ],
+            "specifications": {
+                "screen": "6.2 pouces Dynamic AMOLED 2X",
+                "storage": "128GB/256GB",
+                "camera": "50MP + 12MP + 10MP",
+                "battery": "4000mAh"
+            },
+            "offers": [
+                {
+                    "merchant": "Orange Tunisie",
+                    "price": 2299,
+                    "currency": "TND",
+                    "shipping": 15,
+                    "delivery": "24-48h",
+                    "stock": "En stock",
+                    "rating": 4.4,
+                    "logo": "/images/merchants/orange-tn.png",
+                    "payment_methods": ["Visa", "Mastercard", "Virement"],
+                    "warranty": "24 mois Samsung"
+                },
+                {
+                    "merchant": "Tunisianet",
+                    "price": 2199,
+                    "currency": "TND",
+                    "shipping": 10,
+                    "delivery": "2-3 jours",
+                    "stock": "En stock",
+                    "rating": 4.6,
+                    "logo": "/images/merchants/tunisianet.png",
+                    "payment_methods": ["Visa", "Mastercard", "Paiement 3x"],
+                    "warranty": "12 mois"
+                }
+            ],
+            "country_availability": ["TN", "MA", "EG", "DZ"],
+            "created_at": "2024-01-08T09:30:00Z",
+            "updated_at": "2024-01-20T14:20:00Z"
+        },
+        {
+            "id": "macbook-air-m3",
+            "name": "MacBook Air M3 13 pouces",
+            "category": "Ordinateurs portables",
+            "description": "Ordinateur portable ultra-fin avec puce M3 et autonomie exceptionnelle",
+            "image": "/images/products/macbook-air-m3.jpg",
+            "rating": 4.8,
+            "reviews": 987,
+            "features": [
+                "Puce Apple M3",
+                "Écran Liquid Retina 13.6\"",
+                "Autonomie 18h",
+                "8GB RAM unifiée",
+                "Charge MagSafe"
+            ],
+            "specifications": {
+                "processor": "Apple M3 8-core CPU",
+                "memory": "8GB/16GB/24GB",
+                "storage": "256GB/512GB/1TB/2TB SSD",
+                "display": "13.6\" Liquid Retina"
+            },
+            "offers": [
+                {
+                    "merchant": "Apple Store Le Caire",
+                    "price": 45000,
+                    "currency": "EGP",
+                    "shipping": 0,
+                    "delivery": "Retrait gratuit",
+                    "stock": "En stock",
+                    "rating": 4.9,
+                    "logo": "/images/merchants/apple-store.png",
+                    "payment_methods": [
+                        "Visa",
+                        "Mastercard",
+                        "Apple Pay",
+                        "Financement 0%"
+                    ],
+                    "warranty": "12 mois Apple"
+                },
+                {
+                    "merchant": "B.TECH Égypte",
+                    "price": 46500,
+                    "currency": "EGP",
+                    "shipping": 200,
+                    "delivery": "1-2 jours",
+                    "stock": "Stock limité",
+                    "rating": 4.3,
+                    "logo": "/images/merchants/btech.png",
+                    "payment_methods": ["Visa", "Mastercard", "Virement"],
+                    "warranty": "12 mois"
+                }
+            ],
+            "country_availability": ["EG", "MA", "TN", "ZA"],
+            "created_at": "2024-01-14T13:00:00Z",
+            "updated_at": "2024-01-22T10:30:00Z"
+        },
+        {
+            "id": "hp-pavilion-15",
+            "name": "HP Pavilion 15 AMD Ryzen 5",
+            "category": "Ordinateurs portables",
+            "description": "Ordinateur portable polyvalent pour le travail et les loisirs",
+            "image": "/images/products/hp-pavilion-15.jpg",
+            "rating": 4.2,
+            "reviews": 654,
+            "features": [
+                "AMD Ryzen 5 5500U",
+                "8GB RAM DDR4",
+                "SSD 512GB",
+                "Écran 15.6\" Full HD",
+                "Windows 11"
+            ],
+            "specifications": {
+                "processor": "AMD Ryzen 5 5500U",
+                "memory": "8GB DDR4",
+                "storage": "512GB SSD",
+                "display": "15.6\" Full HD IPS"
+            },
+            "offers": [
+                {
+                    "merchant": "Electroplanet Maroc",
+                    "price": 6999,
+                    "currency": "MAD",
+                    "shipping": 99,
+                    "delivery": "2-3 jours",
+                    "stock": "En stock",
+                    "rating": 4.4,
+                    "logo": "/images/merchants/electroplanet.png",
+                    "payment_methods": ["Visa", "Mastercard", "3x sans frais"],
+                    "warranty": "12 mois HP"
+                },
+                {
+                    "merchant": "Jumia Maroc",
+                    "price": 7299,
+                    "currency": "MAD",
+                    "shipping": 0,
+                    "delivery": "Livraison gratuite",
+                    "stock": "Stock limité",
+                    "rating": 4.1,
+                    "logo": "/images/merchants/jumia.png",
+                    "payment_methods": [
+                        "Visa",
+                        "Mastercard",
+                        "Paiement à la livraison"
+                    ],
+                    "warranty": "6 mois"
+                }
+            ],
+            "country_availability": ["MA", "TN", "DZ"],
+            "created_at": "2024-01-16T14:00:00Z",
+            "updated_at": "2024-01-23T11:15:00Z"
+        },
+        {
+            "id": "apple-watch-series-9",
+            "name": "Apple Watch Series 9 GPS 45mm",
+            "category": "Montres connectées",
+            "description": "Montre connectée avec puce S9 et écran Always-On",
+            "image": "/images/products/apple-watch-9.jpg",
+            "rating": 4.6,
+            "reviews": 1432,
+            "features": [
+                "Puce S9 ultra-rapide",
+                "Écran Always-On Retina",
+                "Résistant à l'eau 50m",
+                "Suivi santé avancé",
+                "Autonomie 18h"
+            ],
+            "specifications": {
+                "display": "45mm Always-On Retina",
+                "connectivity": "GPS + Cellular",
+                "battery": "Jusqu'à 18h",
+                "sensors": "ECG, SpO2, Température"
+            },
+            "offers": [
+                {
+                    "merchant": "Orange Sénégal",
+                    "price": 285000,
+                    "currency": "XOF",
+                    "shipping": 5000,
+                    "delivery": "24-48h",
+                    "stock": "En stock",
+                    "rating": 4.3,
+                    "logo": "/images/merchants/orange-sn.png",
+                    "payment_methods": ["Orange Money", "Visa", "Mastercard"],
+                    "warranty": "12 mois Apple"
+                },
+                {
+                    "merchant": "Free Sénégal",
+                    "price": 279000,
+                    "currency": "XOF",
+                    "shipping": 3000,
+                    "delivery": "2-3 jours",
+                    "stock": "En stock",
+                    "rating": 4.5,
+                    "logo": "/images/merchants/free-sn.png",
+                    "payment_methods": ["Free Money", "Visa", "Virement"],
+                    "warranty": "12 mois"
+                }
+            ],
+            "country_availability": ["SN", "CI", "ML", "BF"],
+            "created_at": "2024-01-18T09:00:00Z",
+            "updated_at": "2024-01-24T16:30:00Z"
+        },
+        {
+            "id": "samsung-galaxy-tab-s9",
+            "name": "Samsung Galaxy Tab S9 11 pouces",
+            "category": "Tablettes",
+            "description": "Tablette premium avec S Pen inclus et écran Dynamic AMOLED",
+            "image": "/images/products/galaxy-tab-s9.jpg",
+            "rating": 4.4,
+            "reviews": 789,
+            "features": [
+                "Snapdragon 8 Gen 2",
+                "Écran Dynamic AMOLED 2X",
+                "S Pen inclus",
+                "8GB RAM + 128GB",
+                "Résistant à l'eau IP68"
+            ],
+            "specifications": {
+                "processor": "Snapdragon 8 Gen 2",
+                "memory": "8GB RAM",
+                "storage": "128GB/256GB",
+                "display": "11\" Dynamic AMOLED 2X"
+            },
+            "offers": [
+                {
+                    "merchant": "Vodacom Afrique du Sud",
+                    "price": 12999,
+                    "currency": "ZAR",
+                    "shipping": 150,
+                    "delivery": "1-2 jours",
+                    "stock": "En stock",
+                    "rating": 4.6,
+                    "logo": "/images/merchants/vodacom.png",
+                    "payment_methods": ["Visa", "Mastercard", "EFT"],
+                    "warranty": "24 mois Samsung"
+                },
+                {
+                    "merchant": "Takealot Afrique du Sud",
+                    "price": 13499,
+                    "currency": "ZAR",
+                    "shipping": 0,
+                    "delivery": "Livraison gratuite",
+                    "stock": "Stock limité",
+                    "rating": 4.2,
+                    "logo": "/images/merchants/takealot.png",
+                    "payment_methods": ["Visa", "Mastercard", "PayFast"],
+                    "warranty": "12 mois"
+                }
+            ],
+            "country_availability": ["ZA", "NG", "KE", "GH"],
+            "created_at": "2024-01-20T12:00:00Z",
+            "updated_at": "2024-01-25T14:45:00Z"
+        }
+    ],
+    "categories": [
+        {
+            "id": "ecouteurs-bluetooth",
+            "name": "Écouteurs Bluetooth",
+            "icon": "🎧",
+            "description": "Écouteurs sans fil et accessoires audio"
+        },
+        {
+            "id": "smartphones",
+            "name": "Smartphones",
+            "icon": "📱",
+            "description": "Téléphones intelligents et accessoires"
+        },
+        {
+            "id": "ordinateurs-portables",
+            "name": "Ordinateurs portables",
+            "icon": "💻",
+            "description": "Laptops et ultrabooks"
+        },
+        {
+            "id": "tablettes",
+            "name": "Tablettes",
+            "icon": "📱",
+            "description": "Tablettes tactiles et e-readers"
+        },
+        {
+            "id": "montres-connectees",
+            "name": "Montres connectées",
+            "icon": "⌚",
+            "description": "Smartwatches et bracelets fitness"
+        }
+    ],
+    "merchants": [
+        {
+            "id": "orange-ci",
+            "name": "Orange Côte d'Ivoire",
+            "country": "CI",
+            "logo": "/images/merchants/orange-ci.png",
+            "rating": 4.2,
+            "verified": true
+        },
+        {
+            "id": "mtn-ci",
+            "name": "MTN Store Abidjan",
+            "country": "CI",
+            "logo": "/images/merchants/mtn-ci.png",
+            "rating": 4.5,
+            "verified": true
+        },
+        {
+            "id": "jumia",
+            "name": "Jumia",
+            "country": "Multi-pays",
+            "logo": "/images/merchants/jumia.png",
+            "rating": 4.0,
+            "verified": true
+        }
+    ]
+}

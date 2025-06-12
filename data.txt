@@ -1,0 +1,5 @@
+npx supabase db reset --db-url "postgresql://postgres:AfricaHub@db.gpjkwjdtgbxkvcpzfodb.supabase.co:5432/postgres"
+
+
+aboa.akoun40@gmail.com
+mdp: 00000000
