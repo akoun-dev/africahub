@@ -143,6 +143,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             console.log("📋 Profils trouvés:", profiles)
 
             const profileData = profiles.length > 0 ? profiles[0] : null
+            console.log("📊 Profil extrait:", profileData)
 
             // Si aucun profil trouvé, créer automatiquement
             if (!profileData) {
@@ -180,27 +181,68 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
             // Le profil est maintenant un objet JSON direct
             const userProfileData = profileData
+            console.log("📊 Données profil extraites:", userProfileData)
 
-            // Récupérer l'email depuis auth.users si nécessaire
-            const { data: authUser } = await supabase.auth.getUser()
-            const userEmail =
-                authUser.user?.email || userProfileData.email || ""
+            // Utiliser l'email du profil directement
+            const userEmail = userProfileData.email || ""
+            console.log("📧 Email utilisé:", userEmail)
 
-            // Charger les permissions directement (RLS désactivé temporairement)
-            const { data: permissionsData } = await supabase
-                .from("user_permissions")
-                .select("permission")
-                .eq("user_id", userId)
+            // Charger les permissions via API REST
+            console.log("🔐 Chargement des permissions via API REST...")
+            const permResponse = await fetch(
+                `https://gpjkwjdtgbxkvcpzfodb.supabase.co/rest/v1/user_permissions?user_id=eq.${userId}&select=permission`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        apikey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdwamt3amR0Z2J4a3ZjcHpmb2RiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkyODgxOTUsImV4cCI6MjA2NDg2NDE5NX0.pQrp1QRfNjTFiPo7RSTwfeAWsVdp1x0_oh5Rxr9GZzY",
+                        Authorization:
+                            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdwamt3amR0Z2J4a3ZjcHpmb2RiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkyODgxOTUsImV4cCI6MjA2NDg2NDE5NX0.pQrp1QRfNjTFiPo7RSTwfeAWsVdp1x0_oh5Rxr9GZzY",
+                    },
+                }
+            )
 
-            // Charger le profil marchand si applicable
+            console.log(
+                "📥 Réponse permissions:",
+                permResponse.status,
+                permResponse.statusText
+            )
+
+            let permissionsData: any[] = []
+            if (permResponse.ok) {
+                permissionsData = await permResponse.json()
+                console.log("🔐 Permissions trouvées:", permissionsData)
+            } else {
+                console.warn("⚠️ Erreur chargement permissions (non bloquante)")
+            }
+
+            // Charger le profil marchand si applicable via API REST
             let merchantProfile = null
             if (userProfileData.role === "merchant") {
-                const { data: merchantData } = await supabase
-                    .from("merchant_profiles")
-                    .select("*")
-                    .eq("user_id", userId)
-                    .single()
-                merchantProfile = merchantData
+                console.log("🏪 Chargement profil marchand via API REST...")
+                const merchantResponse = await fetch(
+                    `https://gpjkwjdtgbxkvcpzfodb.supabase.co/rest/v1/merchant_profiles?user_id=eq.${userId}&select=*`,
+                    {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                            apikey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdwamt3amR0Z2J4a3ZjcHpmb2RiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkyODgxOTUsImV4cCI6MjA2NDg2NDE5NX0.pQrp1QRfNjTFiPo7RSTwfeAWsVdp1x0_oh5Rxr9GZzY",
+                            Authorization:
+                                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdwamt3amR0Z2J4a3ZjcHpmb2RiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkyODgxOTUsImV4cCI6MjA2NDg2NDE5NX0.pQrp1QRfNjTFiPo7RSTwfeAWsVdp1x0_oh5Rxr9GZzY",
+                        },
+                    }
+                )
+
+                if (merchantResponse.ok) {
+                    const merchantData = await merchantResponse.json()
+                    merchantProfile =
+                        merchantData.length > 0 ? merchantData[0] : null
+                    console.log("🏪 Profil marchand trouvé:", merchantProfile)
+                } else {
+                    console.warn(
+                        "⚠️ Erreur chargement profil marchand (non bloquante)"
+                    )
+                }
             }
 
             // Assembler le profil complet
