@@ -46,6 +46,14 @@ const TestDashboard = React.lazy(() => import("./pages/TestDashboard"))
 // Page de diagnostic des profils
 const DiagnosticProfils = React.lazy(() => import("./pages/DiagnosticProfils"))
 
+// Page de test des fonctionnalités utilisateur
+const UserFeaturesTestPage = React.lazy(
+    () => import("./pages/debug/UserFeaturesTestPage")
+)
+
+// Page de test de déconnexion
+const LogoutTestPage = React.lazy(() => import("./pages/debug/LogoutTestPage"))
+
 // Import du test de profil
 import "./utils/testProfile.js"
 
@@ -84,6 +92,23 @@ const UserNotifications = React.lazy(
 const UserSettings = React.lazy(() => import("./pages/user/UserSettingsPage"))
 const MerchantDashboard = React.lazy(() => import("./pages/MerchantDashboard"))
 
+// Pages marchands
+const MerchantDashboardPage = React.lazy(
+    () => import("./pages/merchant/MerchantDashboardPage")
+)
+const MerchantProductsPage = React.lazy(
+    () => import("./pages/merchant/MerchantProductsPage")
+)
+const MerchantProductFormPage = React.lazy(
+    () => import("./pages/merchant/MerchantProductFormPage")
+)
+const MerchantReviewsPage = React.lazy(
+    () => import("./pages/merchant/MerchantReviewsPage")
+)
+const MerchantAnalyticsPage = React.lazy(
+    () => import("./pages/merchant/MerchantAnalyticsPage")
+)
+
 // Pages administrateur
 const Admin = React.lazy(() => import("./pages/Admin"))
 const APIManagement = React.lazy(() => import("./pages/APIManagement"))
@@ -95,6 +120,7 @@ import { LegalPages } from "./pages/legal/LegalPages"
 
 // Routes de dashboard par rôle
 import UserManagementRoutes from "./routes/UserManagementRoutes"
+import MerchantRoutes from "./routes/MerchantRoutes"
 
 // Ajout des nouvelles pages publiques
 const Recommendations = React.lazy(() => import("./pages/Recommendations"))
@@ -1661,6 +1687,40 @@ const App = () => (
                                         }
                                     />
 
+                                    {/* Page de test des fonctionnalités utilisateur */}
+                                    <Route
+                                        path="/debug/user-features"
+                                        element={
+                                            <Suspense
+                                                fallback={
+                                                    <LoadingSpinner
+                                                        size="lg"
+                                                        text="Chargement du test des fonctionnalités..."
+                                                    />
+                                                }
+                                            >
+                                                <UserFeaturesTestPage />
+                                            </Suspense>
+                                        }
+                                    />
+
+                                    {/* Page de test de déconnexion */}
+                                    <Route
+                                        path="/debug/logout-test"
+                                        element={
+                                            <Suspense
+                                                fallback={
+                                                    <LoadingSpinner
+                                                        size="lg"
+                                                        text="Chargement du test de déconnexion..."
+                                                    />
+                                                }
+                                            >
+                                                <LogoutTestPage />
+                                            </Suspense>
+                                        }
+                                    />
+
                                     {/* Routes de dashboard par rôle */}
                                     <Route
                                         path="/user/*"
@@ -1687,7 +1747,7 @@ const App = () => (
                                                 }
                                             >
                                                 <RequireMerchant>
-                                                    <UserManagementRoutes />
+                                                    <MerchantRoutes />
                                                 </RequireMerchant>
                                             </Suspense>
                                         }

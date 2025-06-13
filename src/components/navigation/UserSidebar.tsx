@@ -4,7 +4,7 @@
  */
 
 import React from "react"
-import { Link, useLocation } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import { cn } from "@/lib/utils"
 import {
     BarChart3,
@@ -19,6 +19,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useAuth } from "@/contexts/AuthContext"
+import { toast } from "sonner"
 
 interface NavigationItem {
     label: string
@@ -30,6 +31,7 @@ interface NavigationItem {
 
 export const UserSidebar: React.FC = () => {
     const location = useLocation()
+    const navigate = useNavigate()
     const { logout } = useAuth()
     const [isCollapsed, setIsCollapsed] = React.useState(false)
 
@@ -83,11 +85,42 @@ export const UserSidebar: React.FC = () => {
         return location.pathname === href
     }
 
+    // 🚪 Fonction de déconnexion améliorée avec gestion d'erreurs et redirection
     const handleLogout = async () => {
         try {
+            console.log("🔐 UserSidebar: Début de la déconnexion...")
+
+            // Afficher un toast de chargement
+            toast.loading("Déconnexion en cours...", { id: "sidebar-logout" })
+
+            // Appeler la fonction de déconnexion
             await logout()
+
+            // Succès - afficher le message et rediriger
+            toast.success("Déconnexion réussie ! À bientôt sur AfricaHub 👋", {
+                id: "sidebar-logout",
+                duration: 3000,
+            })
+
+            console.log(
+                "✅ UserSidebar: Déconnexion réussie, redirection vers l'accueil..."
+            )
+
+            // Rediriger vers la page d'accueil après un court délai
+            setTimeout(() => {
+                navigate("/", { replace: true })
+            }, 500)
         } catch (error) {
-            console.error("Erreur lors de la déconnexion:", error)
+            console.error(
+                "❌ UserSidebar: Erreur lors de la déconnexion:",
+                error
+            )
+
+            // Afficher l'erreur à l'utilisateur
+            toast.error("Erreur lors de la déconnexion. Veuillez réessayer.", {
+                id: "sidebar-logout",
+                duration: 4000,
+            })
         }
     }
 

@@ -26,6 +26,7 @@ import {
     Clock,
 } from "lucide-react"
 import { Link } from "react-router-dom"
+import useMerchantProfile from "@/hooks/useMerchantProfile"
 
 /**
  * Dashboard principal pour les marchands
@@ -33,6 +34,8 @@ import { Link } from "react-router-dom"
  */
 export const MerchantDashboardPage: React.FC = () => {
     const { profile } = useAuth()
+    const { merchantProfile, businessInfo, displayName, sectorDescription } =
+        useMerchantProfile()
 
     // Données simulées - à remplacer par de vraies données
     const merchantStats = {
@@ -148,14 +151,20 @@ export const MerchantDashboardPage: React.FC = () => {
                                 className="text-3xl font-bold"
                                 style={{ color: "#2D4A6B" }}
                             >
-                                {profile?.merchant_profile?.business_name ||
-                                    "Mon Commerce"}
+                                {displayName}
                             </h1>
                             {getVerificationStatusBadge()}
                         </div>
-                        <p className="text-slate-600">
-                            Gérez votre catalogue et suivez vos performances
-                        </p>
+                        <div className="space-y-1">
+                            <p className="text-slate-600">
+                                Gérez votre catalogue et suivez vos performances
+                            </p>
+                            {businessInfo && (
+                                <p className="text-sm text-blue-600 font-medium">
+                                    {sectorDescription}
+                                </p>
+                            )}
+                        </div>
                     </div>
                     <div className="flex items-center space-x-4 mt-4 lg:mt-0">
                         <Link to="/merchant/products/new">
@@ -176,6 +185,65 @@ export const MerchantDashboardPage: React.FC = () => {
                         </Link>
                     </div>
                 </div>
+
+                {/* Alerte profil incomplet */}
+                {businessInfo && !businessInfo.isComplete && (
+                    <Card className="border-orange-200 bg-orange-50">
+                        <CardContent className="pt-6">
+                            <div className="flex items-start space-x-3">
+                                <AlertCircle className="w-5 h-5 text-orange-600 mt-0.5" />
+                                <div className="flex-1">
+                                    <h4 className="font-medium text-orange-800">
+                                        Complétez votre profil business
+                                    </h4>
+                                    <p className="text-sm text-orange-700 mt-1">
+                                        Ajoutez les informations manquantes de
+                                        votre entreprise pour bénéficier de
+                                        recommandations personnalisées et
+                                        améliorer votre visibilité.
+                                    </p>
+                                    <div className="mt-3 flex flex-wrap gap-2">
+                                        {!businessInfo.name && (
+                                            <Badge
+                                                variant="outline"
+                                                className="text-orange-700 border-orange-300"
+                                            >
+                                                Nom d'entreprise
+                                            </Badge>
+                                        )}
+                                        {!businessInfo.sector && (
+                                            <Badge
+                                                variant="outline"
+                                                className="text-orange-700 border-orange-300"
+                                            >
+                                                Secteur d'activité
+                                            </Badge>
+                                        )}
+                                        {!businessInfo.type && (
+                                            <Badge
+                                                variant="outline"
+                                                className="text-orange-700 border-orange-300"
+                                            >
+                                                Type d'activité
+                                            </Badge>
+                                        )}
+                                    </div>
+                                    <Link to="/merchant/profile">
+                                        <Button
+                                            size="sm"
+                                            className="mt-3"
+                                            style={{
+                                                backgroundColor: "#2D4A6B",
+                                            }}
+                                        >
+                                            Compléter le profil
+                                        </Button>
+                                    </Link>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
 
                 {/* Statistiques principales */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

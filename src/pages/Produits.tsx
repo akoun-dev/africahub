@@ -100,8 +100,7 @@ type SectorType =
 
 // Interface unifiée pour tous les éléments
 interface UnifiedItem {
-    id: string | number // ID unique généré automatiquement
-    originalId?: string | number // ID original de la source de données
+    id: string | number
     name: string
     description?: string
     price?: number
@@ -132,18 +131,15 @@ interface UnifiedFilters {
     coverage?: string
 }
 
-// Fonction pour unifier toutes les données avec des IDs uniques
+// Fonction pour unifier toutes les données
 const unifyAllData = (): UnifiedItem[] => {
     const unifiedData: UnifiedItem[] = []
-    let globalIndex = 0 // Compteur global pour garantir l'unicité des IDs
 
     // Produits
     const products = getProductsWithFallback([])
-    products.forEach((product, index) => {
+    products.forEach(product => {
         unifiedData.push({
             ...product,
-            id: `products-${globalIndex++}`, // ID unique avec préfixe secteur
-            originalId: product.id, // Conserver l'ID original pour référence
             sector: "products" as SectorType,
             description: product.description || "",
             countryCode: product.country_availability?.[0] || "",
@@ -151,11 +147,9 @@ const unifyAllData = (): UnifiedItem[] => {
     })
 
     // Banques
-    africanBanks.forEach((bank, index) => {
+    africanBanks.forEach(bank => {
         unifiedData.push({
             ...bank,
-            id: `banks-${globalIndex++}`, // ID unique avec préfixe secteur
-            originalId: bank.id, // Conserver l'ID original
             sector: "banks" as SectorType,
             price: undefined, // Les banques n'ont pas de prix fixe
             currency: "USD",
@@ -163,11 +157,9 @@ const unifyAllData = (): UnifiedItem[] => {
     })
 
     // Services bancaires
-    bankingServices.forEach((service, index) => {
+    bankingServices.forEach(service => {
         unifiedData.push({
             ...service,
-            id: `banking-services-${globalIndex++}`, // ID unique avec préfixe
-            originalId: service.id, // Conserver l'ID original
             sector: "banks" as SectorType,
             price: service.fees,
             currency: service.currency,
@@ -176,11 +168,9 @@ const unifyAllData = (): UnifiedItem[] => {
     })
 
     // Fournisseurs d'énergie
-    africanEnergyProviders.forEach((provider, index) => {
+    africanEnergyProviders.forEach(provider => {
         unifiedData.push({
             ...provider,
-            id: `energy-providers-${globalIndex++}`, // ID unique avec préfixe
-            originalId: provider.id, // Conserver l'ID original
             sector: "energy" as SectorType,
             price: undefined,
             currency: "USD",
@@ -188,11 +178,9 @@ const unifyAllData = (): UnifiedItem[] => {
     })
 
     // Tarifs énergétiques
-    energyTariffs.forEach((tariff, index) => {
+    energyTariffs.forEach(tariff => {
         unifiedData.push({
             ...tariff,
-            id: `energy-tariffs-${globalIndex++}`, // ID unique avec préfixe
-            originalId: tariff.id, // Conserver l'ID original
             sector: "energy" as SectorType,
             price: tariff.pricePerKWh,
             currency: tariff.currency,
@@ -201,11 +189,9 @@ const unifyAllData = (): UnifiedItem[] => {
     })
 
     // Solutions solaires
-    solarSolutions.forEach((solution, index) => {
+    solarSolutions.forEach(solution => {
         unifiedData.push({
             ...solution,
-            id: `solar-solutions-${globalIndex++}`, // ID unique avec préfixe
-            originalId: solution.id, // Conserver l'ID original
             sector: "energy" as SectorType,
             price: solution.price,
             currency: solution.currency,
@@ -215,11 +201,9 @@ const unifyAllData = (): UnifiedItem[] => {
 
     // Assurances
     Object.entries(africanInsuranceData).forEach(([category, insurances]) => {
-        insurances.forEach((insurance, index) => {
+        insurances.forEach(insurance => {
             unifiedData.push({
                 ...insurance,
-                id: `insurance-${category}-${globalIndex++}`, // ID unique avec catégorie
-                originalId: insurance.id, // Conserver l'ID original
                 sector: "insurance" as SectorType,
                 price: insurance.price,
                 currency: insurance.currency,
@@ -230,11 +214,9 @@ const unifyAllData = (): UnifiedItem[] => {
     })
 
     // Opérateurs télécoms
-    africanTelecomOperators.forEach((operator, index) => {
+    africanTelecomOperators.forEach(operator => {
         unifiedData.push({
             ...operator,
-            id: `telecom-operators-${globalIndex++}`, // ID unique avec préfixe
-            originalId: operator.id, // Conserver l'ID original
             sector: "telecom" as SectorType,
             price: undefined,
             currency: "USD",
@@ -242,11 +224,9 @@ const unifyAllData = (): UnifiedItem[] => {
     })
 
     // Forfaits mobiles
-    mobilePlans.forEach((plan, index) => {
+    mobilePlans.forEach(plan => {
         unifiedData.push({
             ...plan,
-            id: `mobile-plans-${globalIndex++}`, // ID unique avec préfixe
-            originalId: plan.id, // Conserver l'ID original
             sector: "telecom" as SectorType,
             price: plan.price,
             currency: plan.currency,
@@ -255,11 +235,9 @@ const unifyAllData = (): UnifiedItem[] => {
     })
 
     // Services internet
-    internetServices.forEach((service, index) => {
+    internetServices.forEach(service => {
         unifiedData.push({
             ...service,
-            id: `internet-services-${globalIndex++}`, // ID unique avec préfixe
-            originalId: service.id, // Conserver l'ID original
             sector: "telecom" as SectorType,
             price: service.price,
             currency: service.currency,
@@ -268,11 +246,9 @@ const unifyAllData = (): UnifiedItem[] => {
     })
 
     // Compagnies de transport
-    africanTransportCompanies.forEach((company, index) => {
+    africanTransportCompanies.forEach(company => {
         unifiedData.push({
             ...company,
-            id: `transport-companies-${globalIndex++}`, // ID unique avec préfixe
-            originalId: company.id, // Conserver l'ID original
             sector: "transport" as SectorType,
             price: undefined,
             currency: "USD",
@@ -280,11 +256,9 @@ const unifyAllData = (): UnifiedItem[] => {
     })
 
     // Routes de transport
-    transportRoutes.forEach((route, index) => {
+    transportRoutes.forEach(route => {
         unifiedData.push({
             ...route,
-            id: `transport-routes-${globalIndex++}`, // ID unique avec préfixe
-            originalId: route.id, // Conserver l'ID original
             sector: "transport" as SectorType,
             price: route.price,
             currency: route.currency,
@@ -294,11 +268,9 @@ const unifyAllData = (): UnifiedItem[] => {
     })
 
     // Services de livraison
-    deliveryServices.forEach((service, index) => {
+    deliveryServices.forEach(service => {
         unifiedData.push({
             ...service,
-            id: `delivery-services-${globalIndex++}`, // ID unique avec préfixe
-            originalId: service.id, // Conserver l'ID original
             sector: "transport" as SectorType,
             price: service.price,
             currency: service.currency,
@@ -307,11 +279,9 @@ const unifyAllData = (): UnifiedItem[] => {
     })
 
     // Secteurs économiques
-    africanEconomicSectors.forEach((sector, index) => {
+    africanEconomicSectors.forEach(sector => {
         unifiedData.push({
             ...sector,
-            id: `economic-sectors-${globalIndex++}`, // ID unique avec préfixe
-            originalId: sector.id, // Conserver l'ID original
             sector: "sectors" as SectorType,
             price: undefined,
             currency: "USD",
@@ -320,11 +290,9 @@ const unifyAllData = (): UnifiedItem[] => {
     })
 
     // Entreprises par secteur
-    sectorCompanies.forEach((company, index) => {
+    sectorCompanies.forEach(company => {
         unifiedData.push({
             ...company,
-            id: `sector-companies-${globalIndex++}`, // ID unique avec préfixe
-            originalId: company.id, // Conserver l'ID original
             sector: "sectors" as SectorType,
             price: undefined,
             currency: "USD",
@@ -1020,7 +988,7 @@ const Produits: React.FC = () => {
 
                                     return (
                                         <motion.div
-                                            key={item.id} // Utiliser l'ID unique généré
+                                            key={`${item.sector}-${item.id}`}
                                             initial={{ opacity: 0, y: 20 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ delay: index * 0.05 }}
@@ -1153,7 +1121,7 @@ const Produits: React.FC = () => {
 
                                     return (
                                         <motion.div
-                                            key={item.id} // Utiliser l'ID unique généré
+                                            key={`${item.sector}-${item.id}`}
                                             initial={{ opacity: 0, x: -20 }}
                                             animate={{ opacity: 1, x: 0 }}
                                             transition={{ delay: index * 0.05 }}

@@ -1,5 +1,5 @@
 import React from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -17,15 +17,47 @@ import { useNavigationStructure } from "./NavigationStructure"
 import { useAuth } from "@/contexts/AuthContext"
 import { useAdminAuth } from "@/hooks/useAdminAuth"
 import { LogOut, Settings, User, Code } from "lucide-react"
+import { toast } from "sonner"
 
 export const UserActions: React.FC = () => {
     const { userNavigation, adminNavigation, authNavigation } =
         useNavigationStructure()
     const { user, signOut } = useAuth()
     const { adminUser } = useAdminAuth()
+    const navigate = useNavigate()
 
+    // 🚪 Fonction de déconnexion améliorée avec gestion d'erreurs et redirection
     const handleLogout = async () => {
-        await signOut()
+        try {
+            console.log("🔐 Début de la déconnexion...")
+
+            // Afficher un toast de chargement
+            toast.loading("Déconnexion en cours...", { id: "logout" })
+
+            // Appeler la fonction de déconnexion
+            await signOut()
+
+            // Succès - afficher le message et rediriger
+            toast.success("Déconnexion réussie ! À bientôt sur AfricaHub 👋", {
+                id: "logout",
+                duration: 3000,
+            })
+
+            console.log("✅ Déconnexion réussie, redirection vers l'accueil...")
+
+            // Rediriger vers la page d'accueil après un court délai
+            setTimeout(() => {
+                navigate("/", { replace: true })
+            }, 500)
+        } catch (error) {
+            console.error("❌ Erreur lors de la déconnexion:", error)
+
+            // Afficher l'erreur à l'utilisateur
+            toast.error("Erreur lors de la déconnexion. Veuillez réessayer.", {
+                id: "logout",
+                duration: 4000,
+            })
+        }
     }
 
     const getRoleBadgeVariant = (roles: string[]) => {

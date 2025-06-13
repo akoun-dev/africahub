@@ -1,645 +1,466 @@
+/**
+ * Dashboard principal pour les gestionnaires
+ * Vue d'ensemble des tâches de modération et supervision
+ */
+
 import React from "react"
-import { useAuth } from "@/contexts/AuthContext"
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
+import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import {
     Shield,
     AlertTriangle,
     CheckCircle,
     Clock,
-    Eye,
-    MessageSquare,
-    Package,
     Users,
-    TrendingUp,
-    FileText,
+    Package,
+    MessageSquare,
     Flag,
-    Search,
-    Filter,
+    TrendingUp,
+    TrendingDown,
+    Eye,
+    Settings,
     BarChart3,
+    FileText,
+    UserCheck,
+    AlertCircle,
+    Activity,
 } from "lucide-react"
-import { Link } from "react-router-dom"
+import { AuthGuard } from "@/components/auth/AuthGuard"
+import { useAuth } from "@/contexts/AuthContext"
+import useManagerModeration from "@/hooks/useManagerModeration"
+import useManagerProducts from "@/hooks/useManagerProducts"
+import useManagerReports from "@/hooks/useManagerReports"
 
-/**
- * Dashboard principal pour les gestionnaires
- * Outils de modération et de gestion de contenu
- */
 export const ManagerDashboardPage: React.FC = () => {
     const { profile } = useAuth()
+    const { moderationStats, isLoading: moderationLoading } =
+        useManagerModeration()
+    const { productStats, isLoading: productLoading } = useManagerProducts()
+    const { reportStats, isLoading: reportLoading } = useManagerReports()
 
-    // Données simulées - à remplacer par de vraies données
-    const moderationStats = {
-        pendingReviews: 45,
-        pendingProducts: 23,
-        reportedContent: 12,
-        resolvedToday: 67,
-        averageResponseTime: "2.5h",
-        contentApprovalRate: 89.5,
+    const formatNumber = (num: number) => {
+        return new Intl.NumberFormat("fr-FR").format(num)
     }
 
-    const recentModerationActivity = [
-        {
-            id: 1,
-            type: "product_approved",
-            title: "Produit approuvé",
-            description: "Samsung Galaxy S24 - TechStore CI",
-            time: "15 min",
-            icon: CheckCircle,
-            status: "success",
-        },
-        {
-            id: 2,
-            type: "review_flagged",
-            title: "Avis signalé",
-            description: "Contenu inapproprié détecté",
-            time: "30 min",
-            icon: Flag,
-            status: "warning",
-        },
-        {
-            id: 3,
-            type: "merchant_verified",
-            title: "Marchand vérifié",
-            description: "ElectroShop - Documents validés",
-            time: "1 heure",
-            icon: Shield,
-            status: "success",
-        },
-        {
-            id: 4,
-            type: "content_rejected",
-            title: "Contenu rejeté",
-            description: "iPhone 15 - Description non conforme",
-            time: "2 heures",
-            icon: AlertTriangle,
-            status: "error",
-        },
-    ]
-
-    const pendingTasks = [
-        {
-            id: 1,
-            type: "product_review",
-            title: "Révision de produits",
-            count: 23,
-            priority: "high",
-            category: "Électronique",
-            link: "/manager/products/pending",
-        },
-        {
-            id: 2,
-            type: "merchant_verification",
-            title: "Vérification marchands",
-            count: 8,
-            priority: "medium",
-            category: "Tous secteurs",
-            link: "/manager/merchants/pending",
-        },
-        {
-            id: 3,
-            type: "content_moderation",
-            title: "Modération contenu",
-            count: 12,
-            priority: "high",
-            category: "Avis clients",
-            link: "/manager/content/pending",
-        },
-        {
-            id: 4,
-            type: "compliance_check",
-            title: "Vérification conformité",
-            count: 5,
-            priority: "low",
-            category: "Assurance",
-            link: "/manager/compliance",
-        },
-    ]
-
-    const categoryStats = [
-        { name: "Électronique", pending: 15, approved: 89, rejected: 6 },
-        { name: "Banque", pending: 8, approved: 45, rejected: 2 },
-        { name: "Assurance", pending: 12, approved: 67, rejected: 8 },
-        { name: "Transport", pending: 6, approved: 34, rejected: 3 },
-        { name: "Santé", pending: 4, approved: 28, rejected: 1 },
-    ]
-
-    const getPriorityColor = (priority: string) => {
-        switch (priority) {
-            case "high":
-                return "bg-red-100 text-red-800"
-            case "medium":
-                return "bg-yellow-100 text-yellow-800"
-            case "low":
-                return "bg-green-100 text-green-800"
-            default:
-                return "bg-gray-100 text-gray-800"
+    const getTrendIcon = (trend: number) => {
+        if (trend > 0) {
+            return <TrendingUp className="w-4 h-4 text-green-500" />
+        } else if (trend < 0) {
+            return <TrendingDown className="w-4 h-4 text-red-500" />
         }
+        return null
     }
+
+    const getPriorityColor = (count: number) => {
+        if (count === 0) return "text-green-600"
+        if (count <= 5) return "text-yellow-600"
+        if (count <= 15) return "text-orange-600"
+        return "text-red-600"
+    }
+
+    const isLoading = moderationLoading || productLoading || reportLoading
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 lg:p-8">
-            <div className="max-w-7xl mx-auto space-y-8">
-                {/* En-tête de bienvenue */}
-                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-                    <div>
-                        <h1
-                            className="text-3xl font-bold"
-                            style={{ color: "#2D4A6B" }}
-                        >
-                            Gestion & Modération
-                        </h1>
-                        <p className="text-slate-600 mt-2">
-                            Outils de modération et de gestion de contenu
-                        </p>
-                        <div className="flex items-center space-x-2 mt-2">
-                            <Badge variant="secondary">
-                                Département:{" "}
-                                {profile?.department || "Modération"}
-                            </Badge>
-                            <Badge variant="outline">Gestionnaire</Badge>
+        <AuthGuard>
+            <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 lg:p-8">
+                <div className="max-w-7xl mx-auto space-y-8">
+                    {/* En-tête */}
+                    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+                        <div>
+                            <div className="flex items-center space-x-3 mb-2">
+                                <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
+                                    <Shield className="w-6 h-6 text-white" />
+                                </div>
+                                <div>
+                                    <h1
+                                        className="text-3xl font-bold"
+                                        style={{ color: "#2D4A6B" }}
+                                    >
+                                        Dashboard Gestionnaire
+                                    </h1>
+                                    <p className="text-slate-600">
+                                        Bienvenue, {profile?.first_name}{" "}
+                                        {profile?.last_name}
+                                    </p>
+                                </div>
+                            </div>
+                            <p className="text-slate-600">
+                                Supervisez le contenu et les interactions sur la
+                                plateforme
+                            </p>
+                        </div>
+                        <div className="flex items-center space-x-4 mt-4 lg:mt-0">
+                            <Link to="/manager/settings">
+                                <Button variant="outline">
+                                    <Settings className="w-4 h-4 mr-2" />
+                                    Paramètres
+                                </Button>
+                            </Link>
+                            <Link to="/manager/reports">
+                                <Button
+                                    style={{ backgroundColor: "#2D4A6B" }}
+                                    className="text-white"
+                                >
+                                    <Flag className="w-4 h-4 mr-2" />
+                                    Signalements
+                                </Button>
+                            </Link>
                         </div>
                     </div>
-                    <div className="flex items-center space-x-4 mt-4 lg:mt-0">
-                        <Link to="/manager/reports">
-                            <Button variant="outline" size="sm">
-                                <FileText className="w-4 h-4 mr-2" />
-                                Rapports
-                            </Button>
-                        </Link>
-                        <Link to="/manager/tools">
-                            <Button
-                                size="sm"
-                                style={{ backgroundColor: "#2D4A6B" }}
-                                className="text-white"
-                            >
-                                <Search className="w-4 h-4 mr-2" />
-                                Outils
-                            </Button>
-                        </Link>
-                    </div>
-                </div>
 
-                {/* Statistiques de modération */}
-                <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-                    <Card className="text-center">
-                        <CardContent className="pt-6">
-                            <div className="flex items-center justify-center mb-2">
-                                <Clock
-                                    className="w-8 h-8"
-                                    style={{ color: "#2D4A6B" }}
-                                />
-                            </div>
-                            <div
-                                className="text-2xl font-bold"
-                                style={{ color: "#2D4A6B" }}
-                            >
-                                {moderationStats.pendingReviews}
-                            </div>
-                            <p className="text-sm text-slate-600">En attente</p>
-                            <p className="text-xs text-yellow-600 mt-1">
-                                Révisions
-                            </p>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="text-center">
-                        <CardContent className="pt-6">
-                            <div className="flex items-center justify-center mb-2">
-                                <CheckCircle
-                                    className="w-8 h-8"
-                                    style={{ color: "#2D4A6B" }}
-                                />
-                            </div>
-                            <div
-                                className="text-2xl font-bold"
-                                style={{ color: "#2D4A6B" }}
-                            >
-                                {moderationStats.resolvedToday}
-                            </div>
-                            <p className="text-sm text-slate-600">Résolus</p>
-                            <p className="text-xs text-green-600 mt-1">
-                                Aujourd'hui
-                            </p>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="text-center">
-                        <CardContent className="pt-6">
-                            <div className="flex items-center justify-center mb-2">
-                                <AlertTriangle
-                                    className="w-8 h-8"
-                                    style={{ color: "#2D4A6B" }}
-                                />
-                            </div>
-                            <div
-                                className="text-2xl font-bold"
-                                style={{ color: "#2D4A6B" }}
-                            >
-                                {moderationStats.reportedContent}
-                            </div>
-                            <p className="text-sm text-slate-600">
-                                Signalements
-                            </p>
-                            <p className="text-xs text-red-600 mt-1">Urgents</p>
-                        </CardContent>
-                    </Card>
-                </div>
-
-                <div className="grid lg:grid-cols-2 gap-8">
-                    {/* Activité récente */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle
-                                className="flex items-center"
-                                style={{ color: "#2D4A6B" }}
-                            >
-                                <Shield className="w-5 h-5 mr-2" />
-                                Activité de Modération
-                            </CardTitle>
-                            <CardDescription>
-                                Dernières actions de modération
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="space-y-4">
-                                {recentModerationActivity.map(activity => {
-                                    const Icon = activity.icon
-                                    const statusColors = {
-                                        success: "text-green-600 bg-green-100",
-                                        info: "text-blue-600 bg-blue-100",
-                                        warning:
-                                            "text-yellow-600 bg-yellow-100",
-                                        error: "text-red-600 bg-red-100",
-                                    }
-
-                                    return (
-                                        <div
-                                            key={activity.id}
-                                            className="flex items-start space-x-3"
-                                        >
-                                            <div
-                                                className={`p-2 rounded-lg ${
-                                                    statusColors[
-                                                        activity.status as keyof typeof statusColors
-                                                    ]
-                                                }`}
-                                            >
-                                                <Icon className="w-4 h-4" />
-                                            </div>
-                                            <div className="flex-1 min-w-0">
-                                                <p className="text-sm font-medium text-slate-900">
-                                                    {activity.title}
-                                                </p>
-                                                <p className="text-sm text-slate-600 truncate">
-                                                    {activity.description}
-                                                </p>
-                                                <p className="text-xs text-slate-500 mt-1">
-                                                    Il y a {activity.time}
-                                                </p>
+                    {/* Alertes urgentes */}
+                    {!isLoading && (
+                        <>
+                            {(moderationStats?.urgent_count > 0 ||
+                                reportStats?.urgent_count > 0) && (
+                                <Card className="border-red-200 bg-red-50">
+                                    <CardContent className="pt-6">
+                                        <div className="flex items-start space-x-3">
+                                            <AlertTriangle className="w-5 h-5 text-red-600 mt-0.5" />
+                                            <div className="flex-1">
+                                                <h4 className="font-medium text-red-800">
+                                                    Éléments urgents à traiter
+                                                </h4>
+                                                <div className="mt-2 space-y-1">
+                                                    {moderationStats?.urgent_count >
+                                                        0 && (
+                                                        <p className="text-sm text-red-700">
+                                                            •{" "}
+                                                            {
+                                                                moderationStats.urgent_count
+                                                            }{" "}
+                                                            éléments de
+                                                            modération urgents
+                                                        </p>
+                                                    )}
+                                                    {reportStats?.urgent_count >
+                                                        0 && (
+                                                        <p className="text-sm text-red-700">
+                                                            •{" "}
+                                                            {
+                                                                reportStats.urgent_count
+                                                            }{" "}
+                                                            signalements urgents
+                                                        </p>
+                                                    )}
+                                                </div>
+                                                <div className="mt-3 flex space-x-2">
+                                                    <Link to="/manager/moderation">
+                                                        <Button
+                                                            size="sm"
+                                                            variant="outline"
+                                                            className="text-red-700 border-red-300"
+                                                        >
+                                                            Voir la modération
+                                                        </Button>
+                                                    </Link>
+                                                    <Link to="/manager/reports">
+                                                        <Button
+                                                            size="sm"
+                                                            variant="outline"
+                                                            className="text-red-700 border-red-300"
+                                                        >
+                                                            Voir les
+                                                            signalements
+                                                        </Button>
+                                                    </Link>
+                                                </div>
                                             </div>
                                         </div>
-                                    )
-                                })}
-                            </div>
-                            <div className="mt-4 pt-4 border-t">
-                                <Link to="/manager/activity">
+                                    </CardContent>
+                                </Card>
+                            )}
+                        </>
+                    )}
+
+                    {/* Métriques principales */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <Card>
+                            <CardContent className="pt-6">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-600">
+                                            Modération en attente
+                                        </p>
+                                        <div className="flex items-center space-x-2">
+                                            <p
+                                                className={`text-2xl font-bold ${getPriorityColor(
+                                                    moderationStats?.total_pending ||
+                                                        0
+                                                )}`}
+                                            >
+                                                {formatNumber(
+                                                    moderationStats?.total_pending ||
+                                                        0
+                                                )}
+                                            </p>
+                                        </div>
+                                        <p className="text-sm text-gray-500">
+                                            {moderationStats?.high_priority_count ||
+                                                0}{" "}
+                                            priorité haute
+                                        </p>
+                                    </div>
+                                    <div className="p-3 bg-orange-50 rounded-full">
+                                        <Clock className="w-6 h-6 text-orange-600" />
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        <Card>
+                            <CardContent className="pt-6">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-600">
+                                            Produits à réviser
+                                        </p>
+                                        <div className="flex items-center space-x-2">
+                                            <p
+                                                className={`text-2xl font-bold ${getPriorityColor(
+                                                    productStats?.pending_review ||
+                                                        0
+                                                )}`}
+                                            >
+                                                {formatNumber(
+                                                    productStats?.pending_review ||
+                                                        0
+                                                )}
+                                            </p>
+                                        </div>
+                                        <p className="text-sm text-gray-500">
+                                            {(
+                                                (productStats?.compliance_rate ||
+                                                    0) * 100
+                                            ).toFixed(1)}
+                                            % conformité
+                                        </p>
+                                    </div>
+                                    <div className="p-3 bg-blue-50 rounded-full">
+                                        <Package
+                                            className="w-6 h-6"
+                                            style={{ color: "#2D4A6B" }}
+                                        />
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        <Card>
+                            <CardContent className="pt-6">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-600">
+                                            Signalements actifs
+                                        </p>
+                                        <div className="flex items-center space-x-2">
+                                            <p
+                                                className={`text-2xl font-bold ${getPriorityColor(
+                                                    reportStats?.pending_reports ||
+                                                        0
+                                                )}`}
+                                            >
+                                                {formatNumber(
+                                                    reportStats?.pending_reports ||
+                                                        0
+                                                )}
+                                            </p>
+                                        </div>
+                                        <p className="text-sm text-gray-500">
+                                            {(
+                                                (reportStats?.resolution_rate ||
+                                                    0) * 100
+                                            ).toFixed(1)}
+                                            % résolus
+                                        </p>
+                                    </div>
+                                    <div className="p-3 bg-red-50 rounded-full">
+                                        <Flag className="w-6 h-6 text-red-600" />
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        <Card>
+                            <CardContent className="pt-6">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-600">
+                                            Traités aujourd'hui
+                                        </p>
+                                        <div className="flex items-center space-x-2">
+                                            <p
+                                                className="text-2xl font-bold"
+                                                style={{ color: "#2D4A6B" }}
+                                            >
+                                                {formatNumber(
+                                                    (moderationStats?.today_processed ||
+                                                        0) +
+                                                        (reportStats?.today_resolved ||
+                                                            0)
+                                                )}
+                                            </p>
+                                        </div>
+                                        <p className="text-sm text-gray-500">
+                                            Temps moyen:{" "}
+                                            {Math.round(
+                                                moderationStats?.avg_response_time ||
+                                                    0
+                                            )}
+                                            h
+                                        </p>
+                                    </div>
+                                    <div className="p-3 bg-green-50 rounded-full">
+                                        <CheckCircle className="w-6 h-6 text-green-600" />
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+
+                    {/* Outils de modération */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle style={{ color: "#2D4A6B" }}>
+                                Outils de Modération
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                                <Link to="/manager/moderation">
                                     <Button
                                         variant="outline"
-                                        size="sm"
-                                        className="w-full"
+                                        className="w-full h-20 flex flex-col items-center justify-center space-y-2 relative"
                                     >
-                                        Voir toute l'activité
+                                        <MessageSquare
+                                            className="w-6 h-6"
+                                            style={{ color: "#2D4A6B" }}
+                                        />
+                                        <span className="text-sm">
+                                            Modération
+                                        </span>
+                                        {moderationStats?.total_pending > 0 && (
+                                            <Badge className="absolute -top-1 -right-1 bg-red-500 text-white text-xs">
+                                                {moderationStats.total_pending}
+                                            </Badge>
+                                        )}
+                                    </Button>
+                                </Link>
+
+                                <Link to="/manager/products">
+                                    <Button
+                                        variant="outline"
+                                        className="w-full h-20 flex flex-col items-center justify-center space-y-2 relative"
+                                    >
+                                        <Package
+                                            className="w-6 h-6"
+                                            style={{ color: "#2D4A6B" }}
+                                        />
+                                        <span className="text-sm">
+                                            Produits
+                                        </span>
+                                        {productStats?.pending_review > 0 && (
+                                            <Badge className="absolute -top-1 -right-1 bg-red-500 text-white text-xs">
+                                                {productStats.pending_review}
+                                            </Badge>
+                                        )}
+                                    </Button>
+                                </Link>
+
+                                <Link to="/manager/reports">
+                                    <Button
+                                        variant="outline"
+                                        className="w-full h-20 flex flex-col items-center justify-center space-y-2 relative"
+                                    >
+                                        <Flag
+                                            className="w-6 h-6"
+                                            style={{ color: "#2D4A6B" }}
+                                        />
+                                        <span className="text-sm">
+                                            Signalements
+                                        </span>
+                                        {reportStats?.pending_reports > 0 && (
+                                            <Badge className="absolute -top-1 -right-1 bg-red-500 text-white text-xs">
+                                                {reportStats.pending_reports}
+                                            </Badge>
+                                        )}
+                                    </Button>
+                                </Link>
+
+                                <Link to="/manager/analytics">
+                                    <Button
+                                        variant="outline"
+                                        className="w-full h-20 flex flex-col items-center justify-center space-y-2"
+                                    >
+                                        <BarChart3
+                                            className="w-6 h-6"
+                                            style={{ color: "#2D4A6B" }}
+                                        />
+                                        <span className="text-sm">
+                                            Analytics
+                                        </span>
                                     </Button>
                                 </Link>
                             </div>
                         </CardContent>
                     </Card>
 
-                    {/* Tâches en attente */}
+                    {/* Raccourcis rapides */}
                     <Card>
                         <CardHeader>
-                            <CardTitle
-                                className="flex items-center"
-                                style={{ color: "#2D4A6B" }}
-                            >
-                                <FileText className="w-5 h-5 mr-2" />
-                                Tâches en Attente
+                            <CardTitle style={{ color: "#2D4A6B" }}>
+                                Actions Rapides
                             </CardTitle>
-                            <CardDescription>
-                                Éléments nécessitant votre attention
-                            </CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div className="space-y-4">
-                                {pendingTasks.map(task => (
-                                    <div
-                                        key={task.id}
-                                        className="flex items-center justify-between p-3 border rounded-lg hover:shadow-md transition-shadow"
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <Link to="/manager/moderation?status=urgent">
+                                    <Button
+                                        variant="outline"
+                                        className="w-full justify-start"
+                                        style={{
+                                            borderColor: "#2D4A6B",
+                                            color: "#2D4A6B",
+                                        }}
                                     >
-                                        <div className="flex-1">
-                                            <h4 className="font-medium text-slate-900">
-                                                {task.title}
-                                            </h4>
-                                            <p className="text-sm text-slate-600">
-                                                {task.category}
-                                            </p>
-                                            <div className="flex items-center space-x-2 mt-1">
-                                                <span
-                                                    className="text-lg font-bold"
-                                                    style={{ color: "#2D4A6B" }}
-                                                >
-                                                    {task.count}
-                                                </span>
-                                                <Badge
-                                                    className={getPriorityColor(
-                                                        task.priority
-                                                    )}
-                                                >
-                                                    {task.priority === "high"
-                                                        ? "Urgent"
-                                                        : task.priority ===
-                                                          "medium"
-                                                        ? "Moyen"
-                                                        : "Faible"}
-                                                </Badge>
-                                            </div>
-                                        </div>
-                                        <Link to={task.link}>
-                                            <Button size="sm" variant="outline">
-                                                Traiter
-                                            </Button>
-                                        </Link>
-                                    </div>
-                                ))}
+                                        <AlertTriangle className="w-4 h-4 mr-2" />
+                                        Éléments urgents
+                                    </Button>
+                                </Link>
+                                <Link to="/manager/products?status=pending">
+                                    <Button
+                                        variant="outline"
+                                        className="w-full justify-start"
+                                        style={{
+                                            borderColor: "#2D4A6B",
+                                            color: "#2D4A6B",
+                                        }}
+                                    >
+                                        <Eye className="w-4 h-4 mr-2" />
+                                        Réviser produits
+                                    </Button>
+                                </Link>
+                                <Link to="/manager/reports?priority=high">
+                                    <Button
+                                        variant="outline"
+                                        className="w-full justify-start"
+                                        style={{
+                                            borderColor: "#2D4A6B",
+                                            color: "#2D4A6B",
+                                        }}
+                                    >
+                                        <Flag className="w-4 h-4 mr-2" />
+                                        Signalements prioritaires
+                                    </Button>
+                                </Link>
                             </div>
-                        </CardContent>
-                    </Card>
-                </div>
-
-                {/* Statistiques par catégorie */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle
-                            className="flex items-center"
-                            style={{ color: "#2D4A6B" }}
-                        >
-                            <BarChart3 className="w-5 h-5 mr-2" />
-                            Statistiques par Catégorie
-                        </CardTitle>
-                        <CardDescription>
-                            État de la modération par secteur d'activité
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-4">
-                            {categoryStats.map(category => (
-                                <div key={category.name} className="space-y-2">
-                                    <div className="flex items-center justify-between">
-                                        <span className="font-medium">
-                                            {category.name}
-                                        </span>
-                                        <div className="flex items-center space-x-4 text-sm">
-                                            <span className="text-yellow-600">
-                                                {category.pending} en attente
-                                            </span>
-                                            <span className="text-green-600">
-                                                {category.approved} approuvés
-                                            </span>
-                                            <span className="text-red-600">
-                                                {category.rejected} rejetés
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div className="w-full bg-slate-200 rounded-full h-2">
-                                        <div className="flex h-2 rounded-full overflow-hidden">
-                                            <div
-                                                className="bg-green-500"
-                                                style={{
-                                                    width: `${
-                                                        (category.approved /
-                                                            (category.pending +
-                                                                category.approved +
-                                                                category.rejected)) *
-                                                        100
-                                                    }%`,
-                                                }}
-                                            ></div>
-                                            <div
-                                                className="bg-yellow-500"
-                                                style={{
-                                                    width: `${
-                                                        (category.pending /
-                                                            (category.pending +
-                                                                category.approved +
-                                                                category.rejected)) *
-                                                        100
-                                                    }%`,
-                                                }}
-                                            ></div>
-                                            <div
-                                                className="bg-red-500"
-                                                style={{
-                                                    width: `${
-                                                        (category.rejected /
-                                                            (category.pending +
-                                                                category.approved +
-                                                                category.rejected)) *
-                                                        100
-                                                    }%`,
-                                                }}
-                                            ></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </CardContent>
-                </Card>
-
-                {/* Outils de modération */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle style={{ color: "#2D4A6B" }}>
-                            Outils de Modération
-                        </CardTitle>
-                        <CardDescription>
-                            Accès rapide aux fonctionnalités de gestion
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                            <Link to="/manager/products">
-                                <Button
-                                    variant="outline"
-                                    className="w-full h-20 flex flex-col items-center justify-center space-y-2"
-                                >
-                                    <Package
-                                        className="w-6 h-6"
-                                        style={{ color: "#2D4A6B" }}
-                                    />
-                                    <span className="text-sm">Produits</span>
-                                    {moderationStats.pendingProducts > 0 && (
-                                        <Badge className="absolute -top-1 -right-1 bg-red-500 text-white text-xs">
-                                            {moderationStats.pendingProducts}
-                                        </Badge>
-                                    )}
-                                </Button>
-                            </Link>
-
-                            <Link to="/manager/merchants">
-                                <Button
-                                    variant="outline"
-                                    className="w-full h-20 flex flex-col items-center justify-center space-y-2"
-                                >
-                                    <Users
-                                        className="w-6 h-6"
-                                        style={{ color: "#2D4A6B" }}
-                                    />
-                                    <span className="text-sm">Marchands</span>
-                                </Button>
-                            </Link>
-
-                            <Link to="/manager/reviews">
-                                <Button
-                                    variant="outline"
-                                    className="w-full h-20 flex flex-col items-center justify-center space-y-2"
-                                >
-                                    <MessageSquare
-                                        className="w-6 h-6"
-                                        style={{ color: "#2D4A6B" }}
-                                    />
-                                    <span className="text-sm">Avis</span>
-                                </Button>
-                            </Link>
-
-                            <Link to="/manager/reports">
-                                <Button
-                                    variant="outline"
-                                    className="w-full h-20 flex flex-col items-center justify-center space-y-2"
-                                >
-                                    <Flag
-                                        className="w-6 h-6"
-                                        style={{ color: "#2D4A6B" }}
-                                    />
-                                    <span className="text-sm">
-                                        Signalements
-                                    </span>
-                                    {moderationStats.reportedContent > 0 && (
-                                        <Badge className="absolute -top-1 -right-1 bg-red-500 text-white text-xs">
-                                            {moderationStats.reportedContent}
-                                        </Badge>
-                                    )}
-                                </Button>
-                            </Link>
-
-                            <Link to="/manager/analytics">
-                                <Button
-                                    variant="outline"
-                                    className="w-full h-20 flex flex-col items-center justify-center space-y-2"
-                                >
-                                    <BarChart3
-                                        className="w-6 h-6"
-                                        style={{ color: "#2D4A6B" }}
-                                    />
-                                    <span className="text-sm">Analytiques</span>
-                                </Button>
-                            </Link>
-
-                            <Link to="/manager/search">
-                                <Button
-                                    variant="outline"
-                                    className="w-full h-20 flex flex-col items-center justify-center space-y-2"
-                                >
-                                    <Search
-                                        className="w-6 h-6"
-                                        style={{ color: "#2D4A6B" }}
-                                    />
-                                    <span className="text-sm">Recherche</span>
-                                </Button>
-                            </Link>
-
-                            <Link to="/manager/filters">
-                                <Button
-                                    variant="outline"
-                                    className="w-full h-20 flex flex-col items-center justify-center space-y-2"
-                                >
-                                    <Filter
-                                        className="w-6 h-6"
-                                        style={{ color: "#2D4A6B" }}
-                                    />
-                                    <span className="text-sm">Filtres</span>
-                                </Button>
-                            </Link>
-
-                            <Link to="/manager/compliance">
-                                <Button
-                                    variant="outline"
-                                    className="w-full h-20 flex flex-col items-center justify-center space-y-2"
-                                >
-                                    <Shield
-                                        className="w-6 h-6"
-                                        style={{ color: "#2D4A6B" }}
-                                    />
-                                    <span className="text-sm">Conformité</span>
-                                </Button>
-                            </Link>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                {/* Métriques de performance */}
-                <div className="grid lg:grid-cols-3 gap-4">
-                    <Card className="text-center">
-                        <CardContent className="pt-6">
-                            <div
-                                className="text-2xl font-bold"
-                                style={{ color: "#2D4A6B" }}
-                            >
-                                {moderationStats.averageResponseTime}
-                            </div>
-                            <p className="text-sm text-slate-600">
-                                Temps de réponse moyen
-                            </p>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="text-center">
-                        <CardContent className="pt-6">
-                            <div
-                                className="text-2xl font-bold"
-                                style={{ color: "#2D4A6B" }}
-                            >
-                                {moderationStats.contentApprovalRate}%
-                            </div>
-                            <p className="text-sm text-slate-600">
-                                Taux d'approbation
-                            </p>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="text-center">
-                        <CardContent className="pt-6">
-                            <div
-                                className="text-2xl font-bold"
-                                style={{ color: "#2D4A6B" }}
-                            >
-                                98.5%
-                            </div>
-                            <p className="text-sm text-slate-600">
-                                Satisfaction qualité
-                            </p>
                         </CardContent>
                     </Card>
                 </div>
             </div>
-        </div>
+        </AuthGuard>
     )
 }
 
