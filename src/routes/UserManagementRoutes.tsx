@@ -15,8 +15,8 @@ import UserProfilePage from "@/pages/user/UserProfilePage"
 // Import des pages marchand
 import MerchantDashboardPage from "@/pages/merchant/MerchantDashboardPage"
 
-// Import des pages gestionnaire
-import ManagerDashboardPage from "@/pages/manager/ManagerDashboardPage"
+// Import des routes gestionnaire
+import ManagerRoutes from "./ManagerRoutes"
 
 // Import des pages admin
 import AdminDashboardPage from "@/pages/admin/AdminDashboardPage"
@@ -80,25 +80,7 @@ export const UserManagementRoutes: React.FC = () => {
             />
 
             {/* Routes gestionnaire */}
-            <Route
-                path="/manager/*"
-                element={
-                    <ProtectedRoute allowedRoles={["manager"]}>
-                        <Routes>
-                            <Route
-                                path="dashboard"
-                                element={
-                                    <DashboardLayout allowedRoles={["manager"]}>
-                                        <ManagerDashboardPage />
-                                    </DashboardLayout>
-                                }
-                            />
-                            {/* TODO: Ajouter d'autres routes gestionnaire */}
-                            <Route path="*" element={<RootRedirect />} />
-                        </Routes>
-                    </ProtectedRoute>
-                }
-            />
+            <Route path="/manager/*" element={<ManagerRoutes />} />
 
             {/* Routes administrateur */}
             <Route

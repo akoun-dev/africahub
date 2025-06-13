@@ -1,18 +1,15 @@
 import { CapacitorConfig } from "@capacitor/cli"
 
+/**
+ * Configuration Capacitor pour la production
+ * Utilisez cette configuration pour les builds de production
+ * Commande: npx cap sync --config capacitor.config.prod.ts
+ */
 const config: CapacitorConfig = {
     appId: "com.africahub.app",
     appName: "AfricaHub",
     webDir: "dist",
-    // Configuration du serveur pour le développement
-    // Commentez la section server pour la production
-    server: {
-        // URL pour le développement local - changez l'IP selon votre réseau
-        url: "http://192.168.1.5:8081",
-        cleartext: true,
-        // Permet le live reload pendant le développement
-        androidScheme: "http",
-    },
+    // Pas de serveur pour la production - utilise les fichiers locaux
     plugins: {
         SplashScreen: {
             launchShowDuration: 2000,
@@ -36,18 +33,16 @@ const config: CapacitorConfig = {
         },
         // Configuration pour le plugin Filesystem
         Filesystem: {
-            // Permissions pour l'accès aux fichiers
             iosScheme: "capacitor",
             androidScheme: "https",
         },
     },
-    // Configuration Android spécifique
+    // Configuration Android pour la production
     android: {
-        allowMixedContent: true,
-        // Permissions nécessaires pour AfricaHub
-        webContentsDebuggingEnabled: true,
+        allowMixedContent: false,
+        webContentsDebuggingEnabled: false,
     },
-    // Configuration iOS spécifique (pour le futur)
+    // Configuration iOS pour la production
     ios: {
         scheme: "AfricaHub",
         contentInset: "automatic",

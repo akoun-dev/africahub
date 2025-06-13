@@ -12,10 +12,20 @@
         "db:reset": "npx supabase db reset --db-url \"postgresql://postgres:AfricaHub@db.gpjkwjdtgbxkvcpzfodb.supabase.co:5432/postgres\"",
         "db:status": "psql \"postgresql://postgres:AfricaHub@db.gpjkwjdtgbxkvcpzfodb.supabase.co:5432/postgres\" -c \"\\dt\"",
         "test:supabase": "echo 'Ouvrez la console du navigateur et utilisez: await window.testSupabase.runAllTests()'",
-        "test:auth": "echo 'Ouvrez la console du navigateur et utilisez: await window.testAuthFix.runAuthFixTests()'"
+        "test:auth": "echo 'Ouvrez la console du navigateur et utilisez: await window.testAuthFix.runAuthFixTests()'",
+        "mobile:dev": "npm run build && npx cap sync && npx cap run android",
+        "mobile:build": "npm run build && npx cap sync --config capacitor.config.prod.ts",
+        "mobile:sync": "npx cap sync",
+        "mobile:sync:prod": "npx cap sync --config capacitor.config.prod.ts",
+        "mobile:open": "npx cap open android",
+        "mobile:live": "npm run dev & npx cap run android --livereload --external",
+        "mobile:check": "node scripts/check-mobile-setup.js",
+        "android:dev": "npm run mobile:dev",
+        "android:build": "npm run mobile:build",
+        "android:open": "npm run mobile:open"
     },
     "dependencies": {
-        "@capacitor/android": "^7.2.0",
+        "@capacitor/android": "^7.3.0",
         "@capacitor/cli": "^7.3.0",
         "@capacitor/filesystem": "^7.1.1",
         "@hookform/resolvers": "^3.9.0",

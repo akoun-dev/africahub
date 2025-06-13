@@ -1,34 +1,30 @@
 /**
  * Layout principal pour les pages gestionnaire
- * Inclut la navigation latérale et la structure générale
+ * Design moderne avec navigation latérale et structure responsive
  */
 
 import React, { useState } from "react"
-import { Outlet } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { 
-    Menu, 
-    X, 
-    Bell, 
-    Search, 
-    User,
-    LogOut,
-    Settings
-} from "lucide-react"
+import { Menu, X, Bell, Search, User, LogOut, Settings } from "lucide-react"
 import { AuthGuard } from "@/components/auth/AuthGuard"
 import { useAuth } from "@/contexts/AuthContext"
 import ManagerNavigation from "./ManagerNavigation"
 import useManagerModeration from "@/hooks/useManagerModeration"
 import useManagerReports from "@/hooks/useManagerReports"
 
-export const ManagerLayout: React.FC = () => {
+interface ManagerLayoutProps {
+    children: React.ReactNode
+}
+
+export const ManagerLayout: React.FC<ManagerLayoutProps> = ({ children }) => {
     const { profile, logout } = useAuth()
     const { moderationStats } = useManagerModeration()
     const { reportStats } = useManagerReports()
     const [sidebarOpen, setSidebarOpen] = useState(false)
 
-    const totalNotifications = (moderationStats?.urgent_count || 0) + (reportStats?.urgent_count || 0)
+    const totalNotifications =
+        (moderationStats?.urgent_count || 0) + (reportStats?.urgent_count || 0)
 
     const handleLogout = async () => {
         try {
@@ -49,10 +45,15 @@ export const ManagerLayout: React.FC = () => {
                 {/* Sidebar mobile */}
                 {sidebarOpen && (
                     <div className="fixed inset-0 z-50 lg:hidden">
-                        <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setSidebarOpen(false)} />
+                        <div
+                            className="fixed inset-0 bg-black bg-opacity-50"
+                            onClick={() => setSidebarOpen(false)}
+                        />
                         <div className="fixed left-0 top-0 h-full w-64 bg-white">
                             <div className="flex items-center justify-between p-4 border-b">
-                                <h2 className="font-semibold text-gray-900">Menu</h2>
+                                <h2 className="font-semibold text-gray-900">
+                                    Menu
+                                </h2>
                                 <Button
                                     variant="ghost"
                                     size="sm"
@@ -97,11 +98,17 @@ export const ManagerLayout: React.FC = () => {
 
                             <div className="flex items-center space-x-4">
                                 {/* Notifications */}
-                                <Button variant="ghost" size="sm" className="relative">
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="relative"
+                                >
                                     <Bell className="w-5 h-5" />
                                     {totalNotifications > 0 && (
                                         <Badge className="absolute -top-1 -right-1 bg-red-500 text-white text-xs min-w-[1.25rem] h-5 flex items-center justify-center rounded-full">
-                                            {totalNotifications > 99 ? "99+" : totalNotifications}
+                                            {totalNotifications > 99
+                                                ? "99+"
+                                                : totalNotifications}
                                         </Badge>
                                     )}
                                 </Button>
@@ -110,9 +117,12 @@ export const ManagerLayout: React.FC = () => {
                                 <div className="flex items-center space-x-3">
                                     <div className="hidden md:block text-right">
                                         <p className="text-sm font-medium text-gray-900">
-                                            {profile?.first_name} {profile?.last_name}
+                                            {profile?.first_name}{" "}
+                                            {profile?.last_name}
                                         </p>
-                                        <p className="text-xs text-gray-500">Gestionnaire</p>
+                                        <p className="text-xs text-gray-500">
+                                            Gestionnaire
+                                        </p>
                                     </div>
                                     <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
                                         <User className="w-4 h-4 text-white" />
@@ -124,8 +134,8 @@ export const ManagerLayout: React.FC = () => {
                                     <Button variant="ghost" size="sm">
                                         <Settings className="w-4 h-4" />
                                     </Button>
-                                    <Button 
-                                        variant="ghost" 
+                                    <Button
+                                        variant="ghost"
                                         size="sm"
                                         onClick={handleLogout}
                                         className="text-red-600 hover:text-red-700 hover:bg-red-50"
@@ -138,9 +148,7 @@ export const ManagerLayout: React.FC = () => {
                     </header>
 
                     {/* Contenu de la page */}
-                    <main className="flex-1 overflow-auto">
-                        <Outlet />
-                    </main>
+                    <main className="flex-1 overflow-auto">{children}</main>
                 </div>
             </div>
         </AuthGuard>

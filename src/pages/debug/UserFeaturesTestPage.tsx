@@ -21,7 +21,7 @@ import {
     Loader2,
 } from "lucide-react"
 import { useAuth } from "@/contexts/AuthContext"
-import useFavorites from "@/hooks/useFavorites"
+import { useFavorites } from "@/hooks/useFavorites"
 import useUserReviews from "@/hooks/useUserReviews"
 import useUserNotifications from "@/hooks/useUserNotifications"
 import useUserHistory from "@/hooks/useUserHistory"
