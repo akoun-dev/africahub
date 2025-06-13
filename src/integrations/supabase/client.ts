@@ -44,10 +44,50 @@ export const supabase = createClient<Database>(
         auth: {
             persistSession: true,
             autoRefreshToken: true,
+            detectSessionInUrl: true,
+            flowType: "pkce",
         },
         global: {
             headers: {
                 "X-Client-Info": "africahub-web",
+                "Content-Type": "application/json",
+            },
+            fetch: (url, options = {}) => {
+                console.log("🌐 Requête Supabase:", url, options)
+
+                // Ajouter des options pour contourner les problèmes CORS/réseau
+                const enhancedOptions = {
+                    ...options,
+                    mode: "cors" as RequestMode,
+                    credentials: "omit" as RequestCredentials,
+                    headers: {
+                        ...options.headers,
+                        "Cache-Control": "no-cache",
+                        Pragma: "no-cache",
+                    },
+                }
+
+                return fetch(url, enhancedOptions)
+                    .then(response => {
+                        console.log(
+                            "✅ Réponse Supabase:",
+                            response.status,
+                            response.statusText
+                        )
+                        return response
+                    })
+                    .catch(error => {
+                        console.error("❌ Erreur fetch Supabase:", error)
+                        throw error
+                    })
+            },
+        },
+        db: {
+            schema: "public",
+        },
+        realtime: {
+            params: {
+                eventsPerSecond: 10,
             },
         },
     }

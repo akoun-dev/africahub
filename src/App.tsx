@@ -7,8 +7,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { AuthProvider } from "./contexts/AuthContext"
 import { CountryProvider } from "./contexts/CountryContext"
 import { ThemeProvider } from "./contexts/ThemeContext"
-// Import des utilitaires de test pour la console
-import "./utils/authTestUtils"
 
 // Layouts
 import { PublicLayout } from "./layouts/PublicLayout"
@@ -55,7 +53,6 @@ const UserFeaturesTestPage = React.lazy(
 const LogoutTestPage = React.lazy(() => import("./pages/debug/LogoutTestPage"))
 
 // Import du test de profil
-import "./utils/testProfile.js"
 
 // Nouvelles pages manquantes
 const Guides = React.lazy(() => import("./pages/Guides"))

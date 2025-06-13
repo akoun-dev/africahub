@@ -16,6 +16,8 @@ type SupabaseRPCFunctions =
     | "update_current_user_profile"
     | "has_permission"
     | "has_role"
+    | "create_user_profile_simple_rpc"
+    | "create_merchant_profile_rpc"
 import {
     UserWithProfile,
     hasPermission,
@@ -25,6 +27,14 @@ import {
 import { useNavigate, useLocation } from "react-router-dom"
 
 // Interface étendue pour le profil utilisateur
+interface RPCResult {
+    success: boolean
+    profile_id?: string
+    merchant_id?: string
+    message?: string
+    error?: string
+}
+
 interface ExtendedUserProfile {
     id: string
     user_id: string
@@ -60,11 +70,6 @@ interface AuthContextType {
         updates: Partial<UserWithProfile>
     ) => Promise<{ error: Error | null }>
     refreshProfile: () => Promise<void>
-    createProfileForExistingUser: () => Promise<{
-        success: boolean
-        error?: string
-        profile_id?: string
-    }>
     hasPermission: (permission: string) => boolean
     hasRole: (role: string) => boolean
     canAccess: (resource: string, action: string) => boolean
@@ -100,33 +105,77 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [profile, setProfile] = useState<UserWithProfile | null>(null)
     const [loading, setLoading] = useState(true)
 
-    // Charger le profil utilisateur
+    // Charger le profil utilisateur via API REST
     const loadUserProfile = async (
         userId: string
     ): Promise<UserWithProfile | null> => {
         try {
             console.log("🔍 Loading user profile for:", userId)
 
-            // Charger le profil utilisateur
-            const { data: profileData, error: profileError } = await supabase
-                .from("user_profiles")
-                .select("*")
-                .eq("user_id", userId)
-                .maybeSingle()
+            // Charger le profil utilisateur via API REST
+            console.log("📡 Chargement via API REST...")
+            const response = await fetch(
+                `https://gpjkwjdtgbxkvcpzfodb.supabase.co/rest/v1/user_profiles?user_id=eq.${userId}&select=*`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        apikey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdwamt3amR0Z2J4a3ZjcHpmb2RiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkyODgxOTUsImV4cCI6MjA2NDg2NDE5NX0.pQrp1QRfNjTFiPo7RSTwfeAWsVdp1x0_oh5Rxr9GZzY",
+                        Authorization:
+                            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdwamt3amR0Z2J4a3ZjcHpmb2RiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkyODgxOTUsImV4cCI6MjA2NDg2NDE5NX0.pQrp1QRfNjTFiPo7RSTwfeAWsVdp1x0_oh5Rxr9GZzY",
+                    },
+                }
+            )
 
-            console.log("📋 Profile data:", {
-                profileData,
-                profileError,
-            })
+            console.log(
+                "📥 Réponse chargement:",
+                response.status,
+                response.statusText
+            )
 
-            // Si aucun profil trouvé, retourner null
-            if (profileError || !profileData) {
-                console.log(
-                    "❌ Aucun profil trouvé pour l'utilisateur:",
-                    userId
-                )
-                console.log("💡 Le profil doit être créé lors de l'inscription")
+            if (!response.ok) {
+                const errorText = await response.text()
+                console.error("❌ Erreur chargement:", errorText)
                 return null
+            }
+
+            const profiles = await response.json()
+            console.log("📋 Profils trouvés:", profiles)
+
+            const profileData = profiles.length > 0 ? profiles[0] : null
+
+            // Si aucun profil trouvé, créer automatiquement
+            if (!profileData) {
+                console.log("❌ Aucun profil trouvé, création automatique...")
+                console.log("🔍 Nombre de profils trouvés:", profiles.length)
+                console.log("🔧 Déclenchement de la création automatique...")
+
+                // Déclencher la création via la fonction window qui a accès à user
+                if (
+                    typeof window !== "undefined" &&
+                    (window as any).createProfileDirect
+                ) {
+                    console.log("🚀 Appel de createProfileDirect...")
+                    const result = await (window as any).createProfileDirect()
+                    console.log("📥 Résultat createProfileDirect:", result)
+
+                    if (result.success) {
+                        // Recharger le profil après création
+                        console.log(
+                            "🔄 Rechargement après création automatique..."
+                        )
+                        return await loadUserProfile(userId)
+                    } else {
+                        console.error(
+                            "❌ Échec création automatique:",
+                            result.error
+                        )
+                        return null
+                    }
+                } else {
+                    console.error("❌ createProfileDirect non disponible")
+                    return null
+                }
             }
 
             // Le profil est maintenant un objet JSON direct
@@ -195,54 +244,270 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
     }
 
-    // Créer un profil pour un utilisateur existant
-    const createProfileForExistingUser = async () => {
+    // Fonction pour créer manuellement un profil (accessible via window.createProfile)
+    const createProfileManually = async () => {
         if (!user) {
             console.error("❌ Aucun utilisateur connecté")
             return { success: false, error: "Aucun utilisateur connecté" }
         }
 
         try {
-            console.log(
-                "🔧 Création de profil pour utilisateur existant:",
-                user.id
-            )
+            console.log("🔧 Création manuelle de profil pour:", user.id)
 
-            const { data: profileResult, error: profileError } =
-                await supabase.rpc("create_user_profile_simple_rpc", {
-                    p_user_id: user.id,
-                    p_email: user.email || "",
-                    p_first_name:
-                        user.user_metadata?.first_name || "Utilisateur",
-                    p_last_name: user.user_metadata?.last_name || "AfricaHub",
-                    p_role: user.user_metadata?.role || "user",
-                })
-
-            console.log("📥 Résultat création profil:", {
-                profileResult,
-                profileError,
-            })
-
-            if (profileError) {
-                console.error("❌ Erreur création profil:", profileError)
-                return { success: false, error: profileError.message }
+            const profileData = {
+                user_id: user.id,
+                email: user.email || "",
+                first_name: user.user_metadata?.first_name || "Utilisateur",
+                last_name: user.user_metadata?.last_name || "AfricaHub",
+                role: (user.user_metadata?.role || "user") as
+                    | "user"
+                    | "merchant"
+                    | "admin"
+                    | "manager",
+                status: "active" as
+                    | "active"
+                    | "inactive"
+                    | "suspended"
+                    | "pending",
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
             }
 
-            if (profileResult?.success) {
-                console.log(
-                    "✅ Profil créé avec succès:",
-                    profileResult.profile_id
+            console.log("📝 Données du profil:", profileData)
+
+            const { data: createdProfile, error: createError } = await supabase
+                .from("user_profiles")
+                .insert(profileData)
+                .select()
+                .single()
+
+            if (createError) {
+                console.error("❌ Erreur création:", createError)
+                return { success: false, error: createError.message }
+            }
+
+            console.log("✅ Profil créé:", createdProfile.id)
+
+            // Créer les permissions de base
+            await supabase.from("user_permissions").insert([
+                {
+                    user_id: user.id,
+                    permission: "view_products",
+                    granted_by: user.id,
+                },
+                {
+                    user_id: user.id,
+                    permission: "view_profile",
+                    granted_by: user.id,
+                },
+                {
+                    user_id: user.id,
+                    permission: "edit_profile",
+                    granted_by: user.id,
+                },
+            ])
+
+            // Recharger le profil
+            await refreshProfile()
+
+            return { success: true, profile_id: createdProfile.id }
+        } catch (error) {
+            console.error("💥 Erreur:", error)
+            return { success: false, error: "Erreur inattendue" }
+        }
+    }
+
+    // Exposer les fonctions dans window pour les tests
+    if (typeof window !== "undefined") {
+        ;(window as any).createProfile = createProfileManually
+        ;(window as any).forceProfileReload = refreshProfile
+
+        // Création de profil via API REST directe (contournement du client Supabase)
+        ;(window as any).createProfileDirect = async () => {
+            if (!user) {
+                console.error("❌ Aucun utilisateur connecté")
+                return { success: false, error: "Aucun utilisateur connecté" }
+            }
+
+            try {
+                console.log("🔧 Création directe via API REST pour:", user.id)
+
+                const profileData = {
+                    user_id: user.id,
+                    email: user.email || "",
+                    first_name: user.user_metadata?.first_name || "Utilisateur",
+                    last_name: user.user_metadata?.last_name || "AfricaHub",
+                    role: user.user_metadata?.role || "user",
+                    status: "active",
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString(),
+                }
+
+                console.log("📝 Données du profil:", profileData)
+
+                // Insertion directe via API REST
+                const response = await fetch(
+                    "https://gpjkwjdtgbxkvcpzfodb.supabase.co/rest/v1/user_profiles",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            apikey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdwamt3amR0Z2J4a3ZjcHpmb2RiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkyODgxOTUsImV4cCI6MjA2NDg2NDE5NX0.pQrp1QRfNjTFiPo7RSTwfeAWsVdp1x0_oh5Rxr9GZzY",
+                            Authorization:
+                                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdwamt3amR0Z2J4a3ZjcHpmb2RiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkyODgxOTUsImV4cCI6MjA2NDg2NDE5NX0.pQrp1QRfNjTFiPo7RSTwfeAWsVdp1x0_oh5Rxr9GZzY",
+                            Prefer: "return=representation",
+                        },
+                        body: JSON.stringify(profileData),
+                    }
                 )
+
+                console.log(
+                    "📥 Réponse API:",
+                    response.status,
+                    response.statusText
+                )
+
+                if (!response.ok) {
+                    const errorText = await response.text()
+                    console.error("❌ Erreur API:", errorText)
+                    return { success: false, error: errorText }
+                }
+
+                const createdProfile = await response.json()
+                console.log("✅ Profil créé via API:", createdProfile)
+
                 // Recharger le profil
                 await refreshProfile()
-                return { success: true, profile_id: profileResult.profile_id }
-            } else {
-                console.warn("⚠️ Résultat inattendu:", profileResult)
-                return { success: false, error: "Résultat inattendu" }
+
+                return { success: true, profile_id: createdProfile[0]?.id }
+            } catch (error) {
+                console.error("💥 Erreur:", error)
+                return { success: false, error: "Erreur inattendue" }
             }
-        } catch (error) {
-            console.error("💥 Erreur inattendue:", error)
-            return { success: false, error: "Erreur inattendue" }
+        }
+
+        // Fonction de test de connexion Supabase
+        ;(window as any).testSupabase = async () => {
+            console.log("🧪 Test de connexion Supabase...")
+            console.log("🔗 URL Supabase:", supabase.supabaseUrl)
+            console.log("🔑 Clé présente:", !!supabase.supabaseKey)
+
+            try {
+                console.log("📡 Tentative de requête simple...")
+
+                // Test avec timeout
+                const timeoutPromise = new Promise((_, reject) =>
+                    setTimeout(
+                        () => reject(new Error("Timeout après 10s")),
+                        10000
+                    )
+                )
+
+                const queryPromise = supabase
+                    .from("user_profiles")
+                    .select("count")
+                    .limit(1)
+
+                const result = await Promise.race([
+                    queryPromise,
+                    timeoutPromise,
+                ])
+                const { data, error } = result as any
+
+                console.log("✅ Connexion OK:", { data, error })
+                return { success: true, data, error }
+            } catch (err) {
+                console.error("❌ Erreur connexion:", err)
+                console.error("❌ Type d'erreur:", typeof err)
+                console.error("❌ Message:", (err as Error).message)
+                return { success: false, error: err }
+            }
+        }
+
+        // Test de connectivité réseau basique
+        ;(window as any).testNetwork = async () => {
+            console.log("🌐 Test de connectivité réseau...")
+
+            try {
+                // Test 1: Test CORS avec un service public
+                console.log("📡 Test 1: Test CORS...")
+                const response1 = await fetch("https://httpbin.org/get", {
+                    method: "GET",
+                    mode: "cors",
+                })
+                console.log("✅ CORS OK:", response1.status)
+
+                // Test 2: Test direct vers Supabase API
+                console.log("📡 Test 2: Connectivité Supabase API...")
+                const supabaseApiUrl =
+                    "https://gpjkwjdtgbxkvcpzfodb.supabase.co/rest/v1/"
+                const response2 = await fetch(supabaseApiUrl, {
+                    method: "GET",
+                    mode: "cors",
+                    headers: {
+                        apikey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdwamt3amR0Z2J4a3ZjcHpmb2RiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkyODgxOTUsImV4cCI6MjA2NDg2NDE5NX0.pQrp1QRfNjTFiPo7RSTwfeAWsVdp1x0_oh5Rxr9GZzY",
+                        Authorization:
+                            "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdwamt3amR0Z2J4a3ZjcHpmb2RiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkyODgxOTUsImV4cCI6MjA2NDg2NDE5NX0.pQrp1QRfNjTFiPo7RSTwfeAWsVdp1x0_oh5Rxr9GZzY",
+                    },
+                })
+                console.log("✅ Supabase API accessible:", response2.status)
+
+                return { success: true, message: "Tous les tests réseau OK" }
+            } catch (err) {
+                console.error("❌ Erreur réseau:", err)
+                return { success: false, error: err }
+            }
+        }
+
+        // Inscription directe via SQL (contournement du client Supabase)
+        ;(window as any).signUpDirect = async (userData: any) => {
+            console.log("🔧 Inscription directe via SQL:", userData.email)
+
+            try {
+                console.log("📝 Données utilisateur:", userData)
+                console.log("🔧 Création utilisateur via RPC...")
+
+                // Créer l'utilisateur via RPC
+                const response = await fetch(
+                    "https://gpjkwjdtgbxkvcpzfodb.supabase.co/rest/v1/rpc/create_auth_user",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            apikey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdwamt3amR0Z2J4a3ZjcHpmb2RiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkyODgxOTUsImV4cCI6MjA2NDg2NDE5NX0.pQrp1QRfNjTFiPo7RSTwfeAWsVdp1x0_oh5Rxr9GZzY",
+                            Authorization:
+                                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdwamt3amR0Z2J4a3ZjcHpmb2RiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkyODgxOTUsImV4cCI6MjA2NDg2NDE5NX0.pQrp1QRfNjTFiPo7RSTwfeAWsVdp1x0_oh5Rxr9GZzY",
+                        },
+                        body: JSON.stringify({
+                            user_email: userData.email,
+                            user_password: userData.password,
+                            user_first_name: userData.first_name,
+                            user_last_name: userData.last_name,
+                            user_role: userData.role || "user",
+                        }),
+                    }
+                )
+
+                console.log(
+                    "📥 Réponse inscription:",
+                    response.status,
+                    response.statusText
+                )
+
+                if (!response.ok) {
+                    const errorText = await response.text()
+                    console.error("❌ Erreur inscription:", errorText)
+                    return { success: false, error: errorText }
+                }
+
+                const userId = await response.json()
+                console.log("✅ Inscription réussie, user_id:", userId)
+
+                return { success: true, user_id: userId }
+            } catch (error) {
+                console.error("💥 Erreur inscription:", error)
+                return { success: false, error: "Erreur inattendue" }
+            }
         }
     }
 
@@ -440,109 +705,149 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             console.log("📧 Email confirmé:", data.user.email)
             console.log("📊 Métadonnées utilisateur:", data.user.user_metadata)
 
-            // 2. Créer le profil utilisateur avec la fonction RPC
+            // 2. Créer le profil utilisateur directement
             console.log("📝 ÉTAPE 2: Création du profil utilisateur...")
-            const { data: profileResult, error: profileError } =
-                await supabase.rpc("create_user_profile_simple_rpc", {
-                    p_user_id: data.user.id,
-                    p_email: userData.email,
-                    p_first_name: userData.first_name || "Utilisateur",
-                    p_last_name: userData.last_name || "AfricaHub",
-                    p_role: userData.role || "user",
-                })
+            try {
+                const { data: profileData, error: profileError } =
+                    await supabase
+                        .from("user_profiles")
+                        .insert({
+                            user_id: data.user.id,
+                            email: userData.email,
+                            first_name: userData.first_name || "Utilisateur",
+                            last_name: userData.last_name || "AfricaHub",
+                            role: (userData.role || "user") as
+                                | "user"
+                                | "merchant"
+                                | "admin"
+                                | "manager",
+                            status: "active" as
+                                | "active"
+                                | "inactive"
+                                | "suspended"
+                                | "pending",
+                            created_at: new Date().toISOString(),
+                            updated_at: new Date().toISOString(),
+                        })
+                        .select()
+                        .single()
 
-            console.log("📥 Résultat création profil:", {
-                profileResult,
-                profileError,
-            })
+                if (profileError) {
+                    console.error(
+                        "❌ ÉCHEC ÉTAPE 2 - Erreur création profil:",
+                        profileError
+                    )
+                    throw new Error(
+                        "Échec création du profil: " + profileError.message
+                    )
+                }
 
-            if (profileError) {
-                console.error(
-                    "❌ ÉCHEC ÉTAPE 2 - Erreur création profil:",
-                    profileError
-                )
-                // Ne pas faire échouer l'inscription, mais logger l'erreur
-            } else if (profileResult?.success) {
-                console.log(
-                    "✅ SUCCÈS ÉTAPE 2 - Profil créé:",
-                    profileResult.profile_id
-                )
-            } else {
-                console.warn("⚠️ ÉTAPE 2 - Résultat inattendu:", profileResult)
+                console.log("✅ SUCCÈS ÉTAPE 2 - Profil créé:", profileData?.id)
+
+                // Créer les permissions de base
+                await supabase.from("user_permissions").insert([
+                    {
+                        user_id: data.user.id,
+                        permission: "view_products",
+                        granted_by: data.user.id,
+                    },
+                    {
+                        user_id: data.user.id,
+                        permission: "view_profile",
+                        granted_by: data.user.id,
+                    },
+                    {
+                        user_id: data.user.id,
+                        permission: "edit_profile",
+                        granted_by: data.user.id,
+                    },
+                ])
+            } catch (error) {
+                console.error("💥 Erreur fatale création profil:", error)
+                throw error
             }
 
-            // 3. Si marchand, créer le profil marchand avec la fonction RPC
+            // 3. Si marchand, créer le profil marchand directement
             if (userData.role === "merchant" && userData.business_info) {
                 console.log("🏢 ÉTAPE 3: Création profil marchand...")
                 const businessInfo = userData.business_info
 
-                const { data: merchantResult, error: merchantError } =
-                    await supabase.rpc("create_merchant_profile_rpc", {
-                        p_user_id: data.user.id,
-                        p_business_name:
-                            businessInfo.business_name || "Mon Entreprise",
-                        p_business_sector:
-                            businessInfo.business_sector || "Autre",
-                        p_business_type: businessInfo.business_type || "Autre",
-                        p_business_description:
-                            businessInfo.business_description,
-                        p_business_address: businessInfo.business_address,
-                        p_business_phone: businessInfo.business_phone,
-                        p_business_email: businessInfo.business_email,
-                    })
+                try {
+                    // Créer le profil marchand
+                    const { data: merchantData, error: merchantError } =
+                        await supabase
+                            .from("merchant_profiles")
+                            .insert({
+                                user_id: data.user.id,
+                                business_name:
+                                    businessInfo.business_name ||
+                                    "Mon Entreprise",
+                                business_sector:
+                                    businessInfo.business_sector || "Autre",
+                                business_type:
+                                    businessInfo.business_type || "Autre",
+                                business_description:
+                                    businessInfo.business_description,
+                                business_address: businessInfo.business_address,
+                                business_phone: businessInfo.business_phone,
+                                business_email: businessInfo.business_email,
+                                verification_status: "pending",
+                            })
+                            .select()
+                            .single()
 
-                console.log("📥 Résultat création profil marchand:", {
-                    merchantResult,
-                    merchantError,
-                })
+                    if (merchantError) {
+                        console.error(
+                            "❌ ÉCHEC ÉTAPE 3 - Erreur création profil marchand:",
+                            merchantError
+                        )
+                    } else {
+                        console.log(
+                            "✅ SUCCÈS ÉTAPE 3 - Profil marchand créé:",
+                            merchantData?.id
+                        )
+                    }
 
-                if (merchantError) {
-                    console.error(
-                        "❌ ÉCHEC ÉTAPE 3 - Erreur création profil marchand:",
-                        merchantError
-                    )
-                } else if (merchantResult?.success) {
+                    // Mettre à jour le profil utilisateur avec les informations business
                     console.log(
-                        "✅ SUCCÈS ÉTAPE 3 - Profil marchand créé:",
-                        merchantResult.merchant_id
+                        "🔄 Mise à jour profil utilisateur avec infos business..."
                     )
-                } else {
-                    console.warn(
-                        "⚠️ ÉTAPE 3 - Résultat inattendu:",
-                        merchantResult
+
+                    // D'abord, récupérer les colonnes existantes
+                    const { data: existingColumns } = await supabase
+                        .from("user_profiles")
+                        .select("*")
+                        .limit(0)
+
+                    console.log(
+                        "📊 Colonnes disponibles dans user_profiles:",
+                        Object.keys(existingColumns || {})
                     )
+
+                    // Mise à jour basique sans les colonnes business si elles n'existent pas
+                    await supabase
+                        .from("user_profiles")
+                        .update({
+                            updated_at: new Date().toISOString(),
+                        })
+                        .eq("user_id", data.user.id)
+
+                    // Permissions marchands
+                    await supabase.from("user_permissions").insert([
+                        {
+                            user_id: data.user.id,
+                            permission: "manage_products",
+                            granted_by: data.user.id,
+                        },
+                        {
+                            user_id: data.user.id,
+                            permission: "view_analytics",
+                            granted_by: data.user.id,
+                        },
+                    ])
+                } catch (error) {
+                    console.error("💥 Erreur création profil marchand:", error)
                 }
-
-                // Mettre à jour le profil utilisateur avec les informations business
-                console.log(
-                    "🔄 Mise à jour profil utilisateur avec infos business..."
-                )
-                await supabase
-                    .from("user_profiles")
-                    .update({
-                        business_name: businessInfo.business_name,
-                        business_sector: businessInfo.business_sector,
-                        business_type: businessInfo.business_type,
-                        business_description: businessInfo.business_description,
-                        business_address: businessInfo.business_address,
-                        business_phone: businessInfo.business_phone,
-                        business_email: businessInfo.business_email,
-                    })
-                    .eq("user_id", data.user.id)
-
-                // Permissions marchands
-                await supabase.from("user_permissions").insert([
-                    {
-                        user_id: data.user.id,
-                        permission: "manage_products",
-                        granted_by: data.user.id,
-                    },
-                    {
-                        user_id: data.user.id,
-                        permission: "view_analytics",
-                        granted_by: data.user.id,
-                    },
-                ])
             }
 
             console.log("🎉 Inscription terminée avec succès")
@@ -670,7 +975,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         logout,
         updateProfile,
         refreshProfile,
-        createProfileForExistingUser,
         hasPermission: checkPermission,
         hasRole: checkRole,
         canAccess: checkAccess,
