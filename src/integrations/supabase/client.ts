@@ -64,6 +64,9 @@ export const supabase = createClient<Database>(
                         ...options.headers,
                         "Cache-Control": "no-cache",
                         Pragma: "no-cache",
+                        // S'assurer que l'API key est toujours présente
+                        apikey: SUPABASE_PUBLISHABLE_KEY,
+                        Authorization: `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
                     },
                 }
 

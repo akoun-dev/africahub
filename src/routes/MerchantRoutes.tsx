@@ -9,16 +9,40 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { AuthGuard } from "@/components/auth/AuthGuard"
 
 // Import des pages marchands
-const MerchantDashboardPage = React.lazy(() => import("@/pages/merchant/MerchantDashboardPage"))
-const MerchantProductsPage = React.lazy(() => import("@/pages/merchant/MerchantProductsPage"))
-const MerchantProductFormPage = React.lazy(() => import("@/pages/merchant/MerchantProductFormPage"))
-const MerchantReviewsPage = React.lazy(() => import("@/pages/merchant/MerchantReviewsPage"))
-const MerchantAnalyticsPage = React.lazy(() => import("@/pages/merchant/MerchantAnalyticsPage"))
+const MerchantDashboardPage = React.lazy(
+    () => import("@/pages/merchant/MerchantDashboardPage")
+)
+const MerchantProductsPage = React.lazy(
+    () => import("@/pages/merchant/MerchantProductsPage")
+)
+const MerchantProductFormPage = React.lazy(
+    () => import("@/pages/merchant/MerchantProductFormPage")
+)
+const MerchantReviewsPage = React.lazy(
+    () => import("@/pages/merchant/MerchantReviewsPage")
+)
+const MerchantAnalyticsPage = React.lazy(
+    () => import("@/pages/merchant/MerchantAnalyticsPage")
+)
+const MerchantOrdersPage = React.lazy(
+    () => import("@/pages/merchant/MerchantOrdersPage")
+)
+const MerchantPromotionsPage = React.lazy(
+    () => import("@/pages/merchant/MerchantPromotionsPage")
+)
+const MerchantActivityPage = React.lazy(
+    () => import("@/pages/merchant/MerchantActivityPage")
+)
 
-// Pages communes (réutilisées depuis les routes utilisateur)
-const UserProfilePage = React.lazy(() => import("@/pages/user/UserProfilePage"))
-const UserSettingsPage = React.lazy(() => import("@/pages/user/UserSettingsPage"))
-const UserNotificationsPage = React.lazy(() => import("@/pages/user/UserNotificationsPage"))
+// Import du layout marchand et des vues spécialisées
+import {
+    MerchantLayout,
+    MerchantFavoritesView,
+    MerchantMyReviewsView,
+    MerchantNotificationsView,
+    MerchantProfileView,
+    MerchantSettingsView,
+} from "@/components/merchant"
 
 // Page 404 pour les routes marchands
 const NotFound = React.lazy(() => import("@/pages/NotFound"))
@@ -75,7 +99,9 @@ const MerchantRoutes: React.FC = () => {
                                 />
                             }
                         >
-                            <MerchantProductsPage />
+                            <MerchantLayout>
+                                <MerchantProductsPage />
+                            </MerchantLayout>
                         </Suspense>
                     }
                 />
@@ -90,7 +116,9 @@ const MerchantRoutes: React.FC = () => {
                                 />
                             }
                         >
-                            <MerchantProductFormPage />
+                            <MerchantLayout>
+                                <MerchantProductFormPage />
+                            </MerchantLayout>
                         </Suspense>
                     }
                 />
@@ -105,7 +133,9 @@ const MerchantRoutes: React.FC = () => {
                                 />
                             }
                         >
-                            <MerchantProductFormPage />
+                            <MerchantLayout>
+                                <MerchantProductFormPage />
+                            </MerchantLayout>
                         </Suspense>
                     }
                 />
@@ -120,7 +150,9 @@ const MerchantRoutes: React.FC = () => {
                                 />
                             }
                         >
-                            <MerchantProductFormPage />
+                            <MerchantLayout>
+                                <MerchantProductFormPage />
+                            </MerchantLayout>
                         </Suspense>
                     }
                 />
@@ -137,7 +169,9 @@ const MerchantRoutes: React.FC = () => {
                                 />
                             }
                         >
-                            <MerchantReviewsPage />
+                            <MerchantLayout>
+                                <MerchantReviewsPage />
+                            </MerchantLayout>
                         </Suspense>
                     }
                 />
@@ -154,12 +188,14 @@ const MerchantRoutes: React.FC = () => {
                                 />
                             }
                         >
-                            <MerchantAnalyticsPage />
+                            <MerchantLayout>
+                                <MerchantAnalyticsPage />
+                            </MerchantLayout>
                         </Suspense>
                     }
                 />
 
-                {/* Gestion des commandes (à implémenter) */}
+                {/* Gestion des commandes */}
                 <Route
                     path="/orders"
                     element={
@@ -171,23 +207,14 @@ const MerchantRoutes: React.FC = () => {
                                 />
                             }
                         >
-                            <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 lg:p-8">
-                                <div className="max-w-7xl mx-auto">
-                                    <div className="text-center py-12">
-                                        <h1 className="text-2xl font-bold text-gray-900 mb-4">
-                                            Gestion des Commandes
-                                        </h1>
-                                        <p className="text-gray-600">
-                                            Cette fonctionnalité sera bientôt disponible.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
+                            <MerchantLayout>
+                                <MerchantOrdersPage />
+                            </MerchantLayout>
                         </Suspense>
                     }
                 />
 
-                {/* Gestion des promotions (à implémenter) */}
+                {/* Gestion des promotions */}
                 <Route
                     path="/promotions"
                     element={
@@ -199,23 +226,14 @@ const MerchantRoutes: React.FC = () => {
                                 />
                             }
                         >
-                            <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 lg:p-8">
-                                <div className="max-w-7xl mx-auto">
-                                    <div className="text-center py-12">
-                                        <h1 className="text-2xl font-bold text-gray-900 mb-4">
-                                            Gestion des Promotions
-                                        </h1>
-                                        <p className="text-gray-600">
-                                            Cette fonctionnalité sera bientôt disponible.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
+                            <MerchantLayout>
+                                <MerchantPromotionsPage />
+                            </MerchantLayout>
                         </Suspense>
                     }
                 />
 
-                {/* Activité et historique (à implémenter) */}
+                {/* Activité et historique */}
                 <Route
                     path="/activity"
                     element={
@@ -227,23 +245,14 @@ const MerchantRoutes: React.FC = () => {
                                 />
                             }
                         >
-                            <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 lg:p-8">
-                                <div className="max-w-7xl mx-auto">
-                                    <div className="text-center py-12">
-                                        <h1 className="text-2xl font-bold text-gray-900 mb-4">
-                                            Activité du Compte
-                                        </h1>
-                                        <p className="text-gray-600">
-                                            Cette fonctionnalité sera bientôt disponible.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
+                            <MerchantLayout>
+                                <MerchantActivityPage />
+                            </MerchantLayout>
                         </Suspense>
                     }
                 />
 
-                {/* Pages communes réutilisées */}
+                {/* Pages communes avec vues marchands spécialisées */}
                 <Route
                     path="/profile"
                     element={
@@ -255,7 +264,9 @@ const MerchantRoutes: React.FC = () => {
                                 />
                             }
                         >
-                            <UserProfilePage />
+                            <MerchantLayout>
+                                <MerchantProfileView />
+                            </MerchantLayout>
                         </Suspense>
                     }
                 />
@@ -270,7 +281,9 @@ const MerchantRoutes: React.FC = () => {
                                 />
                             }
                         >
-                            <UserSettingsPage />
+                            <MerchantLayout>
+                                <MerchantSettingsView />
+                            </MerchantLayout>
                         </Suspense>
                     }
                 />
@@ -285,7 +298,45 @@ const MerchantRoutes: React.FC = () => {
                                 />
                             }
                         >
-                            <UserNotificationsPage />
+                            <MerchantLayout>
+                                <MerchantNotificationsView />
+                            </MerchantLayout>
+                        </Suspense>
+                    }
+                />
+
+                {/* Routes vers vues utilisateur avec layout marchand */}
+                <Route
+                    path="/favorites"
+                    element={
+                        <Suspense
+                            fallback={
+                                <LoadingSpinner
+                                    size="lg"
+                                    text="Chargement des favoris..."
+                                />
+                            }
+                        >
+                            <MerchantLayout>
+                                <MerchantFavoritesView />
+                            </MerchantLayout>
+                        </Suspense>
+                    }
+                />
+                <Route
+                    path="/my-reviews"
+                    element={
+                        <Suspense
+                            fallback={
+                                <LoadingSpinner
+                                    size="lg"
+                                    text="Chargement de mes avis..."
+                                />
+                            }
+                        >
+                            <MerchantLayout>
+                                <MerchantMyReviewsView />
+                            </MerchantLayout>
                         </Suspense>
                     }
                 />
@@ -302,24 +353,28 @@ const MerchantRoutes: React.FC = () => {
                                 />
                             }
                         >
-                            <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 lg:p-8">
-                                <div className="max-w-7xl mx-auto">
-                                    <div className="text-center py-12">
-                                        <h1 className="text-2xl font-bold text-gray-900 mb-4">
-                                            Page non trouvée
-                                        </h1>
-                                        <p className="text-gray-600 mb-6">
-                                            La page que vous recherchez n'existe pas dans l'espace marchand.
-                                        </p>
-                                        <a
-                                            href="/merchant/dashboard"
-                                            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
-                                        >
-                                            Retour au dashboard
-                                        </a>
+                            <MerchantLayout>
+                                <div className="p-4 lg:p-8">
+                                    <div className="max-w-7xl mx-auto">
+                                        <div className="text-center py-12">
+                                            <h1 className="text-2xl font-bold text-gray-900 mb-4">
+                                                Page non trouvée
+                                            </h1>
+                                            <p className="text-gray-600 mb-6">
+                                                La page que vous recherchez
+                                                n'existe pas dans l'espace
+                                                marchand.
+                                            </p>
+                                            <a
+                                                href="/merchant/dashboard"
+                                                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                                            >
+                                                Retour au dashboard
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            </MerchantLayout>
                         </Suspense>
                     }
                 />

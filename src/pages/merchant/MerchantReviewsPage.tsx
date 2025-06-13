@@ -1,5 +1,5 @@
 /**
- * Page de gestion des avis clients pour les marchands
+ * Page de gestion des avis clients pour les marchands - Version moderne
  * Permet de consulter, répondre et gérer les avis sur les produits
  */
 
@@ -10,8 +10,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { 
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+import {
     Dialog,
     DialogContent,
     DialogDescription,
@@ -20,21 +26,20 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { 
-    DropdownMenu, 
-    DropdownMenuContent, 
-    DropdownMenuItem, 
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
     DropdownMenuTrigger,
-    DropdownMenuSeparator
+    DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
-import { 
-    ArrowLeft, 
-    MessageSquare, 
-    Star, 
-    Search, 
-    Filter, 
-    MoreVertical, 
-    Reply, 
+import {
+    MessageSquare,
+    Star,
+    Search,
+    Filter,
+    MoreVertical,
+    Reply,
     CheckCircle,
     XCircle,
     AlertTriangle,
@@ -43,9 +48,9 @@ import {
     Package,
     Calendar,
     ThumbsUp,
-    Flag
+    Flag,
 } from "lucide-react"
-import { AuthGuard } from "@/components/auth/AuthGuard"
+
 import useMerchantReviews from "@/hooks/useMerchantReviews"
 import { toast } from "sonner"
 
@@ -61,7 +66,7 @@ export const MerchantReviewsPage: React.FC = () => {
         getReviewsNeedingResponse,
         isResponding,
         isUpdatingStatus,
-        isDeletingResponse
+        isDeletingResponse,
     } = useMerchantReviews()
 
     const [searchTerm, setSearchTerm] = useState("")
@@ -69,7 +74,9 @@ export const MerchantReviewsPage: React.FC = () => {
     const [statusFilter, setStatusFilter] = useState<string>("all")
     const [hasResponseFilter, setHasResponseFilter] = useState<string>("all")
     const [responseText, setResponseText] = useState("")
-    const [selectedReviewId, setSelectedReviewId] = useState<string | null>(null)
+    const [selectedReviewId, setSelectedReviewId] = useState<string | null>(
+        null
+    )
     const [isResponseDialogOpen, setIsResponseDialogOpen] = useState(false)
 
     // Filtrer les avis
@@ -79,10 +86,20 @@ export const MerchantReviewsPage: React.FC = () => {
         return filterReviews({
             search: searchTerm,
             rating: ratingFilter === "all" ? undefined : parseInt(ratingFilter),
-            status: statusFilter === "all" ? undefined : statusFilter as any,
-            has_response: hasResponseFilter === "all" ? undefined : hasResponseFilter === "yes",
+            status: statusFilter === "all" ? undefined : (statusFilter as any),
+            has_response:
+                hasResponseFilter === "all"
+                    ? undefined
+                    : hasResponseFilter === "yes",
         })
-    }, [reviews, searchTerm, ratingFilter, statusFilter, hasResponseFilter, filterReviews])
+    }, [
+        reviews,
+        searchTerm,
+        ratingFilter,
+        statusFilter,
+        hasResponseFilter,
+        filterReviews,
+    ])
 
     const getStatusBadge = (status: string) => {
         switch (status) {
@@ -124,13 +141,18 @@ export const MerchantReviewsPage: React.FC = () => {
             <Star
                 key={i}
                 className={`w-4 h-4 ${
-                    i < rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
+                    i < rating
+                        ? "fill-yellow-400 text-yellow-400"
+                        : "text-gray-300"
                 }`}
             />
         ))
     }
 
-    const handleOpenResponseDialog = (reviewId: string, existingResponse?: string) => {
+    const handleOpenResponseDialog = (
+        reviewId: string,
+        existingResponse?: string
+    ) => {
         setSelectedReviewId(reviewId)
         setResponseText(existingResponse || "")
         setIsResponseDialogOpen(true)
@@ -149,7 +171,10 @@ export const MerchantReviewsPage: React.FC = () => {
         }
     }
 
-    const handleStatusChange = async (reviewId: string, newStatus: "pending" | "approved" | "rejected" | "flagged") => {
+    const handleStatusChange = async (
+        reviewId: string,
+        newStatus: "pending" | "approved" | "rejected" | "flagged"
+    ) => {
         try {
             await updateReviewStatus(reviewId, newStatus)
         } catch (error) {
@@ -158,7 +183,9 @@ export const MerchantReviewsPage: React.FC = () => {
     }
 
     const handleDeleteResponse = async (reviewId: string) => {
-        if (window.confirm("Êtes-vous sûr de vouloir supprimer cette réponse ?")) {
+        if (
+            window.confirm("Êtes-vous sûr de vouloir supprimer cette réponse ?")
+        ) {
             try {
                 await deleteResponse(reviewId)
             } catch (error) {
@@ -169,352 +196,487 @@ export const MerchantReviewsPage: React.FC = () => {
 
     if (isLoading) {
         return (
-            <AuthGuard>
-                <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 lg:p-8">
-                    <div className="max-w-7xl mx-auto">
-                        <div className="flex items-center justify-center h-64">
-                            <div className="text-center">
-                                <MessageSquare className="w-12 h-12 text-gray-400 mx-auto mb-4 animate-pulse" />
-                                <p className="text-gray-600">Chargement des avis...</p>
-                            </div>
+            <div className="min-h-screen bg-gradient-to-br from-slate-50 to-emerald-50 p-6">
+                <div className="flex items-center justify-center h-64">
+                    <div className="text-center">
+                        <div className="w-16 h-16 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <MessageSquare className="w-8 h-8 text-emerald-600 animate-pulse" />
                         </div>
+                        <p className="text-gray-600 text-lg">
+                            Chargement des avis...
+                        </p>
                     </div>
                 </div>
-            </AuthGuard>
+            </div>
         )
     }
 
     return (
-        <AuthGuard>
-            <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 lg:p-8">
-                <div className="max-w-7xl mx-auto space-y-8">
-                    {/* En-tête */}
-                    <div className="flex items-center space-x-4">
-                        <Link to="/merchant/dashboard">
-                            <Button variant="outline" size="sm">
-                                <ArrowLeft className="w-4 h-4 mr-2" />
-                                Retour
-                            </Button>
-                        </Link>
-                        <div>
-                            <h1 className="text-3xl font-bold" style={{ color: "#2D4A6B" }}>
-                                Avis Clients
-                            </h1>
-                            <p className="text-slate-600">
-                                Gérez les avis et commentaires sur vos produits
-                            </p>
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-emerald-50">
+            <div className="p-6 space-y-6">
+                {/* En-tête avec design moderne */}
+                <div className="bg-gradient-to-r from-emerald-600 via-emerald-700 to-emerald-800 rounded-xl p-8 text-white shadow-xl relative overflow-hidden">
+                    {/* Motifs décoratifs */}
+                    <div className="absolute inset-0 bg-black/10"></div>
+                    <div className="absolute -right-10 -top-10 w-32 h-32 bg-white/5 rounded-full"></div>
+                    <div className="absolute -left-5 -bottom-5 w-24 h-24 bg-emerald-400/20 rounded-full"></div>
+
+                    <div className="relative z-10">
+                        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+                            <div>
+                                <h1 className="text-4xl font-bold text-white mb-2">
+                                    Avis Clients
+                                </h1>
+                                <p className="text-emerald-100 text-lg">
+                                    Gérez les avis et commentaires sur vos
+                                    produits
+                                </p>
+                            </div>
                         </div>
                     </div>
+                </div>
 
-                    {/* Statistiques rapides */}
-                    {stats && (
-                        <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
-                            <Card className="text-center">
-                                <CardContent className="pt-6">
-                                    <div className="text-2xl font-bold" style={{ color: "#2D4A6B" }}>
-                                        {stats.total}
-                                    </div>
-                                    <p className="text-sm text-slate-600">Total</p>
-                                </CardContent>
-                            </Card>
-                            <Card className="text-center">
-                                <CardContent className="pt-6">
-                                    <div className="text-2xl font-bold text-green-600">
-                                        {stats.approved}
-                                    </div>
-                                    <p className="text-sm text-slate-600">Approuvés</p>
-                                </CardContent>
-                            </Card>
-                            <Card className="text-center">
-                                <CardContent className="pt-6">
-                                    <div className="text-2xl font-bold text-yellow-600">
-                                        {stats.pending}
-                                    </div>
-                                    <p className="text-sm text-slate-600">En attente</p>
-                                </CardContent>
-                            </Card>
-                            <Card className="text-center">
-                                <CardContent className="pt-6">
-                                    <div className="text-2xl font-bold text-blue-600">
-                                        {stats.withResponse}
-                                    </div>
-                                    <p className="text-sm text-slate-600">Avec réponse</p>
-                                </CardContent>
-                            </Card>
-                            <Card className="text-center">
-                                <CardContent className="pt-6">
-                                    <div className="text-2xl font-bold text-orange-600">
-                                        {stats.needingResponse}
-                                    </div>
-                                    <p className="text-sm text-slate-600">À répondre</p>
-                                </CardContent>
-                            </Card>
-                            <Card className="text-center">
-                                <CardContent className="pt-6">
-                                    <div className="flex items-center justify-center space-x-1">
-                                        <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                                        <span className="text-2xl font-bold" style={{ color: "#2D4A6B" }}>
-                                            {stats.averageRating.toFixed(1)}
-                                        </span>
-                                    </div>
-                                    <p className="text-sm text-slate-600">Note moyenne</p>
-                                </CardContent>
-                            </Card>
-                        </div>
-                    )}
-
-                    {/* Filtres et recherche */}
-                    <Card>
-                        <CardContent className="pt-6">
-                            <div className="flex flex-col lg:flex-row gap-4">
-                                <div className="flex-1">
-                                    <div className="relative">
-                                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                                        <Input
-                                            placeholder="Rechercher dans les avis..."
-                                            value={searchTerm}
-                                            onChange={(e) => setSearchTerm(e.target.value)}
-                                            className="pl-10"
-                                        />
-                                    </div>
+                {/* Statistiques rapides avec design moderne */}
+                {stats && (
+                    <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
+                        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
+                            <CardContent className="p-6 text-center">
+                                <div className="w-12 h-12 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <MessageSquare className="w-6 h-6 text-emerald-600" />
                                 </div>
-                                <Select value={ratingFilter} onValueChange={setRatingFilter}>
-                                    <SelectTrigger className="w-full lg:w-48">
-                                        <SelectValue placeholder="Note" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="all">Toutes les notes</SelectItem>
-                                        <SelectItem value="5">5 étoiles</SelectItem>
-                                        <SelectItem value="4">4 étoiles</SelectItem>
-                                        <SelectItem value="3">3 étoiles</SelectItem>
-                                        <SelectItem value="2">2 étoiles</SelectItem>
-                                        <SelectItem value="1">1 étoile</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                                    <SelectTrigger className="w-full lg:w-48">
-                                        <SelectValue placeholder="Statut" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="all">Tous les statuts</SelectItem>
-                                        <SelectItem value="approved">Approuvé</SelectItem>
-                                        <SelectItem value="pending">En attente</SelectItem>
-                                        <SelectItem value="rejected">Rejeté</SelectItem>
-                                        <SelectItem value="flagged">Signalé</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                <Select value={hasResponseFilter} onValueChange={setHasResponseFilter}>
-                                    <SelectTrigger className="w-full lg:w-48">
-                                        <SelectValue placeholder="Réponse" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="all">Tous</SelectItem>
-                                        <SelectItem value="yes">Avec réponse</SelectItem>
-                                        <SelectItem value="no">Sans réponse</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </CardContent>
-                    </Card>
+                                <div className="text-2xl font-bold text-emerald-600 mb-1">
+                                    {stats.total}
+                                </div>
+                                <p className="text-sm font-medium text-gray-700">
+                                    Total
+                                </p>
+                            </CardContent>
+                        </Card>
+                        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
+                            <CardContent className="p-6 text-center">
+                                <div className="w-12 h-12 bg-gradient-to-br from-green-100 to-green-200 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <CheckCircle className="w-6 h-6 text-green-600" />
+                                </div>
+                                <div className="text-2xl font-bold text-green-600 mb-1">
+                                    {stats.approved}
+                                </div>
+                                <p className="text-sm font-medium text-gray-700">
+                                    Approuvés
+                                </p>
+                            </CardContent>
+                        </Card>
+                        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
+                            <CardContent className="p-6 text-center">
+                                <div className="w-12 h-12 bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <Clock className="w-6 h-6 text-yellow-600" />
+                                </div>
+                                <div className="text-2xl font-bold text-yellow-600 mb-1">
+                                    {stats.pending}
+                                </div>
+                                <p className="text-sm font-medium text-gray-700">
+                                    En attente
+                                </p>
+                            </CardContent>
+                        </Card>
+                        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
+                            <CardContent className="p-6 text-center">
+                                <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <Reply className="w-6 h-6 text-blue-600" />
+                                </div>
+                                <div className="text-2xl font-bold text-blue-600 mb-1">
+                                    {stats.withResponse}
+                                </div>
+                                <p className="text-sm font-medium text-gray-700">
+                                    Avec réponse
+                                </p>
+                            </CardContent>
+                        </Card>
+                        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
+                            <CardContent className="p-6 text-center">
+                                <div className="w-12 h-12 bg-gradient-to-br from-orange-100 to-orange-200 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <AlertTriangle className="w-6 h-6 text-orange-600" />
+                                </div>
+                                <div className="text-2xl font-bold text-orange-600 mb-1">
+                                    {stats.needingResponse}
+                                </div>
+                                <p className="text-sm font-medium text-gray-700">
+                                    À répondre
+                                </p>
+                            </CardContent>
+                        </Card>
+                        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
+                            <CardContent className="p-6 text-center">
+                                <div className="w-12 h-12 bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <Star className="w-6 h-6 text-yellow-600" />
+                                </div>
+                                <div className="text-2xl font-bold text-yellow-600 mb-1">
+                                    {stats.averageRating.toFixed(1)}
+                                </div>
+                                <p className="text-sm font-medium text-gray-700">
+                                    Note moyenne
+                                </p>
+                            </CardContent>
+                        </Card>
+                    </div>
+                )}
 
-                    {/* Liste des avis */}
-                    <div className="space-y-6">
-                        {filteredReviews.length === 0 ? (
-                            <Card>
-                                <CardContent className="pt-6">
-                                    <div className="text-center py-12">
-                                        <MessageSquare className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                                        <h3 className="text-lg font-medium text-gray-900 mb-2">
-                                            Aucun avis trouvé
-                                        </h3>
-                                        <p className="text-gray-600">
-                                            {searchTerm || ratingFilter !== "all" || statusFilter !== "all" || hasResponseFilter !== "all"
-                                                ? "Aucun avis ne correspond à vos critères de recherche."
-                                                : "Vous n'avez pas encore reçu d'avis sur vos produits."}
-                                        </p>
+                {/* Filtres et recherche avec design moderne */}
+                <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+                    <CardContent className="p-6">
+                        <div className="flex flex-col lg:flex-row gap-4">
+                            <div className="flex-1">
+                                <div className="relative">
+                                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                                    <Input
+                                        placeholder="Rechercher dans les avis..."
+                                        value={searchTerm}
+                                        onChange={e =>
+                                            setSearchTerm(e.target.value)
+                                        }
+                                        className="pl-10 border-emerald-200 focus:border-emerald-500"
+                                    />
+                                </div>
+                            </div>
+                            <Select
+                                value={ratingFilter}
+                                onValueChange={setRatingFilter}
+                            >
+                                <SelectTrigger className="w-full lg:w-48 border-emerald-200">
+                                    <SelectValue placeholder="Note" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">
+                                        Toutes les notes
+                                    </SelectItem>
+                                    <SelectItem value="5">5 étoiles</SelectItem>
+                                    <SelectItem value="4">4 étoiles</SelectItem>
+                                    <SelectItem value="3">3 étoiles</SelectItem>
+                                    <SelectItem value="2">2 étoiles</SelectItem>
+                                    <SelectItem value="1">1 étoile</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <Select
+                                value={statusFilter}
+                                onValueChange={setStatusFilter}
+                            >
+                                <SelectTrigger className="w-full lg:w-48 border-emerald-200">
+                                    <SelectValue placeholder="Statut" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">
+                                        Tous les statuts
+                                    </SelectItem>
+                                    <SelectItem value="approved">
+                                        Approuvé
+                                    </SelectItem>
+                                    <SelectItem value="pending">
+                                        En attente
+                                    </SelectItem>
+                                    <SelectItem value="rejected">
+                                        Rejeté
+                                    </SelectItem>
+                                    <SelectItem value="flagged">
+                                        Signalé
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <Select
+                                value={hasResponseFilter}
+                                onValueChange={setHasResponseFilter}
+                            >
+                                <SelectTrigger className="w-full lg:w-48 border-emerald-200">
+                                    <SelectValue placeholder="Réponse" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">Tous</SelectItem>
+                                    <SelectItem value="yes">
+                                        Avec réponse
+                                    </SelectItem>
+                                    <SelectItem value="no">
+                                        Sans réponse
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Liste des avis avec design moderne */}
+                <div className="space-y-6">
+                    {filteredReviews.length === 0 ? (
+                        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+                            <CardContent className="p-12">
+                                <div className="text-center">
+                                    <div className="w-24 h-24 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-full flex items-center justify-center mx-auto mb-6">
+                                        <MessageSquare className="w-12 h-12 text-emerald-600" />
                                     </div>
-                                </CardContent>
-                            </Card>
-                        ) : (
-                            filteredReviews.map((review) => (
-                                <Card key={review.id} className="hover:shadow-lg transition-shadow">
-                                    <CardContent className="pt-6">
-                                        <div className="space-y-4">
-                                            {/* En-tête de l'avis */}
-                                            <div className="flex items-start justify-between">
-                                                <div className="flex items-start space-x-4">
-                                                    <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                                                        <User className="w-5 h-5 text-gray-500" />
+                                    <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                                        Aucun avis trouvé
+                                    </h3>
+                                    <p className="text-gray-600 text-lg">
+                                        {searchTerm ||
+                                        ratingFilter !== "all" ||
+                                        statusFilter !== "all" ||
+                                        hasResponseFilter !== "all"
+                                            ? "Aucun avis ne correspond à vos critères de recherche."
+                                            : "Vous n'avez pas encore reçu d'avis sur vos produits."}
+                                    </p>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ) : (
+                        filteredReviews.map(review => (
+                            <Card
+                                key={review.id}
+                                className="border-0 shadow-lg bg-white/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300"
+                            >
+                                <CardContent className="p-6">
+                                    <div className="space-y-4">
+                                        {/* En-tête de l'avis */}
+                                        <div className="flex items-start justify-between">
+                                            <div className="flex items-start space-x-4">
+                                                <div className="w-12 h-12 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-full flex items-center justify-center">
+                                                    <User className="w-6 h-6 text-emerald-600" />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <div className="flex items-center space-x-2 mb-2">
+                                                        <span className="font-semibold text-gray-900">
+                                                            {
+                                                                review.user
+                                                                    ?.first_name
+                                                            }{" "}
+                                                            {
+                                                                review.user
+                                                                    ?.last_name
+                                                            }
+                                                        </span>
+                                                        {review.is_verified_purchase && (
+                                                            <Badge className="bg-blue-100 text-blue-800 text-xs">
+                                                                <CheckCircle className="w-3 h-3 mr-1" />
+                                                                Achat vérifié
+                                                            </Badge>
+                                                        )}
                                                     </div>
-                                                    <div className="flex-1">
-                                                        <div className="flex items-center space-x-2 mb-1">
-                                                            <span className="font-medium text-gray-900">
-                                                                {review.user?.first_name} {review.user?.last_name}
-                                                            </span>
-                                                            {review.is_verified_purchase && (
-                                                                <Badge className="bg-blue-100 text-blue-800 text-xs">
-                                                                    <CheckCircle className="w-3 h-3 mr-1" />
-                                                                    Achat vérifié
-                                                                </Badge>
+                                                    <div className="flex items-center space-x-3 mb-3">
+                                                        <div className="flex items-center space-x-1">
+                                                            {renderStars(
+                                                                review.rating
                                                             )}
                                                         </div>
-                                                        <div className="flex items-center space-x-2 mb-2">
-                                                            <div className="flex items-center space-x-1">
-                                                                {renderStars(review.rating)}
-                                                            </div>
-                                                            <span className="text-sm text-gray-500">
-                                                                {new Date(review.created_at).toLocaleDateString("fr-FR")}
-                                                            </span>
-                                                        </div>
-                                                        <div className="flex items-center space-x-2 text-sm text-gray-600">
-                                                            <Package className="w-4 h-4" />
-                                                            <span>{review.product?.name}</span>
-                                                        </div>
+                                                        <span className="text-sm text-gray-500">
+                                                            {new Date(
+                                                                review.created_at
+                                                            ).toLocaleDateString(
+                                                                "fr-FR"
+                                                            )}
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex items-center space-x-2 text-sm text-gray-600 mb-4">
+                                                        <Package className="w-4 h-4" />
+                                                        <span className="font-medium">
+                                                            {
+                                                                review.product
+                                                                    ?.name
+                                                            }
+                                                        </span>
                                                     </div>
                                                 </div>
-                                                <div className="flex items-center space-x-2">
-                                                    {getStatusBadge(review.status)}
-                                                    <DropdownMenu>
-                                                        <DropdownMenuTrigger asChild>
-                                                            <Button variant="ghost" size="sm">
-                                                                <MoreVertical className="w-4 h-4" />
-                                                            </Button>
-                                                        </DropdownMenuTrigger>
-                                                        <DropdownMenuContent align="end">
+                                            </div>
+                                            <div className="flex items-center space-x-2">
+                                                {getStatusBadge(review.status)}
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger
+                                                        asChild
+                                                    >
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            className="hover:bg-emerald-50"
+                                                        >
+                                                            <MoreVertical className="w-4 h-4" />
+                                                        </Button>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent align="end">
+                                                        <DropdownMenuItem
+                                                            onClick={() =>
+                                                                handleOpenResponseDialog(
+                                                                    review.id,
+                                                                    review.merchant_response
+                                                                )
+                                                            }
+                                                        >
+                                                            <Reply className="w-4 h-4 mr-2" />
+                                                            {review.merchant_response
+                                                                ? "Modifier la réponse"
+                                                                : "Répondre"}
+                                                        </DropdownMenuItem>
+                                                        {review.merchant_response && (
                                                             <DropdownMenuItem
-                                                                onClick={() => handleOpenResponseDialog(review.id, review.merchant_response)}
-                                                            >
-                                                                <Reply className="w-4 h-4 mr-2" />
-                                                                {review.merchant_response ? "Modifier la réponse" : "Répondre"}
-                                                            </DropdownMenuItem>
-                                                            {review.merchant_response && (
-                                                                <DropdownMenuItem
-                                                                    onClick={() => handleDeleteResponse(review.id)}
-                                                                    className="text-red-600"
-                                                                >
-                                                                    <XCircle className="w-4 h-4 mr-2" />
-                                                                    Supprimer la réponse
-                                                                </DropdownMenuItem>
-                                                            )}
-                                                            <DropdownMenuSeparator />
-                                                            <DropdownMenuItem
-                                                                onClick={() => handleStatusChange(review.id, "approved")}
-                                                            >
-                                                                <CheckCircle className="w-4 h-4 mr-2" />
-                                                                Approuver
-                                                            </DropdownMenuItem>
-                                                            <DropdownMenuItem
-                                                                onClick={() => handleStatusChange(review.id, "rejected")}
+                                                                onClick={() =>
+                                                                    handleDeleteResponse(
+                                                                        review.id
+                                                                    )
+                                                                }
+                                                                className="text-red-600"
                                                             >
                                                                 <XCircle className="w-4 h-4 mr-2" />
-                                                                Rejeter
+                                                                Supprimer la
+                                                                réponse
                                                             </DropdownMenuItem>
-                                                            <DropdownMenuItem
-                                                                onClick={() => handleStatusChange(review.id, "flagged")}
-                                                            >
-                                                                <Flag className="w-4 h-4 mr-2" />
-                                                                Signaler
-                                                            </DropdownMenuItem>
-                                                        </DropdownMenuContent>
-                                                    </DropdownMenu>
-                                                </div>
-                                            </div>
-
-                                            {/* Contenu de l'avis */}
-                                            <div className="ml-14">
-                                                {review.title && (
-                                                    <h4 className="font-medium text-gray-900 mb-2">
-                                                        {review.title}
-                                                    </h4>
-                                                )}
-                                                <p className="text-gray-700 mb-4">
-                                                    {review.comment}
-                                                </p>
-
-                                                {/* Réponse du marchand */}
-                                                {review.merchant_response && (
-                                                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                                                        <div className="flex items-center space-x-2 mb-2">
-                                                            <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center">
-                                                                <span className="text-white text-xs font-bold">M</span>
-                                                            </div>
-                                                            <span className="font-medium text-blue-900">
-                                                                Réponse du marchand
-                                                            </span>
-                                                            <span className="text-sm text-blue-600">
-                                                                {review.merchant_response_date && 
-                                                                    new Date(review.merchant_response_date).toLocaleDateString("fr-FR")}
-                                                            </span>
-                                                        </div>
-                                                        <p className="text-blue-800">
-                                                            {review.merchant_response}
-                                                        </p>
-                                                    </div>
-                                                )}
-
-                                                {/* Actions rapides */}
-                                                {!review.merchant_response && (
-                                                    <Button
-                                                        variant="outline"
-                                                        size="sm"
-                                                        onClick={() => handleOpenResponseDialog(review.id)}
-                                                        className="mt-2"
-                                                    >
-                                                        <Reply className="w-4 h-4 mr-2" />
-                                                        Répondre à cet avis
-                                                    </Button>
-                                                )}
+                                                        )}
+                                                        <DropdownMenuSeparator />
+                                                        <DropdownMenuItem
+                                                            onClick={() =>
+                                                                handleStatusChange(
+                                                                    review.id,
+                                                                    "approved"
+                                                                )
+                                                            }
+                                                        >
+                                                            <CheckCircle className="w-4 h-4 mr-2" />
+                                                            Approuver
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem
+                                                            onClick={() =>
+                                                                handleStatusChange(
+                                                                    review.id,
+                                                                    "rejected"
+                                                                )
+                                                            }
+                                                        >
+                                                            <XCircle className="w-4 h-4 mr-2" />
+                                                            Rejeter
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem
+                                                            onClick={() =>
+                                                                handleStatusChange(
+                                                                    review.id,
+                                                                    "flagged"
+                                                                )
+                                                            }
+                                                        >
+                                                            <Flag className="w-4 h-4 mr-2" />
+                                                            Signaler
+                                                        </DropdownMenuItem>
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
                                             </div>
                                         </div>
-                                    </CardContent>
-                                </Card>
-                            ))
-                        )}
-                    </div>
 
-                    {/* Dialog de réponse */}
-                    <Dialog open={isResponseDialogOpen} onOpenChange={setIsResponseDialogOpen}>
-                        <DialogContent className="sm:max-w-[525px]">
-                            <DialogHeader>
-                                <DialogTitle>
-                                    {selectedReviewId && reviews?.find(r => r.id === selectedReviewId)?.merchant_response
-                                        ? "Modifier votre réponse"
-                                        : "Répondre à l'avis"}
-                                </DialogTitle>
-                                <DialogDescription>
-                                    Votre réponse sera visible publiquement sous l'avis du client.
-                                </DialogDescription>
-                            </DialogHeader>
-                            <div className="space-y-4">
-                                <Textarea
-                                    placeholder="Écrivez votre réponse..."
-                                    value={responseText}
-                                    onChange={(e) => setResponseText(e.target.value)}
-                                    className="min-h-[120px]"
-                                />
-                            </div>
-                            <DialogFooter>
-                                <Button
-                                    variant="outline"
-                                    onClick={() => setIsResponseDialogOpen(false)}
-                                    disabled={isResponding}
-                                >
-                                    Annuler
-                                </Button>
-                                <Button
-                                    onClick={handleSubmitResponse}
-                                    disabled={isResponding || !responseText.trim()}
-                                    style={{ backgroundColor: "#2D4A6B" }}
-                                    className="text-white"
-                                >
-                                    {isResponding ? "Envoi..." : "Publier la réponse"}
-                                </Button>
-                            </DialogFooter>
-                        </DialogContent>
-                    </Dialog>
+                                        {/* Contenu de l'avis */}
+                                        <div className="ml-16">
+                                            {review.title && (
+                                                <h4 className="font-semibold text-gray-900 mb-3 text-lg">
+                                                    {review.title}
+                                                </h4>
+                                            )}
+                                            <p className="text-gray-700 mb-4 leading-relaxed">
+                                                {review.comment}
+                                            </p>
+
+                                            {/* Réponse du marchand */}
+                                            {review.merchant_response && (
+                                                <div className="bg-gradient-to-r from-emerald-50 to-blue-50 border border-emerald-200 rounded-lg p-4">
+                                                    <div className="flex items-center space-x-3 mb-3">
+                                                        <div className="w-8 h-8 bg-emerald-600 rounded-full flex items-center justify-center">
+                                                            <span className="text-white text-sm font-bold">
+                                                                M
+                                                            </span>
+                                                        </div>
+                                                        <span className="font-semibold text-emerald-900">
+                                                            Réponse du marchand
+                                                        </span>
+                                                        <span className="text-sm text-emerald-600">
+                                                            {review.merchant_response_date &&
+                                                                new Date(
+                                                                    review.merchant_response_date
+                                                                ).toLocaleDateString(
+                                                                    "fr-FR"
+                                                                )}
+                                                        </span>
+                                                    </div>
+                                                    <p className="text-emerald-800 leading-relaxed">
+                                                        {
+                                                            review.merchant_response
+                                                        }
+                                                    </p>
+                                                </div>
+                                            )}
+
+                                            {/* Actions rapides */}
+                                            {!review.merchant_response && (
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() =>
+                                                        handleOpenResponseDialog(
+                                                            review.id
+                                                        )
+                                                    }
+                                                    className="mt-4 border-emerald-300 text-emerald-700 hover:bg-emerald-50"
+                                                >
+                                                    <Reply className="w-4 h-4 mr-2" />
+                                                    Répondre à cet avis
+                                                </Button>
+                                            )}
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        ))
+                    )}
                 </div>
+
+                {/* Dialog de réponse avec design moderne */}
+                <Dialog
+                    open={isResponseDialogOpen}
+                    onOpenChange={setIsResponseDialogOpen}
+                >
+                    <DialogContent className="sm:max-w-[525px]">
+                        <DialogHeader>
+                            <DialogTitle className="text-emerald-800">
+                                {selectedReviewId &&
+                                reviews?.find(r => r.id === selectedReviewId)
+                                    ?.merchant_response
+                                    ? "Modifier votre réponse"
+                                    : "Répondre à l'avis"}
+                            </DialogTitle>
+                            <DialogDescription>
+                                Votre réponse sera visible publiquement sous
+                                l'avis du client.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                            <Textarea
+                                placeholder="Écrivez votre réponse..."
+                                value={responseText}
+                                onChange={e => setResponseText(e.target.value)}
+                                className="min-h-[120px] border-emerald-200 focus:border-emerald-500"
+                            />
+                        </div>
+                        <DialogFooter>
+                            <Button
+                                variant="outline"
+                                onClick={() => setIsResponseDialogOpen(false)}
+                                disabled={isResponding}
+                                className="border-emerald-300 text-emerald-700 hover:bg-emerald-50"
+                            >
+                                Annuler
+                            </Button>
+                            <Button
+                                onClick={handleSubmitResponse}
+                                disabled={isResponding || !responseText.trim()}
+                                className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white"
+                            >
+                                {isResponding
+                                    ? "Envoi..."
+                                    : "Publier la réponse"}
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
             </div>
-        </AuthGuard>
+        </div>
     )
 }
 

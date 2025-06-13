@@ -20,6 +20,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { useAuth } from "@/contexts/AuthContext"
 import { UserRoleEnum, UserRole } from "@/types/user"
 import { Link } from "react-router-dom"
+import { useAuthRedirectFixed } from "@/hooks/useAuthRedirectFixed"
 import {
     Lock,
     Mail,
@@ -64,16 +65,16 @@ const AuthImproved: React.FC = () => {
 
     const { signIn, signUp, user, loading: authLoading } = useAuth()
 
-    // Redirection simple et directe si utilisateur connecté
-    useEffect(() => {
-        if (!authLoading && user) {
-            console.log(
-                "🎯 Utilisateur connecté, redirection immédiate vers dashboard..."
-            )
-            // Redirection immédiate vers le dashboard utilisateur
-            window.location.href = "/user/dashboard"
-        }
-    }, [user, authLoading])
+    // Utiliser le hook de redirection automatique basé sur le rôle
+    const { isRedirecting, shouldShowContent } = useAuthRedirectFixed()
+
+    console.log("🔍 Auth page - État:", {
+        user: !!user,
+        authLoading,
+        isRedirecting,
+        shouldShowContent,
+        userRole: user?.user_metadata?.role,
+    })
 
     // Secteurs d'activité disponibles sur AfricaHub
     const businessSectors = [
@@ -391,8 +392,8 @@ const AuthImproved: React.FC = () => {
         }
     }
 
-    // Si l'authentification est en cours, afficher un loading
-    if (authLoading) {
+    // Si l'authentification est en cours ou redirection en cours, afficher un loading
+    if (authLoading || isRedirecting || !shouldShowContent) {
         return (
             <div
                 className="min-h-screen flex items-center justify-center"
@@ -403,7 +404,13 @@ const AuthImproved: React.FC = () => {
             >
                 <div className="text-center text-white">
                     <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                    <p>Chargement...</p>
+                    <p>
+                        {authLoading
+                            ? "Chargement..."
+                            : isRedirecting
+                            ? "Redirection en cours..."
+                            : "Vérification..."}
+                    </p>
                 </div>
             </div>
         )

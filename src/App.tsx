@@ -1510,24 +1510,6 @@ const App = () => (
                                     />
 
                                     <Route
-                                        path="/merchant/dashboard"
-                                        element={
-                                            <Suspense
-                                                fallback={
-                                                    <LoadingSpinner
-                                                        size="lg"
-                                                        text="Chargement de votre dashboard marchand..."
-                                                    />
-                                                }
-                                            >
-                                                <RequireMerchant>
-                                                    <MerchantDashboard />
-                                                </RequireMerchant>
-                                            </Suspense>
-                                        }
-                                    />
-
-                                    <Route
                                         path="/merchant-dashboard"
                                         element={
                                             <Suspense
@@ -1653,12 +1635,6 @@ const App = () => (
                                                 <Unauthorized />
                                             </Suspense>
                                         }
-                                    />
-
-                                    {/* Route de test directe - DOIT être avant /user/* */}
-                                    <Route
-                                        path="/user/dashboard"
-                                        element={<TestDashboard />}
                                     />
 
                                     {/* Route de test alternative */}

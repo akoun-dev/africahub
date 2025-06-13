@@ -7,6 +7,7 @@ import { UserLayout } from "@/components/layout/UserLayout"
 import { Link, useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import { AuthGuard, useAuthGuard } from "@/components/auth/AuthGuard"
+import { useAuthRedirectFixed } from "@/hooks/useAuthRedirectFixed"
 import {
     User,
     Heart,
@@ -29,6 +30,9 @@ const UserDashboard: React.FC = () => {
     const { user, userProfile, profile, loading, logout } = useAuth()
     const { isAuthenticated, userEmail } = useAuthGuard()
     const navigate = useNavigate()
+
+    // Hook de redirection automatique basé sur le rôle
+    const { isRedirecting } = useAuthRedirectFixed()
 
     // Utiliser profile ou userProfile selon ce qui est disponible
     const currentProfile = userProfile || profile
@@ -82,6 +86,20 @@ const UserDashboard: React.FC = () => {
             : "fallback",
         displayProfile,
     })
+
+    // Si une redirection est en cours, afficher un loader
+    if (isRedirecting) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50">
+                <div className="text-center">
+                    <div className="w-8 h-8 border-2 border-marineBlue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                    <p className="text-marineBlue-600">
+                        Redirection en cours...
+                    </p>
+                </div>
+            </div>
+        )
+    }
 
     return (
         <AuthGuard>

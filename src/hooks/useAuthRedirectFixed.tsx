@@ -8,7 +8,7 @@ import { useNavigate, useLocation } from "react-router-dom"
 import { useAuth } from "@/contexts/AuthContext"
 
 export const useAuthRedirectFixed = () => {
-    const { user, loading } = useAuth()
+    const { user, loading, profile } = useAuth()
     const navigate = useNavigate()
     const location = useLocation()
     const hasRedirected = useRef(false)
@@ -43,9 +43,17 @@ export const useAuthRedirectFixed = () => {
             // Marquer qu'on a tenté une redirection
             hasRedirected.current = true
 
-            // Récupérer le rôle depuis les métadonnées utilisateur
-            const userRole = user.user_metadata?.role || "user"
-            console.log("🎭 Rôle utilisateur détecté:", userRole)
+            // Récupérer le rôle depuis le profil en priorité, sinon depuis les métadonnées
+            const profileRole = profile?.role
+            const metadataRole = user.user_metadata?.role
+            const userRole = profileRole || metadataRole || "user"
+
+            console.log("🎭 Sources de rôle:", {
+                profileRole,
+                metadataRole,
+                finalRole: userRole,
+                hasProfile: !!profile,
+            })
 
             // Rediriger selon le rôle
             let redirectPath = "/user/dashboard" // Par défaut
@@ -72,7 +80,59 @@ export const useAuthRedirectFixed = () => {
             navigate(redirectPath, { replace: true })
             return
         }
-    }, [user, loading, location.pathname, navigate])
+
+        // Vérifier si l'utilisateur connecté est sur la mauvaise page selon son rôle
+        if (
+            user &&
+            profile &&
+            location.pathname !== "/auth" &&
+            !hasRedirected.current
+        ) {
+            const profileRole = profile.role
+            const currentPath = location.pathname
+
+            console.log("🔍 Vérification rôle/page:", {
+                profileRole,
+                currentPath,
+                shouldRedirect: false,
+            })
+
+            let expectedPath = "/user/dashboard"
+            switch (profileRole) {
+                case "admin":
+                    expectedPath = "/admin/dashboard"
+                    break
+                case "manager":
+                    expectedPath = "/manager/dashboard"
+                    break
+                case "merchant":
+                    expectedPath = "/merchant/dashboard"
+                    break
+                case "user":
+                default:
+                    expectedPath = "/user/dashboard"
+                    break
+            }
+
+            // Si l'utilisateur est sur une page dashboard qui ne correspond pas à son rôle
+            const isOnWrongDashboard =
+                (currentPath.includes("/user/dashboard") &&
+                    profileRole !== "user") ||
+                (currentPath.includes("/merchant/dashboard") &&
+                    profileRole !== "merchant") ||
+                (currentPath.includes("/admin/dashboard") &&
+                    !["admin", "manager"].includes(profileRole))
+
+            if (isOnWrongDashboard) {
+                console.log(
+                    `🔄 Redirection nécessaire: ${profileRole} sur ${currentPath} → ${expectedPath}`
+                )
+                hasRedirected.current = true
+                navigate(expectedPath, { replace: true })
+                return
+            }
+        }
+    }, [user, loading, location.pathname, navigate, profile])
 
     return {
         isRedirecting: loading || (user && location.pathname === "/auth"),
